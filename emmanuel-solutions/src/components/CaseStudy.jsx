@@ -95,6 +95,16 @@ export function CaseStudy({ study, index }) {
           <p>{study.metrics}</p>
         </div>
       )}
+
+      {study.profileUrl && (
+        <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--rule)" }}>
+          <a href={study.profileUrl} target="_blank" rel="noreferrer"
+             className="btn btn-ghost btn-small"
+             style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+            View Partner Profile ↗
+          </a>
+        </div>
+      )}
     </motion.article>
   );
 }

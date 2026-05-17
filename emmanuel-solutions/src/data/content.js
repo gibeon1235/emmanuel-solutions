@@ -311,7 +311,8 @@ export const caseStudies = [
       "Industrial-grade circular supply chain established",
       "Patented technology with proven commercial validation"
     ],
-    metrics: "Active paying customers: Wakefit, Adient, Kingspan Jindal"
+    metrics: "Active paying customers: Wakefit, Adient, Kingspan Jindal",
+    profileUrl: "/docs/thaal-innovations-profile.pdf"
   }
 ];
 

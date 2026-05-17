@@ -97,7 +97,7 @@ function HomePage() {
             <motion.div className="hero-ctas" initial="hidden" animate="visible" custom={3.5} variants={fadeUp}>
               <a className="btn btn-primary" href="#about">Explore Our Work</a>
               <a className="btn btn-secondary"
-                 href="/docs/emmanuel-solutions-one-pager.pdf"
+                 href="/docs/emmanuel-solutions-profile.html"
                  target="_blank" rel="noreferrer">
                 Download One-Pager ↗
               </a>

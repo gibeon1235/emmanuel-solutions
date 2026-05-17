@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emmanuel Solutions — Company Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:      #1A3D2B;
+    --green-mid:  #2C6048;
+    --green-pale: #E8F2EC;
+    --gold:       #B8860B;
+    --gold-light: #F5E6C0;
+    --ink:        #111820;
+    --ink-mid:    #374151;
+    --ink-muted:  #6B7280;
+    --rule:       #E2E4DF;
+    --white:      #FFFFFF;
+    --off-white:  #F8F9F6;
+  }
+
+  body {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    background: #e8e8e8;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PAGE CONTAINER ─────────────────── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--white);
+    margin: 2rem auto;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BORDER ACCENT ──────────────── */
+  .page::before {
+    content: "";
+    display: block;
+    height: 5px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--green-mid) 50%, var(--gold) 100%);
+    flex-shrink: 0;
+  }
+
+  /* ── HEADER ─────────────────────────── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 1.4rem 2rem 1.2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .header-logo { display: flex; flex-direction: column; gap: 1px; }
+  .logo-script {
+    font-family: "Great Vibes", cursive;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .logo-tagline {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .header-contact {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+  .header-contact a { color: var(--green); text-decoration: none; }
+
+  /* ── SECTIONS ───────────────────────── */
+  .section { padding: 1.4rem 2rem; }
+  .section + .section { border-top: 1px solid var(--rule); }
+  .section-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-mid);
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    max-width: 40px;
+  }
+
+  /* ── FOUNDER ────────────────────────── */
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.4rem;
+    align-items: start;
+  }
+  .founder-photo {
+    width: 110px;
+    height: 130px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid var(--rule);
+    background: var(--off-white);
+  }
+  .founder-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .founder-name {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.15rem;
+  }
+  .founder-role {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 0.6rem;
+  }
+  .founder-bio {
+    font-size: 0.82rem;
+    color: var(--ink-mid);
+    line-height: 1.65;
+    margin-bottom: 0.7rem;
+  }
+  .founder-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .badge {
+    background: var(--green-pale);
+    color: var(--green);
+    border: 1px solid rgba(26,61,43,0.15);
+    border-radius: 2px;
+    padding: 0.22rem 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ── STATS ──────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    padding: 1.2rem 2rem;
+    background: var(--green);
+  }
+  .stat {
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.15);
+    padding: 0 1rem;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #E8C870;
+    line-height: 1;
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+    display: block;
+    margin-top: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── MISSION ────────────────────────── */
+  .mission-text {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    border-left: 3px solid var(--gold);
+    padding-left: 1rem;
+  }
+
+  /* ── FOOTER (page 1) ────────────────── */
+  .page-footer {
+    margin-top: auto;
+    padding: 0.8rem 2rem;
+    background: var(--off-white);
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .page-footer span {
+    font-size: 0.65rem;
+    color: var(--ink-muted);
+  }
+  .page-num {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.8rem;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  /* ── PAGE 2: SERVICES ───────────────── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .service-card {
+    background: var(--off-white);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.9rem;
+    border-top: 3px solid var(--green);
+  }
+  .service-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 0.35rem;
+  }
+  .service-desc {
+    font-size: 0.74rem;
+    color: var(--ink-mid);
+    line-height: 1.55;
+    margin-bottom: 0.5rem;
+  }
+  .service-points {
+    list-style: none;
+    padding: 0;
+  }
+  .service-points li {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    padding: 0.15rem 0 0.15rem 0.9rem;
+    position: relative;
+    line-height: 1.4;
+  }
+  .service-points li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--green-mid);
+    font-size: 0.65rem;
+  }
+
+  /* ── PAGE 2: PROJECTS ───────────────── */
+  .projects-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.9rem;
+  }
+  .project-card {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.85rem;
+    background: var(--white);
+  }
+  .project-name {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .project-category {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .project-impact {
+    font-size: 0.72rem;
+    color: var(--ink-mid);
+    line-height: 1.55;
+  }
+  .project-impact strong {
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  /* ── FINAL FOOTER ───────────────────── */
+  .final-footer {
+    margin-top: auto;
+    background: var(--green);
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+  }
+  .final-footer-logo {
+    font-family: "Great Vibes", cursive;
+    font-size: 1.4rem;
+    color: rgba(255,255,255,0.9);
+  }
+  .final-footer-tagline {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    display: block;
+    margin-top: 1px;
+  }
+  .final-footer-contact {
+    text-align: right;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+  .final-footer-contact a { color: #E8C870; text-decoration: none; }
+  .final-footer-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── PRINT ──────────────────────────── */
+  @media print {
+    body { background: white; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      page-break-after: always;
+      width: 100%;
+      min-height: 100vh;
+    }
+  }
+
+  /* ── SCREEN RESPONSIVE ──────────────── */
+  @media (max-width: 680px) {
+    .page { width: 100%; margin: 0; box-shadow: none; }
+    .header { padding: 1rem 1.2rem; }
+    .logo-script { font-size: 1.7rem; }
+    .section { padding: 1.1rem 1.2rem; }
+    .stats-row { padding: 1rem 1.2rem; }
+    .stat-num { font-size: 1.5rem; }
+    .founder-grid { grid-template-columns: 90px 1fr; gap: 1rem; }
+    .founder-photo { width: 90px; height: 110px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .projects-row { grid-template-columns: 1fr; }
+    .final-footer { grid-template-columns: 1fr; text-align: center; }
+    .final-footer-contact { text-align: center; }
+    .final-footer-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ PAGE 1 ══════════════════ -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">
+      <span class="logo-script">Emmanuel Solutions</span>
+      <span class="logo-tagline">Change for Good</span>
+    </div>
+    <div class="header-contact">
+      emmanuelsolutions00@gmail.com<br/>
+      Navi Mumbai, Maharashtra, India<br/>
+      <a href="https://emmanuel-solutions-3vij.vercel.app">emmanuel-solutions-3vij.vercel.app</a>
+    </div>
+  </div>
+
+  <!-- Founder -->
+  <div class="section">
+    <div class="section-label">Founder &amp; Principal Consultant</div>
+    <div class="founder-grid">
+      <div class="founder-photo">
+        <img src="/assets/isaac-headshot.jpg" alt="Isaac Emmanuel Yenubari" />
+      </div>
+      <div>
+        <div class="founder-name">Isaac Emmanuel Yenubari</div>
+        <div class="founder-role">Founder &amp; Principal Consultant</div>
+        <p class="founder-bio">
+          Over 30 years of leadership in the polymer industry spanning sales, market development,
+          sustainability advocacy, and high-tech materials innovation — almost entirely with
+          multinational companies that invented leading materials, including
+          <strong>Bayer MaterialScience</strong> and <strong>Covestro</strong>.
+          M.Sc. Polymer Chemistry. Last role: Inclusive Business, Covestro India —
+          focused on housing, food, water and sanitation security.
+        </p>
+        <div class="founder-badges">
+          <span class="badge">Indian Polyurethane Association (IPUA)</span>
+          <span class="badge">India Insulation Forum</span>
+          <span class="badge">Spray Foam Alliance of India</span>
+          <span class="badge">PU Today — Editor</span>
+          <span class="badge">Creatrix Certified Consultant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-num">30+</span>
+      <span class="stat-label">Years of Industry Experience</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">₹92K Cr</span>
+      <span class="stat-label">Post-Harvest Loss Problem Being Solved</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">90%</span>
+      <span class="stat-label">Material Recovery in PU Foam Recycling</span>
+    </div>
+  </div>
+
+  <!-- Mission -->
+  <div class="section">
+    <div class="section-label">Our Mission</div>
+    <p class="mission-text">
+      Emmanuel Solutions is conceived to deliver transformational initiatives through two defining
+      phenomena of this century: Sustainable Technologies and Training in Innovation and Industrial
+      Marketing. We engage with exceptional technologies in renewable energy, energy efficiency,
+      sustainable materials, and sustainable agriculture — deploying them where they matter most,
+      for communities and organisations building a better future.
+    </p>
+  </div>
+
+  <!-- Gallery strip -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0; height:110px; overflow:hidden; flex-shrink:0;">
+    <img src="/assets/devrays-inauguration-team.jpeg" alt="Devrays inauguration" style="width:100%;height:100%;object-fit:cover;object-position:center;" />
+    <img src="/assets/devrays-exterior.jpeg"          alt="Solar dehydrator"     style="width:100%;height:100%;object-fit:cover;object-position:center;" />
+    <img src="/assets/devrays-interior.jpeg"          alt="Interior trays"       style="width:100%;height:100%;object-fit:cover;object-position:center;" />
+  </div>
+  <div style="text-align:center; font-size:0.62rem; color:var(--ink-muted); padding:0.4rem; background:var(--off-white); border-top:1px solid var(--rule);">
+    Devrays Mone Solar Dome — First Installation, Malegaon, Maharashtra (February 2026)
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Emmanuel Solutions · Company Profile 2026</span>
+    <span class="page-num">1 / 2</span>
+    <span style="text-align:right;">Confidential</span>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════ PAGE 2 ══════════════════ -->
+<div class="page">
+
+  <div class="header">
+    <div class="header-logo">
+      <span class="logo-script">Emmanuel Solutions</span>
+      <span class="logo-tagline">Change for Good</span>
+    </div>
+    <div class="header-contact" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.9rem; color:var(--green);">
+      What We Do &amp; Our Work
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="section">
+    <div class="section-label">Four Domains of Practice</div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-title">Sustainable Technology Advisory</div>
+        <p class="service-desc">Deploying climate-smart technologies that preserve food, improve value chains, and increase farmer resilience.</p>
+        <ul class="service-points">
+          <li>Solar cold chain &amp; dehydration systems</li>
+          <li>Post-harvest loss reduction</li>
+          <li>Renewable energy integration</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Circular Economy Strategy</div>
+        <p class="service-desc">Reducing waste and turning by-products into value through decentralised models that strengthen rural economies.</p>
+        <ul class="service-points">
+          <li>Chemical recycling solutions</li>
+          <li>Waste valorisation &amp; upcycling</li>
+          <li>Sustainable materials sourcing</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Innovation Capability Building</div>
+        <p class="service-desc">Facilitating behaviour-first innovation programs that increase creative confidence and risk-balanced execution.</p>
+        <ul class="service-points">
+          <li>Creatrix Innovation Model (Certified)</li>
+          <li>Creativity &amp; risk-taking assessments</li>
+          <li>Team workshops &amp; coaching</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Industrial Marketing &amp; Strategy</div>
+        <p class="service-desc">Outside-in, needs-based strategy helping industrial teams move from product push to high-margin market penetration.</p>
+        <ul class="service-points">
+          <li>Market positioning &amp; segmentation</li>
+          <li>Go-to-market strategy</li>
+          <li>Sales enablement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="section">
+    <div class="section-label">Featured Projects &amp; Partnerships</div>
+    <div class="projects-row">
+      <div class="project-card">
+        <div class="project-name">Ecozen Solutions</div>
+        <div class="project-category">Sustainable Technology</div>
+        <p class="project-impact">
+          Advisory supporting scale of <strong>Ecofrost</strong> — the world's leading solar cold room.
+          Patented IceCore thermal storage: 30hrs batteryless backup.
+          <strong>59,000+ farmers</strong> helped across <strong>20+ countries</strong>.
+        </p>
+      </div>
+      <div class="project-card">
+        <div class="project-name">Devrays Solar Dehydrators</div>
+        <div class="project-category">Sustainable Technology</div>
+        <p class="project-impact">
+          Co-founded the patented <strong>Mone Solar Dome</strong> — 2x+ efficiency over conventional dryers.
+          First installation live at Malegaon, Maharashtra.
+          Addressing <strong>₹92,000 Cr</strong> annual post-harvest losses.
+        </p>
+      </div>
+      <div class="project-card">
+        <div class="project-name">Thaal Innovations</div>
+        <div class="project-category">Circular Economy</div>
+        <p class="project-impact">
+          Supporting chemical recycling of PU foam with <strong>90% material recovery</strong>.
+          Clients include Wakefit, Adient &amp; Kingspan Jindal.
+          <strong>70% less CO₂</strong> vs virgin material production.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engagement highlight -->
+  <div class="section" style="background:var(--off-white); padding-top:1rem; padding-bottom:1rem;">
+    <div class="section-label">Recent Engagement</div>
+    <div style="display:flex; align-items:flex-start; gap:1rem;">
+      <img src="/assets/innovation-training-students.jpg" alt="Innovation Training at Somaiya"
+           style="width:100px; height:70px; object-fit:cover; border-radius:4px; border:1px solid var(--rule); flex-shrink:0;" />
+      <div>
+        <p style="font-family:'Cormorant Garamond',serif; font-size:0.95rem; font-weight:600; color:var(--green); margin-bottom:0.2rem;">
+          Innovation Training · Somaiya Vidyavihar University, Mumbai (March 2026)
+        </p>
+        <p style="font-size:0.74rem; color:var(--ink-mid); line-height:1.6;">
+          Delivered the Creatrix Innovation Model workshop to 50+ Gen Z students from
+          Dr Shantilal K Somaiya School of Commerce &amp; Somaiya School of Applied Sciences.
+          Facilitated by the Innovation Incubation and Entrepreneurship Cell.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final footer -->
+  <div class="final-footer" style="margin-top:auto;">
+    <div>
+      <div class="final-footer-logo">Emmanuel Solutions</div>
+      <span class="final-footer-tagline">Change for Good</span>
+    </div>
+    <div class="final-footer-divider"></div>
+    <div class="final-footer-contact">
+      <a href="mailto:emmanuelsolutions00@gmail.com">emmanuelsolutions00@gmail.com</a><br/>
+      Navi Mumbai, Maharashtra, India<br/>
+      <a href="https://linkedin.com/in/isaac-emmanuel-17007932">LinkedIn: Isaac Emmanuel Yenubari</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
