@@ -165,7 +165,7 @@ export function ContactForm() {
       </button>
 
       <p className="form-note">
-        Or email directly: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        Or email directly: <a href={`https://mail.google.com/mail/?view=cm&to=${CONTACT_EMAIL}&subject=Enquiry via Emmanuel Solutions`}>{CONTACT_EMAIL}</a>
       </p>
     </motion.form>
   );

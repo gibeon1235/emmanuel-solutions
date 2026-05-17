@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -105,6 +106,14 @@ export function CaseStudy({ study, index }) {
           </a>
         </div>
       )}
+
+      <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--rule)" }}>
+        <Link to={`/case-studies/${study.id}`}
+          className="btn btn-ghost btn-small"
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+          Read Full Case Study →
+        </Link>
+      </div>
     </motion.article>
   );
 }

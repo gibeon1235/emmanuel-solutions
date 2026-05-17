@@ -135,7 +135,7 @@ export function InsightDetailPage() {
               <div className="article-cta">
                 <h3>Discuss This Topic</h3>
                 <p>Interested in how these ideas apply to your organisation? Isaac is happy to talk.</p>
-                <a href={`mailto:isaac@emmanuel-solutions.in?subject=Re: ${article.title}`}
+                <a href={`https://mail.google.com/mail/?view=cm&to=emmanuelsolutions00@gmail.com&subject=Re: ${article.title}`}
                    className="btn btn-primary">
                   Get in Touch
                 </a>

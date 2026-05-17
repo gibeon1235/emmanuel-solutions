@@ -11,8 +11,9 @@ import { TeamMember }         from "./components/TeamMember";
 import { InsightCard }        from "./components/InsightCard";
 import { ContactForm }        from "./components/ContactForm";
 import { Footer }             from "./components/Footer";
-import { ServiceDetailPage }  from "./pages/ServiceDetailPage";
-import { InsightDetailPage }  from "./pages/InsightDetailPage";
+import { ServiceDetailPage }      from "./pages/ServiceDetailPage";
+import { InsightDetailPage }      from "./pages/InsightDetailPage";
+import { CaseStudyDetailPage }    from "./pages/CaseStudyDetailPage";
 
 import {
   services, caseStudies, team, insights, galleryImages, heroStats
@@ -296,8 +297,9 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/"                      element={<HomePage />} />
-        <Route path="/services/:serviceId"   element={<ServiceDetailPage />} />
-        <Route path="/insights/:insightId"   element={<InsightDetailPage />} />
+        <Route path="/services/:serviceId"       element={<ServiceDetailPage />} />
+        <Route path="/insights/:insightId"        element={<InsightDetailPage />} />
+        <Route path="/case-studies/:caseStudyId"  element={<CaseStudyDetailPage />} />
         {/* Catch-all → home */}
         <Route path="*"                      element={<HomePage />} />
       </Routes>

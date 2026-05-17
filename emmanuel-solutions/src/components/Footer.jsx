@@ -50,7 +50,7 @@ export function Footer() {
         <motion.div className="footer-section" custom={3} variants={fadeUp}>
           <h5>Contact</h5>
           <ul>
-            <li><a href="mailto:isaac@emmanuel-solutions.in">isaac@emmanuel-solutions.in</a></li>
+            <li><a href="https://mail.google.com/mail/?view=cm&to=emmanuelsolutions00@gmail.com&subject=Enquiry via Emmanuel Solutions">isaac@emmanuel-solutions.in</a></li>
             <li><a href="#contact">Book a Consultation</a></li>
             <li><a href="/docs/emmanuel-solutions-one-pager.pdf" target="_blank" rel="noreferrer">One-Pager PDF ↗</a></li>
           </ul>

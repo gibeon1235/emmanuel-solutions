@@ -492,3 +492,103 @@ export const galleryImages = [
     caption: "Interior stainless steel trays — modular design for high-volume dehydration"
   }
 ];
+
+// ── CASE STUDY DETAIL PAGES ───────────────────────────────
+export const caseStudyDetails = {
+  "ecozen": {
+    title:       "Ecozen Solutions — Ecofrost",
+    brandName:   "ecozen",
+    productName: "ecofrost",
+    tagline:     "The World's Leading Solar Cold Room Solution",
+    service:     "sustainable-tech",
+    heroStats: [
+      { val: "59,000+",  label: "Farmers Impacted" },
+      { val: "30 Hrs",   label: "Batteryless Backup" },
+      { val: "20+",      label: "Countries Deployed" },
+      { val: "100/mo",   label: "Production Capacity" }
+    ],
+    challenge: {
+      heading: "Post-Harvest Loss at Scale",
+      body: [
+        "India loses an estimated ₹92,000 crore worth of produce every year due to inadequate cold-chain infrastructure. Smallholder farmers, Farmer Producer Organisations, and perishable aggregators have no access to affordable, reliable on-farm cooling — forcing distress sales and limiting market reach.",
+        "Grid-dependent cold rooms are impractical in rural areas with unreliable power, high operational costs, and zero portability. The result: food waste, income loss, and a broken supply chain from farm to consumer."
+      ]
+    },
+    segments: [
+      { icon: "🌾", title: "Farmers", desc: "Smallholder and commercial growers needing on-farm pre-cooling" },
+      { icon: "🤝", title: "Farmer Producer Organisations", desc: "FPOs managing perishable aggregation across multiple farms" },
+      { icon: "📦", title: "Perishable Aggregators", desc: "Middlemen and logistics players handling fresh produce" },
+      { icon: "🏭", title: "Warehousing Companies", desc: "Cold-chain operators expanding rural storage capacity" }
+    ],
+    product: {
+      heading: "Smart. Solar. Self-Sufficient.",
+      body: [
+        "Ecofrost is an AI & IoT-enabled solar cold room with patented Thermal Energy Storage (IceCore) technology. It provides up to 30 hours of batteryless backup — ensuring uninterrupted cooling even during zero-sunshine periods.",
+        "The system operates on solar, grid, or generator — automatically switching to the available power source. A variable frequency compressor enables operation even in low sunshine hours, while R407F refrigerant ensures the lowest GWP with zero ODP. Temperature and humidity levels are auto-selected based on the produce stored."
+      ],
+      pillars: [
+        { icon: "☀️", title: "Solar Powered", sub: "Hybrid grid/generator fallback" },
+        { icon: "💧", title: "Humidity Control", sub: "65% – 95% range" },
+        { icon: "🔋", title: "30-Hr Backup", sub: "Batteryless via IceCore" },
+        { icon: "🚛", title: "Truly Portable", sub: "Modular, deployable anywhere" }
+      ]
+    },
+    technology: {
+      heading: "Four Pillars of Engineering Excellence",
+      pillars: [
+        {
+          title: "AI Platform",
+          desc: "Real-time tracking of 120+ parameters, remote portfolio management (monitoring, control & diagnostics), and seamless data integration through ecozen.ai — a proprietary analytics and management platform."
+        },
+        {
+          title: "Energy Management System",
+          desc: "Operates on solar, grid, or generator and automatically switches to the available power source. A variable frequency compressor works in low sunshine hours with batteryless operation."
+        },
+        {
+          title: "Thermal Storage & Virtual Cooling",
+          desc: "Patented IceCore thermal energy storage provides up to 30 hours of batteryless backup. Optimised cooling fan arrangement ensures better air circulation and more consistent temperature control."
+        },
+        {
+          title: "Refrigeration System",
+          desc: "R407F refrigerant — the lowest GWP with zero ODP. The system can both pre-cool and store produce. Temperature and humidity levels are automatically selected by the unit based on the produce stored."
+        }
+      ]
+    },
+    businessModels: [
+      {
+        icon: "🤲",
+        title: "Lease",
+        desc: "Farmers and FPOs lease Ecofrost units, spreading capital cost over time. Low upfront investment makes deployment accessible to smallholder farmers and cooperatives."
+      },
+      {
+        icon: "❄️",
+        title: "CaaS — Cooling as a Service",
+        desc: "Pay-per-use cooling model. Customers pay for the cold storage they consume, with no ownership of the unit. Removes all capital expenditure and maintenance burden."
+      }
+    ],
+    impact: {
+      headline: "59,000+",
+      subline: "Farmers helped to reduce waste, increase shelf life, reach farther markets and earn more",
+      outcomes: [
+        "Significant reduction in post-harvest food loss at scale",
+        "Increased shelf life of perishables, enabling export-quality produce",
+        "Higher and more stable farmer incomes through better market access",
+        "Women-led rural employment creation through accessible cold storage infrastructure"
+      ]
+    },
+    scale: [
+      { val: "25,000 sqft", label: "State-of-the-Art Manufacturing Facility" },
+      { val: "100/month",   label: "Production Capacity" },
+      { val: "1,050+",      label: "Units Deployed in India" },
+      { val: "20+",         label: "Countries with Active Deployments" }
+    ],
+    globalCustomers: [
+      "SokoFresh",
+      "Odisha Consumers Co-op Federation",
+      "SELCO Foundation",
+      "Akshayakalpa Organic",
+      "Balaji Solar Systems",
+      "Environmental Management Consultants"
+    ]
+  }
+};

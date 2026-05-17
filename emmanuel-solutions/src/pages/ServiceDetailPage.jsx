@@ -261,7 +261,7 @@ export function ServiceDetailPage() {
                 </motion.p>
               </div>
               <div className="detail-cta-buttons">
-                <a href={`mailto:isaac@emmanuel-solutions.in?subject=Enquiry: ${detail.title}`}
+                <a href={`https://mail.google.com/mail/?view=cm&to=emmanuelsolutions00@gmail.com&subject=Enquiry: ${detail.title}`}
                    className="btn btn-primary">
                   Email Isaac Directly
                 </a>
