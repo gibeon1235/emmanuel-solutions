@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
 import { insightDetails } from "../data/content";
@@ -56,7 +56,7 @@ export function InsightDetailPage() {
       {/* ── ARTICLE HERO ────────────────────────────── */}
       <div className="detail-hero article-hero">
         <div className="detail-hero-inner">
-          <motion.div className="breadcrumb"
+          <m.div className="breadcrumb"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
           >
             <Link to="/">Home</Link>
@@ -66,23 +66,23 @@ export function InsightDetailPage() {
             </a>
             <span className="breadcrumb-sep">›</span>
             <span>{article.category}</span>
-          </motion.div>
+          </m.div>
 
-          <motion.div className="insight-meta" style={{ marginBottom: "1.2rem" }}
+          <m.div className="insight-meta" style={{ marginBottom: "1.2rem" }}
             variants={fadeUp} initial="hidden" animate="visible"
           >
             <span className="insight-category">{article.category}</span>
             <span className="insight-date">{formatDate(article.date)}</span>
             <span className="insight-date">{article.readTime} read</span>
-          </motion.div>
+          </m.div>
 
-          <motion.h1 className="article-title"
+          <m.h1 className="article-title"
             variants={fadeUp} custom={1.5} initial="hidden" animate="visible"
           >
             {article.title}
-          </motion.h1>
+          </m.h1>
 
-          <motion.div className="article-byline"
+          <m.div className="article-byline"
             variants={fadeUp} custom={2.5} initial="hidden" animate="visible"
           >
             <div className="byline-avatar">IE</div>
@@ -90,7 +90,7 @@ export function InsightDetailPage() {
               <span className="byline-name">{article.author}</span>
               <span className="byline-role">Founder &amp; Principal Consultant, Emmanuel Solutions</span>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
@@ -100,14 +100,14 @@ export function InsightDetailPage() {
 
           {/* Main content */}
           <div className="article-content">
-            <motion.p className="article-intro"
+            <m.p className="article-intro"
               variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
             >
               {article.intro}
-            </motion.p>
+            </m.p>
 
             {article.sections.map((section, i) => (
-              <motion.div key={i} className="article-section"
+              <m.div key={i} className="article-section"
                 variants={fadeUp} custom={1}
                 initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
               >
@@ -115,7 +115,7 @@ export function InsightDetailPage() {
                 {section.body.split("\n\n").map((para, j) => (
                   <p key={j}>{para}</p>
                 ))}
-              </motion.div>
+              </m.div>
             ))}
 
             {/* Author + CTA at bottom of article */}
@@ -135,7 +135,7 @@ export function InsightDetailPage() {
               <div className="article-cta">
                 <h3>Discuss This Topic</h3>
                 <p>Interested in how these ideas apply to your organisation? Isaac is happy to talk.</p>
-                <a href={`https://mail.google.com/mail/?view=cm&to=emmanuelsolutions00@gmail.com&subject=Re: ${article.title}`}
+                <a href={`mailto:isaac@emmanuelsolutionss.com?subject=Re: ${article.title}`}
                    className="btn btn-primary">
                   Get in Touch
                 </a>

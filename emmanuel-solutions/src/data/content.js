@@ -592,3 +592,33 @@ export const caseStudyDetails = {
     ]
   }
 };
+
+// ── HERO COPY (single source of truth for the hero) ──────
+export const heroCopy = {
+  eyebrow:  "Four practice areas. One AI division.",
+  location: "Navi Mumbai, India",
+  line1:    "From industrial excellence",
+  line2:    "to intelligent systems.",
+  lead:     "Thirty years of industrial judgement at Bayer MaterialScience and Covestro \u2014 across sustainable technology, circular economy, innovation capability and industrial marketing, now with a dedicated division for enterprise AI.",
+  primaryCta:   { label: "Explore our services", href: "#services" },
+  divisionCta:  { label: "AI Solutions", badge: "Division", note: "Enterprise AI consulting & intelligent systems", to: "/aisolutions" },
+  credentials: "30+ years Bayer MaterialScience & Covestro \u00b7 Founding contributor, Spray Foam Alliance of India \u00b7 IPUA \u00b7 Creatrix Certified Consultant"
+};
+
+// ── PRACTICE AREAS (hero rail; colour follows the score) ──
+export const practiceAreas = [
+  { id: "sustainable-tech",     focus: "c1", tone: "#3E8E8A", name: "Sustainable Technology", note: "Solar cold chain, post-harvest loss, renewables" },
+  { id: "circular-economy",     focus: "c2", tone: "#2C6048", name: "Circular Economy",       note: "Chemical recycling, waste valorisation" },
+  { id: "innovation-training",  focus: "c3", tone: "#B98A4B", name: "Innovation Capability",  note: "Creatrix model, behaviour-first programmes" },
+  { id: "industrial-marketing", focus: "c4", tone: "#6E7F8C", name: "Industrial Marketing",   note: "Outside-in strategy, go-to-market" }
+];
+
+// ── CREDIBILITY (Act 2) ──────────────────────────────────
+// Every figure carries its owner. Nothing here is Emmanuel
+// Solutions' own performance data, and nothing pretends to be.
+export const credibilityStats = [
+  { value: "30+",        label: "Years in the polymer industry",                     owner: "Isaac Emmanuel Yenubari" },
+  { value: "2016",       label: "Founding contribution to the Spray Foam Alliance",  owner: "An initiative of the IPUA" },
+  { value: "IS 12432",   label: "Indian Standard governing spray-applied insulation", owner: "Bureau of Indian Standards" },
+  { value: "\u20b992,000 Cr", label: "Annual post-harvest loss addressed",            owner: "India \u2014 scale of the challenge" }
+];

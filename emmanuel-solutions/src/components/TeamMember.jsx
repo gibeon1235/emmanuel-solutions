@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 24 },
@@ -10,7 +10,7 @@ const fadeUp = {
 
 export function TeamMember({ member, index }) {
   return (
-    <motion.div className="team-member"
+    <m.div className="team-member"
       initial="hidden" whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       custom={index} variants={fadeUp}
@@ -37,6 +37,6 @@ export function TeamMember({ member, index }) {
           {member.experience.map((e, i) => <span key={i} className="expertise-tag">{e}</span>)}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

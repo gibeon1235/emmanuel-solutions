@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const fadeUp = {
@@ -18,7 +18,7 @@ const SERVICE_LABELS = {
 
 export function CaseStudy({ study, index }) {
   return (
-    <motion.article
+    <m.article
       className="case-study"
       initial="hidden"
       whileInView="visible"
@@ -114,6 +114,6 @@ export function CaseStudy({ study, index }) {
           Read Full Case Study →
         </Link>
       </div>
-    </motion.article>
+    </m.article>
   );
 }

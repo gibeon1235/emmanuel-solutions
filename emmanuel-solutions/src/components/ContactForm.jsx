@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useState } from "react";
 
 const fadeUp = {
@@ -9,10 +9,11 @@ const fadeUp = {
   })
 };
 
-const CONTACT_EMAIL = "emmanuelsolutions00@gmail.com";
+const CONTACT_EMAIL = "isaac@emmanuelsolutionss.com";
 
 const ENGAGEMENT_OPTS = [
   { value: "consultation",  label: "💼  Get Consultation — discuss your challenge" },
+  { value: "ai-solutions",  label: "AI Solutions — automation and intelligent systems" },
   { value: "partnership",   label: "🤝  Explore Partnership — collaborate on impact" },
   { value: "training",      label: "🎓  Innovation Training — build team capability" },
   { value: "career",        label: "⭐  Join Our Team — impact-driven work" }
@@ -85,7 +86,7 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <motion.div className="form-success"
+      <m.div className="form-success"
         initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
       >
@@ -96,12 +97,12 @@ export function ContactForm() {
           onClick={() => setStatus("idle")}>
           Send Another Message
         </button>
-      </motion.div>
+      </m.div>
     );
   }
 
   return (
-    <motion.form className="contact-form"
+    <m.form className="contact-form"
       initial="hidden" whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       custom={1} variants={fadeUp}
@@ -154,9 +155,9 @@ export function ContactForm() {
       </div>
 
       {errorMsg && (
-        <motion.div className="form-error" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <m.div className="form-error" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {errorMsg}
-        </motion.div>
+        </m.div>
       )}
 
       <button type="submit" className="btn btn-primary btn-large"
@@ -165,8 +166,8 @@ export function ContactForm() {
       </button>
 
       <p className="form-note">
-        Or email directly: <a href={`https://mail.google.com/mail/?view=cm&to=${CONTACT_EMAIL}&subject=Enquiry via Emmanuel Solutions`}>{CONTACT_EMAIL}</a>
+        Or email directly: <a href={`mailto:${CONTACT_EMAIL}?subject=Enquiry via Emmanuel Solutions`}>{CONTACT_EMAIL}</a>
       </p>
-    </motion.form>
+    </m.form>
   );
 }

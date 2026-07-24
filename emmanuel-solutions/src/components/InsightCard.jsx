@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const fadeUp = {
@@ -14,7 +14,7 @@ export function InsightCard({ insight, index }) {
     new Date(d).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
 
   return (
-    <motion.article className="insight-card"
+    <m.article className="insight-card"
       initial="hidden" whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       custom={index} variants={fadeUp}
@@ -32,6 +32,6 @@ export function InsightCard({ insight, index }) {
           Read More →
         </Link>
       </div>
-    </motion.article>
+    </m.article>
   );
 }

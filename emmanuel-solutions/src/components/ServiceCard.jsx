@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const fadeUp = {
@@ -11,7 +11,7 @@ const fadeUp = {
 
 export function ServiceCard({ service, index }) {
   return (
-    <motion.div className="service-card"
+    <m.div className="service-card"
       initial="hidden" whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       custom={index} variants={fadeUp}
@@ -26,6 +26,6 @@ export function ServiceCard({ service, index }) {
       <Link to={`/services/${service.id}`} className="btn btn-ghost btn-small">
         Learn More →
       </Link>
-    </motion.div>
+    </m.div>
   );
 }

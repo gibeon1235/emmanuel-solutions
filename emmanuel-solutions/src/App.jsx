@@ -1,282 +1,281 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
+import { LazyMotion, domAnimation, m, useScroll, useSpring } from "framer-motion";
 
-import { Navigation }         from "./components/Navigation";
-import { CookieConsent }      from "./components/CookieConsent";
-import { ServiceCard }        from "./components/ServiceCard";
-import { CaseStudy }          from "./components/CaseStudy";
-import { TeamMember }         from "./components/TeamMember";
-import { InsightCard }        from "./components/InsightCard";
-import { ContactForm }        from "./components/ContactForm";
-import { Footer }             from "./components/Footer";
-import { ServiceDetailPage }      from "./pages/ServiceDetailPage";
-import { InsightDetailPage }      from "./pages/InsightDetailPage";
-import { CaseStudyDetailPage }    from "./pages/CaseStudyDetailPage";
+import { Navigation }  from "./components/Navigation";
+import { ServiceCard } from "./components/ServiceCard";
+import { CaseStudy }   from "./components/CaseStudy";
+import { InsightCard } from "./components/InsightCard";
+import { ContactForm } from "./components/ContactForm";
+import { Footer }      from "./components/Footer";
+import { HeroSystem }  from "./components/HeroSystem";
+import { Reveal, MaskLine } from "./components/Reveal";
+import { useAct } from "./hooks/useAct";
+import { Seo }         from "./components/Seo";
 
 import {
-  services, caseStudies, team, insights, galleryImages, heroStats
+  services, caseStudies, insights, galleryImages, heroCopy, practiceAreas, credibilityStats
 } from "./data/content";
 
-// ── Scroll to top on route change ────────────────────────
+/* Detail pages are code-split — they are never needed on first paint. */
+const ServiceDetailPage   = lazy(() => import("./pages/ServiceDetailPage").then(m => ({ default: m.ServiceDetailPage })));
+const InsightDetailPage   = lazy(() => import("./pages/InsightDetailPage").then(m => ({ default: m.InsightDetailPage })));
+const CaseStudyDetailPage = lazy(() => import("./pages/CaseStudyDetailPage").then(m => ({ default: m.CaseStudyDetailPage })));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
 
-// ── Animations ───────────────────────────────────────────
-const fadeUp = {
-  hidden:  { opacity: 0, y: 22 },
-  visible: (i = 1) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.09, duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-  })
-};
-const reveal = {
-  hidden:  { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
-};
-
-// ── Gallery image with error fallback ────────────────────
 function GalleryImage({ img, index }) {
   const [broken, setBroken] = useState(false);
   return (
-    <motion.figure className="gallery-card"
-      initial="hidden" whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
-      custom={index} variants={fadeUp}
-    >
+    <Reveal as="figure" className="gallery-card" index={index}>
       <div className="gallery-img-wrap">
         {!broken ? (
-          <img src={img.src} alt={img.alt} loading="lazy" onError={() => setBroken(true)} />
+          <img src={img.src} alt={img.alt} loading="lazy" decoding="async" width="800" height="450"
+               onError={() => setBroken(true)} />
         ) : (
           <div className="gallery-img-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="M21 15l-5-5L5 21"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
             </svg>
             <span>{img.alt}</span>
-            <small>Add image to /public/assets/</small>
           </div>
         )}
       </div>
       <figcaption>{img.caption}</figcaption>
-    </motion.figure>
+    </Reveal>
   );
 }
 
-// ── HOME PAGE ─────────────────────────────────────────────
 function HomePage() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 28, mass: 0.25 });
+  const [focus, setFocus] = useState(null);
+  const act = useAct(1);
 
   return (
     <>
-      <CookieConsent />
-      <motion.div className="scroll-progress" style={{ scaleX }} />
-      <Navigation />
+      <Seo
+        title={null}
+        description="Emmanuel Solutions is a strategic consultancy in sustainable technology, circular economy, innovation capability and industrial marketing, with a dedicated enterprise AI division. Founded on 30+ years at Bayer MaterialScience and Covestro."
+        path="/"
+      />
+      <m.div className="scroll-progress" style={{ scaleX }} />
 
-      <main>
+      {/* One system for the whole page. Acts advance as the visitor descends. */}
+      <HeroSystem act={act} focus={focus} page />
 
-        {/* HERO ───────────────────────────────────── */}
-        <section id="home" className="hero">
-          <div className="hero-content">
-            <motion.p className="eyebrow" initial="hidden" animate="visible" variants={fadeUp}>
-              Strategic Consultancy · Navi Mumbai
-            </motion.p>
-            <motion.h1 initial="hidden" animate="visible" custom={1.5} variants={fadeUp}>
-              Transforming Industries.<br />Sustaining the Future.
-            </motion.h1>
-            <motion.p className="lead" initial="hidden" animate="visible" custom={2.5} variants={fadeUp}>
-              Emmanuel Solutions guides organisations through sustainable technology,
-              circular economy transformation, and innovation capability — backed by
-              30+ years of leadership at Bayer MaterialScience and Covestro.
-            </motion.p>
-            <motion.div className="hero-ctas" initial="hidden" animate="visible" custom={3.5} variants={fadeUp}>
-              <a className="btn btn-primary" href="#about">Explore Our Work</a>
-              <a className="btn btn-secondary"
-                 href="/docs/emmanuel-solutions-profile.html"
-                 target="_blank" rel="noreferrer">
-                Download One-Pager ↗
+      <Navigation onFocusChange={setFocus} />
+
+      <main id="main">
+
+        {/* ── ACT 1 · HERO ─────────────────────────────── */}
+        <section id="home" className="es-hero" aria-label="Introduction">
+
+          <div className="es-hero-inner">
+            <m.p className="es-eyebrow"
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+              <span>{heroCopy.eyebrow}</span>
+              <span className="es-rule" aria-hidden="true" />
+              <span>{heroCopy.location}</span>
+            </m.p>
+
+            <h1 className="es-display">
+              <MaskLine delay={0.42}>{heroCopy.line1}</MaskLine>
+              <MaskLine delay={0.51} className="es-display-em">{heroCopy.line2}</MaskLine>
+            </h1>
+
+            <m.p className="es-lead"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+              {heroCopy.lead}
+            </m.p>
+
+            <m.div className="es-hero-ctas"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.84, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+              <a className="btn btn-primary" href={heroCopy.primaryCta.href}>
+                {heroCopy.primaryCta.label} <span className="es-arrow" aria-hidden="true">→</span>
               </a>
-            </motion.div>
-            <motion.div className="hero-stats" initial="hidden" animate="visible" custom={4.5} variants={fadeUp}>
-              {heroStats.map(s => (
-                <div key={s.label} className="hero-stat">
-                  <span className="stat-num">{s.num}</span>
-                  <span className="stat-label">{s.label}</span>
-                </div>
-              ))}
-            </motion.div>
+              <a className="es-division-cta" href="#ai-solutions"
+                    onMouseEnter={() => setFocus("ai")} onMouseLeave={() => setFocus(null)}
+                    onFocus={() => setFocus("ai")} onBlur={() => setFocus(null)}>
+                <span>
+                  <span className="es-division-head">
+                    {heroCopy.divisionCta.label}
+                    <span className="es-division-badge">{heroCopy.divisionCta.badge}</span>
+                  </span>
+                  <span className="es-division-note">{heroCopy.divisionCta.note}</span>
+                </span>
+                <span className="es-division-arrow" aria-hidden="true">→</span>
+              </a>
+            </m.div>
+
+            <m.p className="es-credentials"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 0.94, duration: 0.8 }}>
+              <span className="es-significance">
+                {heroCopy.credentials}
+                <span className="es-significance-light" aria-hidden="true" />
+              </span>
+            </m.p>
+          </div>
+
+          <div className="es-rail">
+            {practiceAreas.map((p, i) => (
+              <m.a key={p.id} className="es-rail-item" href={`/services/${p.id}`}
+                onMouseEnter={() => setFocus(p.focus)} onMouseLeave={() => setFocus(null)}
+                onFocus={() => setFocus(p.focus)} onBlur={() => setFocus(null)}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+                <span className="es-rail-name">
+                  <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
+                  {p.name}
+                </span>
+                <span className="es-rail-note">{p.note}</span>
+              </m.a>
+            ))}
           </div>
         </section>
 
-        {/* ABOUT ──────────────────────────────────── */}
+        {/* ── ACT 2 · CREDIBILITY ──────────────────────── */}
         <div className="section-alt" id="about">
-          <motion.div className="section about-section"
-            variants={reveal} initial="hidden" whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            <div className="section-label">About Emmanuel Solutions</div>
+          <div className="section about-section">
+            <div className="section-label">The founder</div>
             <div className="about-grid">
               <div className="about-text">
-                <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  A Venture Built on Three Decades of Deep Industry Experience
-                </motion.h2>
-                <motion.p className="about-lead" variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  Emmanuel Solutions is conceived to deliver transformational initiatives through
-                  two defining phenomena of this century:{" "}
-                  <strong>Sustainable Technologies</strong> and{" "}
-                  <strong>Training in Innovation and Industrial Marketing</strong>.
-                </motion.p>
-                <motion.p variants={fadeUp} custom={2} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  We engage with exceptional technologies in renewable energy, energy efficiency,
-                  sustainable materials, and sustainable agriculture — specifically addressing pain
-                  points in <em>construction</em>, <em>food security</em>, and the{" "}
-                  <em>environment</em>. Within this, we focus on Plastic Pollution Cleanups and
-                  Circular Economy: waste management technologies including collection and upcycling
-                  of waste for continued use through a non-linear economic model.
-                </motion.p>
-                <motion.p variants={fadeUp} custom={3} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  As a Certified Consultant of the{" "}
-                  <strong>Creatrix Innovation Model</strong>, we impart training that uplifts
-                  creativity and risk-taking indices through structured assessment — leading to
-                  conscious methods that increase your organisation's innovation capacity.
-                </motion.p>
+                <Reveal as="h2">Three decades inside the industry</Reveal>
+                <Reveal as="p" index={1} className="about-lead">
+                  Isaac Emmanuel Yenubari spent more than thirty years in the polymer industry across sales,
+                  marketing, business development, advocacy, innovation and sustainability — almost entirely
+                  with the multinationals that invented high-tech materials,{" "}
+                  <strong>Bayer MaterialScience and Covestro</strong>.
+                </Reveal>
+                <Reveal as="p" index={2}>
+                  He was a founding contributor to the <strong>Spray Foam Alliance of India</strong>, an initiative
+                  of the Indian Polyurethane Association, serving on its content and promotion teams and organising
+                  its first technical training programmes in 2016. Spray-applied polyurethane insulation is formally
+                  standardised in India under IS 12432 (Part 3):2002.
+                </Reveal>
+                <Reveal as="p" index={3}>
+                  Emmanuel Solutions was founded to apply that experience directly — engaging with exceptional
+                  technologies in renewable energy, energy efficiency, sustainable materials and sustainable
+                  agriculture, addressing pain points in construction, food security and the environment.
+                </Reveal>
+
+                <div className="es-stats">
+                  {credibilityStats.map((stat, i) => (
+                    <Reveal className="es-stat" index={i + 1} key={stat.label}>
+                      <span className="es-stat-value">{stat.value}</span>
+                      <span className="es-stat-label">{stat.label}</span>
+                      <span className="es-stat-owner">{stat.owner}</span>
+                    </Reveal>
+                  ))}
+                </div>
               </div>
 
-              <motion.div className="founder-card" variants={fadeUp} custom={2}
-                initial="hidden" whileInView="visible" viewport={{ once: true }}
-              >
+              <Reveal className="founder-card" index={2}>
                 <div className="founder-avatar">
-                  
-
-                  <img src="/assets/isaac-headshot.jpg" alt="Isaac Emmanuel Yenubari" />
+                  <img src="/assets/isaac-headshot.jpg" alt="Isaac Emmanuel Yenubari"
+                       width="1045" height="1280" loading="lazy" decoding="async" />
                 </div>
                 <div className="founder-name">Isaac Emmanuel Yenubari</div>
                 <div className="founder-role">Founder &amp; Principal Consultant</div>
                 <p className="founder-bio">
-                  30+ years in the polymer industry across Sales, Marketing, Business Development,
-                  Advocacy, Innovation and Sustainability — almost entirely with multinationals that
-                  invented high-tech materials:{" "}
-                  <strong>Bayer MaterialScience / Covestro</strong>.
+                  M.Sc. Polymer Chemistry. Last corporate role: Inclusive Business, Covestro India.
+                  Certified Consultant of the Creatrix Innovation Model.
                 </p>
-                <div className="founder-education">M.Sc. Polymer Chemistry · Navi Mumbai</div>
                 <div className="founder-assocs">
                   <span className="assoc-badge">IPUA</span>
+                  <span className="assoc-badge">SFAI — founding contributor</span>
                   <span className="assoc-badge">India Insulation Forum</span>
-                  <span className="assoc-badge">Spray Foam Alliance</span>
                   <span className="assoc-badge">PU Today — Editor</span>
                 </div>
-              </motion.div>
+              </Reveal>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* SERVICES ───────────────────────────────── */}
-        <motion.section id="services" className="section"
-          variants={reveal} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          <div className="section-label">What We Do</div>
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            Four Domains of Practice
-          </motion.h2>
-          <motion.p className="section-intro" variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            Each service domain is grounded in hands-on deployment — not theory.
-            We bring industry relationships, technical depth, and 30+ years of market intelligence.
-          </motion.p>
+        {/* ── ACT 3 · SERVICES ─────────────────────────── */}
+        <section id="services" className="section">
+          <div className="section-label">What we do</div>
+          <Reveal as="h2">Four practice areas. One standard of work.</Reveal>
+          <Reveal as="p" index={1} className="section-intro">
+            Each practice area is grounded in hands-on deployment rather than theory — industry relationships,
+            technical depth and thirty years of market intelligence.
+          </Reveal>
           <div className="grid two">
-            {services.map((service, idx) => (
-              <ServiceCard key={service.id} service={service} index={idx + 1} />
+            {services.map((service, i) => (
+              <ServiceCard key={service.id} service={service} index={i + 1} />
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        <hr className="section-rule" />
+        {/* ── ACT 4 · AI SOLUTIONS ─────────────────────── */}
+        <section className="es-division-band" id="ai-solutions" aria-label="AI Solutions division">
+          <HeroSystem act={4} focus={focus} theme="dark" />
+          <div className="es-division-inner">
+            <div className="es-division-label">A division of Emmanuel Solutions</div>
+            <Reveal as="h2" className="es-division-title">Intelligence, woven through the business.</Reveal>
+            <Reveal as="p" index={1} className="es-division-lead">
+              AI Solutions applies the same outside-in discipline to enterprise AI — workflow automation,
+              custom intelligent systems and decision support for organisations that need production-grade
+              results rather than experiments.
+            </Reveal>
+            <Reveal index={2} className="es-division-actions">
+              <a href="#contact" className="btn btn-primary">
+                Discuss an AI project <span className="es-arrow" aria-hidden="true">→</span>
+              </a>
+            </Reveal>
+          </div>
+        </section>
 
-        {/* GALLERY ────────────────────────────────── */}
-        <motion.section id="gallery" className="section"
-          variants={reveal} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          <div className="section-label">On the Ground</div>
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            Projects in Action
-          </motion.h2>
-          <motion.p className="section-intro" variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            From inauguration ceremonies to interior commissioning — real installations,
-            real communities, real impact.
-          </motion.p>
+        {/* ── GALLERY ──────────────────────────────────── */}
+        <section id="gallery" className="section">
+          <div className="section-label">On the ground</div>
+          <Reveal as="h2">Projects in action</Reveal>
           <div className="gallery-grid">
-            {galleryImages.map((img, idx) => (
-              <GalleryImage key={idx} img={img} index={idx + 1} />
-            ))}
+            {galleryImages.map((img, i) => <GalleryImage key={i} img={img} index={i + 1} />)}
           </div>
-        </motion.section>
+        </section>
 
-        {/* CASE STUDIES ───────────────────────────── */}
+        {/* ── ACT 5 · PROOF ────────────────────────────── */}
         <div className="section-alt">
-          <motion.section id="case-studies" className="section"
-            variants={reveal} initial="hidden" whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            <div className="section-label">Our Work</div>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              Featured Projects &amp; Partnerships
-            </motion.h2>
-            <motion.p className="section-intro" variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              Real-world applications across sustainable technology, circular economy,
-              and innovation deployment.
-            </motion.p>
+          <section id="case-studies" className="section">
+            <div className="section-label">Our work</div>
+            <Reveal as="h2">Partnerships and projects</Reveal>
+            <Reveal as="p" index={1} className="section-intro">
+              Real-world applications across sustainable technology, circular economy and innovation
+              deployment. Figures below belong to the partner organisations named.
+            </Reveal>
             <div className="grid three">
-              {caseStudies.map((study, idx) => (
-                <CaseStudy key={study.id} study={study} index={idx + 1} />
-              ))}
+              {caseStudies.map((study, i) => <CaseStudy key={study.id} study={study} index={i + 1} />)}
             </div>
-          </motion.section>
+          </section>
         </div>
 
-        {/* INSIGHTS ───────────────────────────────── */}
-        <motion.section id="insights" className="section"
-          variants={reveal} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          <div className="section-label">Thought Leadership</div>
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            Latest Insights
-          </motion.h2>
-          <motion.p className="section-intro" variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            Perspectives on sustainability, circular economy, innovation, and industrial
-            strategy from 30+ years at the forefront of the polymer and materials industry.
-          </motion.p>
+        <section id="insights" className="section">
+          <div className="section-label">Thought leadership</div>
+          <Reveal as="h2">Latest insights</Reveal>
           <div className="grid three">
-            {insights.map((insight, idx) => (
-              <InsightCard key={insight.id} insight={insight} index={idx + 1} />
-            ))}
+            {insights.map((insight, i) => <InsightCard key={insight.id} insight={insight} index={i + 1} />)}
           </div>
-        </motion.section>
+        </section>
 
-        {/* CONTACT ────────────────────────────────── */}
         <div className="contact-section" id="contact">
           <div className="section">
             <div className="contact-container">
               <div className="contact-header">
-                <div className="section-label" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  <span>Get In Touch</span>
-                </div>
-                <motion.h2 style={{ color: "#fff" }}
-                  variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  Let's Build Something Together
-                </motion.h2>
-                <motion.p className="contact-intro"
-                  variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                  Whether you need consulting, a strategic partnership, innovation training,
-                  or simply want to explore what's possible — we'd love to hear from you.
-                </motion.p>
+                <div className="section-label" style={{ color: "rgba(255,255,255,0.6)" }}><span>Get in touch</span></div>
+                <Reveal as="h2" style={{ color: "#fff" }}>Let's build something together</Reveal>
+                <Reveal as="p" index={1} className="contact-intro">
+                  Whether you need consulting, a strategic partnership, innovation training or enterprise AI —
+                  we'd like to hear from you.
+                </Reveal>
               </div>
               <ContactForm />
             </div>
@@ -284,25 +283,29 @@ function HomePage() {
         </div>
 
       </main>
-
       <Footer />
     </>
   );
 }
 
-// ── ROOT APP WITH ROUTES ──────────────────────────────────
+function RouteFallback() {
+  return <div className="es-route-fallback" role="status" aria-live="polite">Loading…</div>;
+}
+
 export default function App() {
   return (
-    <>
+    <LazyMotion features={domAnimation} strict>
+      <a href="#main" className="es-skip">Skip to content</a>
       <ScrollToTop />
-      <Routes>
-        <Route path="/"                      element={<HomePage />} />
-        <Route path="/services/:serviceId"       element={<ServiceDetailPage />} />
-        <Route path="/insights/:insightId"        element={<InsightDetailPage />} />
-        <Route path="/case-studies/:caseStudyId"  element={<CaseStudyDetailPage />} />
-        {/* Catch-all → home */}
-        <Route path="*"                      element={<HomePage />} />
-      </Routes>
-    </>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services/:serviceId" element={<ServiceDetailPage />} />
+          <Route path="/insights/:insightId" element={<InsightDetailPage />} />
+          <Route path="/case-studies/:caseStudyId" element={<CaseStudyDetailPage />} />
+          <Route path="*" element={<HomePage />} />
+        </Routes>
+      </Suspense>
+    </LazyMotion>
   );
 }

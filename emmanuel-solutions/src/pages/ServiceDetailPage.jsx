@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
 import { CaseStudy }  from "../components/CaseStudy";
@@ -59,7 +59,7 @@ export function ServiceDetailPage() {
       {/* ── HERO ──────────────────────────────────────── */}
       <div className="detail-hero" data-service={serviceId}>
         <div className="detail-hero-inner">
-          <motion.div className="breadcrumb"
+          <m.div className="breadcrumb"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
           >
             <Link to="/">Home</Link>
@@ -69,27 +69,27 @@ export function ServiceDetailPage() {
             </a>
             <span className="breadcrumb-sep">›</span>
             <span>{SERVICE_LABELS[serviceId]}</span>
-          </motion.div>
+          </m.div>
 
-          <motion.div className="detail-hero-label" variants={fadeUp} initial="hidden" animate="visible">
+          <m.div className="detail-hero-label" variants={fadeUp} initial="hidden" animate="visible">
             Service
-          </motion.div>
+          </m.div>
 
-          <motion.h1 variants={fadeUp} custom={1.5} initial="hidden" animate="visible">
+          <m.h1 variants={fadeUp} custom={1.5} initial="hidden" animate="visible">
             {detail.title}
-          </motion.h1>
+          </m.h1>
 
-          <motion.p className="detail-hero-tagline" variants={fadeUp} custom={2.5} initial="hidden" animate="visible">
+          <m.p className="detail-hero-tagline" variants={fadeUp} custom={2.5} initial="hidden" animate="visible">
             {detail.tagline}
-          </motion.p>
+          </m.p>
 
-          <motion.div variants={fadeUp} custom={3.5} initial="hidden" animate="visible">
+          <m.div variants={fadeUp} custom={3.5} initial="hidden" animate="visible">
             <a href="#service-contact" className="btn btn-primary"
               onClick={(e) => { e.preventDefault(); document.getElementById("service-contact")?.scrollIntoView({ behavior: "smooth" }); }}
             >
               Discuss This Service
             </a>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
@@ -102,16 +102,16 @@ export function ServiceDetailPage() {
               <div className="detail-overview-text">
                 <div className="section-label">Overview</div>
                 {detail.overview.map((para, i) => (
-                  <motion.p key={i} className={i === 0 ? "detail-lead" : ""}
+                  <m.p key={i} className={i === 0 ? "detail-lead" : ""}
                     variants={fadeUp} custom={i + 1}
                     initial="hidden" whileInView="visible" viewport={{ once: true }}
                   >
                     {para}
-                  </motion.p>
+                  </m.p>
                 ))}
               </div>
 
-              <motion.div className="detail-audience-card"
+              <m.div className="detail-audience-card"
                 variants={fadeUp} custom={2}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
               >
@@ -125,7 +125,7 @@ export function ServiceDetailPage() {
                 >
                   Get in Touch →
                 </a>
-              </motion.div>
+              </m.div>
             </div>
           </div>
         </section>
@@ -136,12 +136,12 @@ export function ServiceDetailPage() {
         <section className="detail-section">
           <div className="detail-section-inner">
             <div className="section-label">{detail.approach.title}</div>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <m.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               How We Work
-            </motion.h2>
+            </m.h2>
             <div className="detail-steps">
               {detail.approach.steps.map((step, i) => (
-                <motion.div key={i} className="detail-step"
+                <m.div key={i} className="detail-step"
                   variants={fadeUp} custom={i + 1}
                   initial="hidden" whileInView="visible" viewport={{ once: true }}
                 >
@@ -150,7 +150,7 @@ export function ServiceDetailPage() {
                     <h3>{step.label}</h3>
                     <p>{step.desc}</p>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
@@ -162,18 +162,18 @@ export function ServiceDetailPage() {
         <div className="detail-section-alt">
           <div className="detail-section-inner" style={{ paddingTop: "4rem", paddingBottom: "4rem" }}>
             <div className="section-label">Focus Areas</div>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <m.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               What We Cover
-            </motion.h2>
+            </m.h2>
             <div className="detail-focus-grid" style={{ marginTop: "2rem" }}>
               {detail.focusAreas.map((area, i) => (
-                <motion.div key={i} className="detail-focus-card"
+                <m.div key={i} className="detail-focus-card"
                   variants={fadeUp} custom={i + 1}
                   initial="hidden" whileInView="visible" viewport={{ once: true }}
                 >
                   <h3>{area.title}</h3>
                   {area.body.split("\n\n").map((p, j) => <p key={j}>{p}</p>)}
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
@@ -186,11 +186,11 @@ export function ServiceDetailPage() {
             <section className="detail-section">
               <div className="detail-section-inner">
                 <div className="section-label">In Action</div>
-                <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <m.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                   Recent Engagements
-                </motion.h2>
+                </m.h2>
                 {detail.featuredEngagements.map((eng, i) => (
-                  <motion.div key={i} className="engagement-card"
+                  <m.div key={i} className="engagement-card"
                     variants={fadeUp} custom={i + 1}
                     initial="hidden" whileInView="visible" viewport={{ once: true }}
                   >
@@ -216,7 +216,7 @@ export function ServiceDetailPage() {
                         ))}
                       </div>
                     )}
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </section>
@@ -230,9 +230,9 @@ export function ServiceDetailPage() {
             <section className="detail-section">
               <div className="detail-section-inner">
                 <div className="section-label">Real-World Application</div>
-                <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <m.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                   Projects &amp; Partnerships
-                </motion.h2>
+                </m.h2>
                 <div className={`grid ${relatedCaseStudies.length > 1 ? "two" : ""}`} style={{ marginTop: "2rem" }}>
                   {relatedCaseStudies.map((study, i) => (
                     <CaseStudy key={study.id} study={study} index={i + 1} />
@@ -248,20 +248,20 @@ export function ServiceDetailPage() {
           <div className="detail-section-inner" style={{ paddingTop: "4rem", paddingBottom: "4rem" }}>
             <div className="contact-container">
               <div className="contact-header">
-                <motion.h2 style={{ color: "#fff" }}
+                <m.h2 style={{ color: "#fff" }}
                   variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
                 >
                   Explore How We Can Work Together
-                </motion.h2>
-                <motion.p className="contact-intro"
+                </m.h2>
+                <m.p className="contact-intro"
                   variants={fadeUp} custom={1}
                   initial="hidden" whileInView="visible" viewport={{ once: true }}
                 >
                   Tell us about your challenge. We'll respond within one business day.
-                </motion.p>
+                </m.p>
               </div>
               <div className="detail-cta-buttons">
-                <a href={`https://mail.google.com/mail/?view=cm&to=emmanuelsolutions00@gmail.com&subject=Enquiry: ${detail.title}`}
+                <a href={`mailto:isaac@emmanuelsolutionss.com?subject=Enquiry: ${detail.title}`}
                    className="btn btn-primary">
                   Email Isaac Directly
                 </a>
