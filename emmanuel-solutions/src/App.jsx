@@ -140,8 +140,9 @@ function HomePage() {
           <div className="es-hero-figure">
             <CinemaScroll
               src="/assets/video/greenhouse.mp4"
-              srcWebm="/assets/video/greenhouse.webm"
+              srcPortrait="/assets/video/greenhouse-portrait.mp4"
               poster="/assets/video/greenhouse-poster.jpg"
+              loop
               alt="A climate-controlled growing environment at first light"
               caption="Climate-controlled growing environment"
               note="Illustrative"

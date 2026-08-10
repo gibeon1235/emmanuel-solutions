@@ -12,22 +12,36 @@ import { useEffect, useRef, useState } from "react";
 
    Drop footage in and it activates automatically — no other change. */
 
+function saving() {
+  if (typeof navigator === "undefined") return false;
+  const c = navigator.connection;
+  return !!(c && (c.saveData || /2g|slow-2g|3g/.test(c.effectiveType || "")));
+}
+
 function canScrub() {
   if (typeof window === "undefined") return false;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
   if (!window.matchMedia("(hover: hover)").matches) return false;
-  const c = navigator.connection;
-  if (c && (c.saveData || /2g|slow-2g|3g/.test(c.effectiveType || ""))) return false;
-  return true;
+  return !saving();
+}
+
+/* Looping playback is far cheaper than scrubbing, so phones get it too —
+   only reduced-motion and data-saver fall back to the still. */
+function canLoop() {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  return !saving();
 }
 
 export function CinemaScroll({
   src,
   srcWebm,
+  srcPortrait,
   poster,
   alt = "",
   caption,
   note,
+  loop = false,
   objectPosition = "52% 38%",
   className = ""
 }) {
@@ -38,17 +52,18 @@ export function CinemaScroll({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!src || !canScrub()) return;
+    if (!src) return;
+    if (loop ? !canLoop() : !canScrub()) return;
     let cancelled = false;
     const activate = () => {
       if (cancelled) return;
       const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 400));
-      idle(() => { if (!cancelled) setMode("scrub"); });
+      idle(() => { if (!cancelled) setMode(loop ? "loop" : "scrub"); });
     };
     if (document.readyState === "complete") activate();
     else window.addEventListener("load", activate, { once: true });
     return () => { cancelled = true; window.removeEventListener("load", activate); };
-  }, [src]);
+  }, [src, loop]);
 
   /* Scrub: map the element's travel through the viewport onto duration */
   useEffect(() => {
@@ -94,6 +109,17 @@ export function CinemaScroll({
     };
   }, [mode]);
 
+  /* Autoplay the loop once it is mounted and buffered */
+  useEffect(() => {
+    if (mode !== "loop") return;
+    const v = video.current;
+    if (!v) return;
+    const start = () => { setReady(true); v.play().catch(() => {}); };
+    if (v.readyState >= 3) start();
+    else v.addEventListener("canplay", start, { once: true });
+    return () => v.removeEventListener("canplay", start);
+  }, [mode]);
+
   /* Poster mode still earns its place — slow parallax on the still */
   useEffect(() => {
     if (mode !== "poster") return;
@@ -117,19 +143,22 @@ export function CinemaScroll({
 
   return (
     <figure className={`es-cinema ${className}`} ref={wrap}>
-      {mode === "scrub" && (
+      {(mode === "scrub" || mode === "loop") && (
         <video
           ref={video}
           className="es-cinema-media"
           poster={poster}
           muted
           playsInline
+          loop={mode === "loop"}
+          autoPlay={mode === "loop"}
           preload="auto"
           tabIndex={-1}
           aria-hidden="true"
           style={{ objectPosition, opacity: ready ? 1 : 0 }}
         >
           {srcWebm && <source src={srcWebm} type="video/webm" />}
+          {srcPortrait && <source src={srcPortrait} type="video/mp4" media="(max-width: 1024px)" />}
           <source src={src} type="video/mp4" />
         </video>
       )}
@@ -141,7 +170,7 @@ export function CinemaScroll({
         alt={alt}
         width="899" height="1599"
         decoding="async"
-        style={{ objectPosition, opacity: mode === "scrub" && ready ? 0 : 1 }}
+        style={{ objectPosition, opacity: (mode === "scrub" || mode === "loop") && ready ? 0 : 1 }}
       />
       <span className="es-cinema-grade" aria-hidden="true" />
       {caption && (
