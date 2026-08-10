@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
 import { insightDetails } from "../data/content";
+import { Seo } from "../components/Seo";
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 22 },
@@ -51,6 +52,7 @@ export function InsightDetailPage() {
 
   return (
     <div className="page">
+      <Seo title={article.title} description={article.excerpt || article.subtitle} path={`/insights/${insightId}`} />
       <Navigation />
 
       {/* ── ARTICLE HERO ────────────────────────────── */}

@@ -16,6 +16,8 @@ const SERVICES = [
 const ABOUT = [
   { to: "/#about", label: "The founder", hash: "about" },
   { to: "/#case-studies", label: "Partnerships", hash: "case-studies" },
+  { to: "/alliances/sfai", label: "Spray Foam Alliance of India" },
+  { to: "/alliances/iif", label: "India Insulation Forum" },
   { to: "/#contact", label: "Contact", hash: "contact" }
 ];
 

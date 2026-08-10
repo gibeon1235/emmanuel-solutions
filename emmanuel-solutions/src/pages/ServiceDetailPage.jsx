@@ -5,6 +5,7 @@ import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
 import { CaseStudy }  from "../components/CaseStudy";
 import { serviceDetails, caseStudies } from "../data/content";
+import { Seo } from "../components/Seo";
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 22 },
@@ -54,6 +55,7 @@ export function ServiceDetailPage() {
 
   return (
     <div className="page">
+      <Seo title={detail.title} description={detail.tagline} path={`/services/${serviceId}`} />
       <Navigation />
 
       {/* ── HERO ──────────────────────────────────────── */}
@@ -211,7 +213,7 @@ export function ServiceDetailPage() {
                       <div className="engagement-gallery">
                         {eng.images.map((src, j) => (
                           <div key={j} className="engagement-img-wrap">
-                            <img src={src} alt={`${eng.title} — photo ${j + 1}`} loading="lazy" />
+                            <img src={src} alt={`${eng.title} — photo ${j + 1}`} loading="lazy" decoding="async" width="800" height="600" />
                           </div>
                         ))}
                       </div>

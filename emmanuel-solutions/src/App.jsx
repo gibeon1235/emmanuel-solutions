@@ -14,13 +14,14 @@ import { useAct } from "./hooks/useAct";
 import { Seo }         from "./components/Seo";
 
 import {
-  services, caseStudies, insights, galleryImages, heroCopy, practiceAreas, credibilityStats
+  services, caseStudies, insights, galleryImages, heroCopy, practiceAreas, credibilityStats, aiCapabilities
 } from "./data/content";
 
 /* Detail pages are code-split — they are never needed on first paint. */
 const ServiceDetailPage   = lazy(() => import("./pages/ServiceDetailPage").then(m => ({ default: m.ServiceDetailPage })));
 const InsightDetailPage   = lazy(() => import("./pages/InsightDetailPage").then(m => ({ default: m.InsightDetailPage })));
 const CaseStudyDetailPage = lazy(() => import("./pages/CaseStudyDetailPage").then(m => ({ default: m.CaseStudyDetailPage })));
+const AlliancePage        = lazy(() => import("./pages/AlliancePage").then(m => ({ default: m.AlliancePage })));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -216,44 +217,69 @@ function HomePage() {
         </section>
 
         {/* ── ACT 4 · AI SOLUTIONS ─────────────────────── */}
-        <section className="es-division-band" id="ai-solutions" aria-label="AI Solutions division">
+        <section className="es-division-band" id="ai-solutions" aria-labelledby="ai-heading">
           <HeroSystem act={4} focus={focus} theme="dark" />
           <div className="es-division-inner">
             <div className="es-division-label">A division of Emmanuel Solutions</div>
-            <Reveal as="h2" className="es-division-title">Intelligence, woven through the business.</Reveal>
-            <Reveal as="p" index={1} className="es-division-lead">
-              AI Solutions applies the same outside-in discipline to enterprise AI — workflow automation,
-              custom intelligent systems and decision support for organisations that need production-grade
-              results rather than experiments.
+            <Reveal as="h2" id="ai-heading" className="es-division-title">
+              Intelligence, woven through the business.
             </Reveal>
+            <Reveal as="p" index={1} className="es-division-lead">
+              AI Solutions applies the same outside-in discipline to enterprise AI. We identify where
+              intelligence genuinely returns value, build it to production standard, and hand your team
+              the capability to run it — <em>not</em> a pilot that never leaves the slide deck.
+            </Reveal>
+
+            <div className="es-cap-grid">
+              {["Strategy", "Automation", "Systems", "Commercial"].map((group, gi) => (
+                <Reveal className="es-cap-group" index={gi + 1} key={group}>
+                  <h3 className="es-cap-group-title">
+                    <span className="es-cap-rule" aria-hidden="true" />
+                    {group}
+                  </h3>
+                  <ul className="es-cap-list">
+                    {aiCapabilities.filter((c) => c.group === group).map((c) => (
+                      <li className="es-cap" key={c.title}>
+                        <span className="es-cap-title">{c.title}</span>
+                        <span className="es-cap-desc">{c.desc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              ))}
+            </div>
+
             <Reveal index={2} className="es-division-actions">
               <a href="#contact" className="btn btn-primary">
                 Discuss an AI project <span className="es-arrow" aria-hidden="true">→</span>
               </a>
+              <span className="es-division-note-line">
+                Typical engagements begin with a two-week discovery.
+              </span>
             </Reveal>
-          </div>
-        </section>
-
-        {/* ── GALLERY ──────────────────────────────────── */}
-        <section id="gallery" className="section">
-          <div className="section-label">On the ground</div>
-          <Reveal as="h2">Projects in action</Reveal>
-          <div className="gallery-grid">
-            {galleryImages.map((img, i) => <GalleryImage key={i} img={img} index={i + 1} />)}
           </div>
         </section>
 
         {/* ── ACT 5 · PROOF ────────────────────────────── */}
         <div className="section-alt">
           <section id="case-studies" className="section">
-            <div className="section-label">Our work</div>
-            <Reveal as="h2">Partnerships and projects</Reveal>
+            <div className="section-label">Partnerships &amp; proof</div>
+            <Reveal as="h2">Technologies we have helped bring to market</Reveal>
             <Reveal as="p" index={1} className="section-intro">
-              Real-world applications across sustainable technology, circular economy and innovation
-              deployment. Figures below belong to the partner organisations named.
+              Emmanuel Solutions advises the organisations below on commercialisation, market
+              positioning and partnerships. <strong>All performance figures shown belong to the
+              partner organisation named.</strong>
             </Reveal>
             <div className="grid three">
               {caseStudies.map((study, i) => <CaseStudy key={study.id} study={study} index={i + 1} />)}
+            </div>
+
+            <div id="gallery" className="es-proof-gallery">
+              <div className="section-label">On the ground</div>
+              <Reveal as="h3" className="es-subhead">Installations, training and community</Reveal>
+              <div className="gallery-grid">
+                {galleryImages.map((img, i) => <GalleryImage key={i} img={img} index={i + 1} />)}
+              </div>
             </div>
           </section>
         </div>
@@ -303,6 +329,7 @@ export default function App() {
           <Route path="/services/:serviceId" element={<ServiceDetailPage />} />
           <Route path="/insights/:insightId" element={<InsightDetailPage />} />
           <Route path="/case-studies/:caseStudyId" element={<CaseStudyDetailPage />} />
+          <Route path="/alliances/:allianceId" element={<AlliancePage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </Suspense>

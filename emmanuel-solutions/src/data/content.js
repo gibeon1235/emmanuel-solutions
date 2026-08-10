@@ -622,3 +622,254 @@ export const credibilityStats = [
   { value: "IS 12432",   label: "Indian Standard governing spray-applied insulation", owner: "Bureau of Indian Standards" },
   { value: "\u20b992,000 Cr", label: "Annual post-harvest loss addressed",            owner: "India \u2014 scale of the challenge" }
 ];
+
+// ── DEVRAYS & THAAL detail pages ──────────────────────────
+// Written only from material already on the site. Every figure
+// belongs to the partner organisation and is labelled as theirs.
+caseStudyDetails["devrays"] = {
+  title:       "Devrays Solar Dehydrators",
+  brandName:   "devrays",
+  productName: "mone solar dome",
+  tagline:     "Patented solar dehydration, built for Indian farming realities",
+  service:     "sustainable-tech",
+  heroStats: [
+    { val: "2\u00d7+",     label: "Efficiency vs conventional dryers" },
+    { val: "99.98%",    label: "UV blocked by the dome" },
+    { val: "Feb 2026",  label: "First installation" },
+    { val: "Patented",  label: "Mone Solar Dome" }
+  ],
+  challenge: {
+    heading: "Produce spoils before it reaches a market",
+    body: [
+      "India loses an estimated \u20b992,000 crore of produce every year to post-harvest spoilage \u2014 a national figure, and the scale of the problem this technology addresses. For smallholder farmers the loss is immediate: harvest arrives all at once, prices collapse, and whatever cannot be sold within days is wasted.",
+      "Dehydration solves this by extending shelf life, reducing transport weight and creating a higher-value product. But conventional dryers are inefficient, fragile, and rarely designed for the conditions of an Indian farm."
+    ]
+  },
+  segments: [
+    { icon: "\ud83c\udf3e", title: "Smallholder farmers", desc: "Growers seeking to preserve harvest surplus rather than sell at distress prices" },
+    { icon: "\ud83e\udd1d", title: "Farmer Producer Organisations", desc: "FPOs aggregating produce across multiple farms" },
+    { icon: "\ud83c\udf36\ufe0f", title: "Spice and horticulture processors", desc: "Operations handling bananas, tomatoes, onions, ginger and spices" },
+    { icon: "\ud83c\udf0d", title: "Export-oriented producers", desc: "Producers who need consistent, food-safe dried output" }
+  ],
+  product: {
+    heading: "A dome designed around the crop, not the catalogue",
+    body: [
+      "The Mone Solar Dome is a portable, rugged solar dehydrator built for deployment on working farms. Its spectral-selective dome admits the wavelengths that dry produce while blocking 99.98% of UV, protecting colour, nutrition and food safety during dehydration.",
+      "A modular tray design with negative-pressure airflow moves moisture out consistently rather than unevenly, which is what allows the unit to reach more than twice the efficiency of conventional solar dryers."
+    ],
+    pillars: [
+      { icon: "\u2600\ufe0f", title: "Spectral-selective dome", sub: "99.98% UV blocked" },
+      { icon: "\ud83c\udf2c\ufe0f", title: "Negative-pressure airflow", sub: "Even moisture removal" },
+      { icon: "\ud83e\uddf1", title: "Modular trays", sub: "Scales with volume" },
+      { icon: "\ud83d\ude9a", title: "Portable and rugged", sub: "Built for farm conditions" }
+    ]
+  },
+  technology: {
+    heading: "Validated across the crops that matter",
+    pillars: [
+      { title: "Spectral selectivity", desc: "The dome material admits drying wavelengths while blocking 99.98% of ultraviolet light, preserving colour and nutritional value that open-air and conventional dryers degrade." },
+      { title: "Airflow design", desc: "Negative-pressure airflow through a modular tray stack removes moisture evenly across every level, avoiding the partial drying and spoilage common to simple box dryers." },
+      { title: "Crop validation", desc: "Performance has been validated for bananas, tomatoes, onions, ginger and spices \u2014 the commodities where post-harvest loss and price volatility are most acute." },
+      { title: "Deployment reality", desc: "Designed to be transported, assembled and maintained on a working farm rather than in an industrial facility, which is the constraint most dehydration technology ignores." }
+    ]
+  },
+  impact: {
+    headline: "2\u00d7+",
+    subline: "Efficiency over conventional solar dryers, with the first unit now operating in Maharashtra's vegetable belt",
+    outcomes: [
+      "Reduced post-harvest waste for smallholder farmers",
+      "Higher incomes through extended shelf life and better timing of sale",
+      "Strengthened export readiness for agricultural produce",
+      "Women-led rural employment creation"
+    ]
+  },
+  scale: [
+    { val: "Malegaon",  label: "First installation, Maharashtra" },
+    { val: "Feb 2026",  label: "Commissioned" },
+    { val: "Patented",  label: "Mone Solar Dome technology" },
+    { val: "5+ crops",  label: "Validated commodities" }
+  ],
+  attribution: "Devrays Solar Dehydrators. Emmanuel Solutions contributed advisory support to the development and deployment of the Mone Solar Dome."
+};
+
+caseStudyDetails["thaal"] = {
+  title:       "Thaal Innovations",
+  brandName:   "thaal",
+  productName: "chemical recycling",
+  tagline:     "Closing the loop on industrial polyurethane foam waste",
+  service:     "circular-economy",
+  heroStats: [
+    { val: "90%",       label: "Material recovery" },
+    { val: "70%",       label: "Less CO\u2082 than virgin production" },
+    { val: "4",         label: "Industrial clients in production" },
+    { val: "Patented",  label: "Recycling technology" }
+  ],
+  challenge: {
+    heading: "A material designed never to come apart",
+    body: [
+      "Polyurethane foam is everywhere \u2014 mattresses, footwear, automotive seating, insulation panels. It is also one of the hardest polymers to recycle, because the chemistry that makes it durable is the same chemistry that resists being reversed. Historically that meant landfill or incineration.",
+      "Emmanuel Solutions treats this as a design failure rather than an inevitability. The question is not how to dispose of foam waste, but how to return it to the supply chain at a quality manufacturers will actually specify."
+    ]
+  },
+  segments: [
+    { icon: "\ud83c\udfed", title: "Foam manufacturers", desc: "Producers generating process waste at industrial volume" },
+    { icon: "\ud83d\udecf\ufe0f", title: "Mattress and furniture", desc: "Brands under pressure to demonstrate circular sourcing" },
+    { icon: "\ud83d\ude97", title: "Automotive seating", desc: "Tier suppliers with scope 3 emissions targets" },
+    { icon: "\ud83c\udfd7\ufe0f", title: "Insulation panels", desc: "Construction materials businesses seeking recycled content" }
+  ],
+  product: {
+    heading: "Recycled polyol at near-virgin quality",
+    body: [
+      "Thaal Innovations' patented chemical recycling process recovers up to 90% of the material from polyurethane foam waste, producing recycled polyol that performs at near-virgin quality \u2014 the threshold at which a manufacturer can actually use it in production rather than in a pilot.",
+      "Emmanuel Solutions supports commercialisation: connecting the technology with industrial partners, navigating specification and procurement, and building the commercial case for circular material in demanding applications."
+    ],
+    pillars: [
+      { icon: "\u267b\ufe0f", title: "90% recovery", sub: "Near-infinite recycling" },
+      { icon: "\ud83c\udf31", title: "70% less CO\u2082", sub: "Versus virgin production" },
+      { icon: "\ud83e\uddea", title: "Near-virgin quality", sub: "Production-grade, not pilot-grade" },
+      { icon: "\ud83d\udcdc", title: "Patented process", sub: "Commercially validated" }
+    ]
+  },
+  technology: {
+    heading: "Founded on materials science, proven in production",
+    pillars: [
+      { title: "Leadership", desc: "Founded by Dr. Devi Ramamoorthy, CEO, who holds a doctorate from IIT Madras, with Prem Anandh S as COO." },
+      { title: "Chemical recycling", desc: "A patented process that reverses polyurethane chemistry to recover polyol, rather than mechanically grinding foam into a lower-value filler." },
+      { title: "Commercial validation", desc: "The recycled material is in production use with paying industrial customers \u2014 the distinction between a laboratory result and a supply chain." },
+      { title: "Emissions case", desc: "Thaal reports low-carbon raw material production at 70% less CO\u2082 than virgin equivalents, which is what makes the material attractive to scope 3 reporting." }
+    ]
+  },
+  impact: {
+    headline: "90%",
+    subline: "Material recovery from foam waste, with recycled polyol now used in production by four industrial clients",
+    outcomes: [
+      "Industrial-grade circular supply chain established for polyurethane",
+      "Low-carbon raw material production at 70% less CO\u2082",
+      "Patented technology with proven commercial validation",
+      "A route for manufacturers to specify recycled content without compromising performance"
+    ]
+  },
+  scale: [
+    { val: "Wakefit",        label: "Mattress manufacturing" },
+    { val: "Adient",         label: "Automotive seating" },
+    { val: "VKC Pride",      label: "Footwear" },
+    { val: "Kingspan Jindal", label: "Insulation panels" }
+  ],
+  globalCustomers: ["Wakefit Mattress", "Adient", "VKC Pride Footwear", "Kingspan Jindal"],
+  attribution: "Thaal Innovations. All performance figures and client relationships belong to Thaal Innovations; Emmanuel Solutions supports commercialisation."
+};
+
+// ── AI SOLUTIONS capability set ───────────────────────────
+export const aiCapabilities = [
+  { group: "Strategy",   title: "AI strategy & roadmaps",        desc: "Where AI genuinely returns value in your operation, sequenced and costed \u2014 not a list of tools." },
+  { group: "Strategy",   title: "Executive AI advisory",         desc: "Board and leadership guidance on capability, risk, vendor selection and what to ignore." },
+  { group: "Strategy",   title: "AI transformation consulting",  desc: "Moving an organisation from isolated experiments to operating capability." },
+  { group: "Automation", title: "Workflow automation",           desc: "Repetitive process work removed end to end, connecting the systems you already run." },
+  { group: "Automation", title: "AI agents",                     desc: "Agents that carry out multi-step work under supervision, with clear boundaries and audit trails." },
+  { group: "Automation", title: "Operations optimisation",       desc: "Scheduling, forecasting and exception handling improved where the cost of error is highest." },
+  { group: "Systems",    title: "Custom AI systems",             desc: "Production-grade systems built for your data and your constraints, not a demo." },
+  { group: "Systems",    title: "Internal knowledge assistants", desc: "Institutional knowledge made answerable \u2014 documents, specifications, standards and history." },
+  { group: "Systems",    title: "AI integration",                desc: "Intelligence added to the ERP, CRM and line-of-business systems already in place." },
+  { group: "Commercial", title: "Customer support automation",   desc: "Resolution rather than deflection, with escalation paths that respect the customer." },
+  { group: "Commercial", title: "Sales & marketing automation",  desc: "Qualification, follow-up and content operations that free the team for actual selling." },
+  { group: "Commercial", title: "Data intelligence",             desc: "Operational data turned into decisions leaders can act on, in plain language." }
+];
+
+// ── ALLIANCES & INDUSTRY LEADERSHIP ───────────────────────
+// Per the source audit: these are industry bodies, not divisions
+// of Emmanuel Solutions. SFAI is an initiative of the Indian
+// Polyurethane Association. Isaac's role is stated exactly as
+// the 2016 charter and programmes document it — nothing more.
+export const alliances = {
+  sfai: {
+    abbr: "SFAI",
+    name: "Spray Foam Alliance of India",
+    parent: "An initiative of the Indian Polyurethane Association (IPUA)",
+    tagline: "The voice of the polyurethane industry on spray foam in building, construction and the cold chain.",
+    role: {
+      label: "Isaac Emmanuel Yenubari's role",
+      lines: [
+        "Founding contributor, 2016 — named on the Content Proposal Team alongside Dr. Ashok Mhatre",
+        "Marketing, promotion and seminars team",
+        "Organiser and named contact for SFAI's first technical training programmes",
+        "Executive Committee member, Indian Polyurethane Association"
+      ],
+      note: "Isaac contributed to SFAI in 2016 while at Covestro. SFAI is IPUA's spray foam arm and represents the major system houses collectively; it is not owned by or part of Emmanuel Solutions."
+    },
+    overview: [
+      "SFAI was launched on 25 May 2016 in Pune as “An Initiative of the System Houses” — the moment a group of polyurethane industry stalwarts decided to act collectively rather than compete on safety and skills. It exists because the safe, correct application of spray polyurethane foam is too important to be left to a handful of enterprises.",
+      "Spray polyurethane foam has one property that makes it unusually well suited to India: it achieves insulation and air sealing in a single application. In a country still proving the business case for insulation at all, that combination matters — and it is why SFAI's work sits at the intersection of energy efficiency, construction practice and the cold chain."
+    ],
+    mission: "To promote the safe use of Spray Polyurethane Foam in the building and construction industry and the cold chain industry, in collaboration with the stakeholders and the government energy conservation policy makers, and impart technical training thereto.",
+    vision: "To ensure an energy secure India through Spray Polyurethane Foam Insulation.",
+    charter: {
+      objective: "To accelerate the implementation of thermal insulation in buildings and the cold chain industry through spray polyurethane foam promotion, training and product stewardship.",
+      deliverables: [
+        "Training for spray application — system houses equipped with curriculum and a technical training plan",
+        "Building envelope — partnership with government bodies including BEE, and organisations such as TERI and IGBC",
+        "Cold chain — partnership with relevant organisations including NHB and GCCA",
+        "Technical workshops and promotional seminars with participation from all stakeholders"
+      ]
+    },
+    focus: [
+      { tone: "#3E8E8A", title: "Why insulation", body: "Buildings account for more than 40% of global energy use. Insulation is the cheapest intervention available, and the least specified in Indian construction." },
+      { tone: "#3E8E8A", title: "Where insulation", body: "The relationship between insulation and architecture — building envelope, condensation risk, heat transfer coefficients, and the growing acknowledgement of insulation among practitioners." },
+      { tone: "#2C6048", title: "How insulation", body: "Chemistry and application process, with particular attention to retrofitting spray foam into existing structures — where most of India's building stock actually is." },
+      { tone: "#B98A4B", title: "Health and safety", body: "Correct handling, protective equipment and application discipline. The single strongest argument for a collective alliance rather than individual enterprise training." }
+    ],
+    programmes: [
+      { title: "SPF Product Training Certification Programme", body: "A structured certification path for applicators, developed with the system houses and delivered in collaboration with BEE and Industrial Training Institutes." },
+      { title: "Enhanced Product Stewardship Programme", body: "Responsibility for the material beyond the point of sale — correct specification, safe application and end-use performance." }
+    ],
+    standard: {
+      code: "IS 12432 (Part 3):2002",
+      title: "Application of Spray Applied Insulation — Code of Practice, Part 3: Polyurethane / Polyisocyanurate",
+      body: "Adopted by the Bureau of Indian Standards after the draft was finalised by the Thermal Insulation Sectional Committee and approved by the Chemical Division Council. Rigid urethane foam is suitable for surfaces operating from −180°C to 110°C for PUR and up to 140°C for PIR; sprayed application is rated −30°C to +120°C.",
+      owner: "Bureau of Indian Standards"
+    },
+    timeline: [
+      { date: "25 May 2016",     place: "Courtyard Marriott, Pune",        title: "SFAI launch \u2014 An Initiative of the System Houses" },
+      { date: "26 May 2016",     place: "NCL Innovation Park, Pune",       title: "First technical training programme" },
+      { date: "22 Sept 2016",    place: "Covestro India, Noida",           title: "Technical Training Programme II" },
+      { date: "16 Dec 2016",     place: "Brilliant Convention Centre, Indore", title: "Spray Foam for Cold Stores Retrofit" },
+      { date: "28 Apr 2017",     place: "Graco Technical Centre, Gurugram", title: "Training programme \u2014 25 attendees, travelling from Raipur and Ladakh" },
+      { date: "17\u201318 Nov 2017", place: "Chennai Trade Centre",            title: "ICE 2017" }
+    ],
+    partners: ["Bureau of Energy Efficiency (BEE)", "Industrial Training Institutes (ITIs)", "TERI", "IGBC", "National Horticulture Board (NHB)", "GCCA", "Indian Polyurethane Association (IPUA)"],
+    resources: [
+      { name: "SFAI Charter",                        file: "/docs/sfai/sfai-charter.pdf",                        note: "Objective, deliverables and metrics" },
+      { name: "SFAI Technical Manual",               file: "/docs/sfai/sfai-technical-manual.pdf",               note: "A Guide to Energy Security: Working with Spray Polyurethane Foam" },
+      { name: "Indian Standard IS 12432 (Part 3)",   file: "/docs/sfai/indian-standard-is-12432.pdf",             note: "Code of practice for spray applied insulation" },
+      { name: "The Need for Building Insulation",    file: "/docs/sfai/the-need-for-building-insulation.pdf",     note: "Why insulation — technical article" },
+      { name: "Architecture and Energy Savings",     file: "/docs/sfai/architecture-and-energy-savings.pdf",      note: "Where insulation — technical article" },
+      { name: "Cold Stores Retrofit",                file: "/docs/sfai/cold-stores-retrofit.pdf",                 note: "Indore programme, December 2016" },
+      { name: "Launch of SFAI",                      file: "/docs/sfai/launch-of-sfai.pdf",                       note: "Pune, 25 May 2016" },
+      { name: "An Initiative of the System Houses",  file: "/docs/sfai/an-initiative-of-the-system-houses.pdf",   note: "Founding presentation" },
+      { name: "ICE 2017",                            file: "/docs/sfai/ice-2017.pdf",                            note: "Chennai Trade Centre, November 2017" },
+      { name: "PU Insulation and the EU Directive",  file: "/docs/sfai/pu-insulation-eu-directive.pdf",           note: "Policy context, April 2018" }
+    ]
+  },
+
+  iif: {
+    abbr: "IIF",
+    name: "India Insulation Forum",
+    parent: "Industry body — profile in preparation",
+    tagline: "An industry forum advancing insulation practice in India.",
+    comingSoon: true,
+    role: {
+      label: "Isaac Emmanuel Yenubari's role",
+      lines: ["Associated with the India Insulation Forum"],
+      note: "This page is a placeholder. The forum's profile and the precise nature of the association are being confirmed before publication — we would rather leave it thin than state it inaccurately."
+    },
+    overview: [
+      "The India Insulation Forum sits alongside the Spray Foam Alliance of India in Emmanuel Solutions' industry work: insulation, energy efficiency and the standards that govern them.",
+      "A full profile — the forum's objectives, activities, membership and Isaac's role within it — is being prepared and will be published here once confirmed."
+    ],
+    whatToExpect: [
+      "The forum's objectives and areas of activity",
+      "Isaac's role and contribution",
+      "Relationship to insulation standards and energy efficiency policy",
+      "Resources and technical material"
+    ]
+  }
+};

@@ -1,4 +1,5 @@
 import { m } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 16 },
@@ -30,21 +31,21 @@ export function Footer() {
         <m.div className="footer-section" custom={1} variants={fadeUp}>
           <h5>Services</h5>
           <ul>
-            <li><a href="#sustainable-tech">Sustainable Technology</a></li>
-            <li><a href="#circular-economy">Circular Economy</a></li>
-            <li><a href="#services">Innovation Capability</a></li>
-            <li><a href="#industrial-marketing">Industrial Marketing</a></li>
+            <li><Link to="/services/sustainable-tech">Sustainable Technology</Link></li>
+            <li><Link to="/services/circular-economy">Circular Economy</Link></li>
+            <li><Link to="/services/innovation-training">Innovation Capability</Link></li>
+            <li><Link to="/services/industrial-marketing">Industrial Marketing</Link></li>
           </ul>
         </m.div>
 
         <m.div className="footer-section" custom={2} variants={fadeUp}>
           <h5>Company</h5>
           <ul>
-            <li><a href="#about">The founder</a></li>
-            <li><a href="#ai-solutions">AI Solutions</a></li>
-            <li><a href="#case-studies">Our Work</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#insights">Insights</a></li>
+            <li><a href="/#about">The founder</a></li>
+            <li><a href="/#ai-solutions">AI Solutions</a></li>
+            <li><a href="/#case-studies">Our Work</a></li>
+            <li><a href="/#gallery">Gallery</a></li>
+            <li><a href="/#insights">Insights</a></li>
           </ul>
         </m.div>
 
@@ -52,7 +53,7 @@ export function Footer() {
           <h5>Contact</h5>
           <ul>
             <li><a href="mailto:isaac@emmanuelsolutionss.com?subject=Enquiry via Emmanuel Solutions">isaac@emmanuelsolutionss.com</a></li>
-            <li><a href="#contact">Book a Consultation</a></li>
+            <li><a href="/#contact">Book a Consultation</a></li>
             <li><a href="/docs/emmanuel-solutions-one-pager.pdf" target="_blank" rel="noreferrer">One-Pager PDF ↗</a></li>
           </ul>
         </m.div>

@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
 import { caseStudyDetails } from "../data/content";
+import { Seo } from "../components/Seo";
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 22 },
@@ -50,6 +51,7 @@ export function CaseStudyDetailPage() {
 
   return (
     <div className="page cs-page" data-study={caseStudyId}>
+      <Seo title={detail.title} description={detail.tagline} path={`/case-studies/${caseStudyId}`} />
       <Navigation />
 
       {/* ── HERO ── */}
@@ -86,7 +88,7 @@ export function CaseStudyDetailPage() {
           </m.p>
 
           <m.div className="cs-hero__stats" variants={fadeUp} custom={3} initial="hidden" animate="visible">
-            {detail.heroStats.map((s, i) => (
+            {(detail.heroStats || []).map((s, i) => (
               <div className="cs-stat" key={i}>
                 <span className="cs-stat__val">{s.val}</span>
                 <span className="cs-stat__label">{s.label}</span>
@@ -99,6 +101,7 @@ export function CaseStudyDetailPage() {
       <main className="cs-main">
 
         {/* ── CHALLENGE + SEGMENTS ── */}
+        {detail.challenge && (
         <section className="cs-section">
           <div className="cs-section__inner cs-split">
             <m.div className="cs-split__col"
@@ -119,7 +122,7 @@ export function CaseStudyDetailPage() {
               <div className="section-label">Who It Serves</div>
               <m.h2 variants={fadeUp}>Customer Segments</m.h2>
               <div className="cs-segments">
-                {detail.segments.map((seg, i) => (
+                {(detail.segments || []).map((seg, i) => (
                   <m.div className="cs-segment-card" key={i} variants={fadeUp} custom={i + 1}>
                     <span className="cs-segment-card__icon">{seg.icon}</span>
                     <div>
@@ -132,10 +135,12 @@ export function CaseStudyDetailPage() {
             </m.div>
           </div>
         </section>
+        )}
 
         <hr className="cs-rule" />
 
         {/* ── PRODUCT ── */}
+        {detail.product && (
         <section className="cs-section cs-section--dark">
           <div className="cs-section__inner">
             <div className="section-label cs-label--light">The Product</div>
@@ -164,10 +169,12 @@ export function CaseStudyDetailPage() {
             </div>
           </div>
         </section>
+        )}
 
         <hr className="cs-rule" />
 
         {/* ── TECH PILLARS ── */}
+        {detail.technology && (
         <section className="cs-section">
           <div className="cs-section__inner">
             <div className="section-label">Technology</div>
@@ -184,6 +191,7 @@ export function CaseStudyDetailPage() {
             </div>
           </div>
         </section>
+        )}
 
         <hr className="cs-rule" />
 
@@ -211,6 +219,7 @@ export function CaseStudyDetailPage() {
         <hr className="cs-rule" />
 
         {/* ── IMPACT ── */}
+        {detail.impact && (
         <section className="cs-section cs-impact-section">
           <div className="cs-impact-bg" />
           <div className="cs-section__inner cs-impact-inner">
@@ -233,10 +242,12 @@ export function CaseStudyDetailPage() {
             </div>
           </div>
         </section>
+        )}
 
         <hr className="cs-rule" />
 
         {/* ── MANUFACTURING + GLOBAL ── */}
+        {detail.scale && (
         <section className="cs-section">
           <div className="cs-section__inner">
             <div className="section-label">Scale</div>
@@ -261,8 +272,12 @@ export function CaseStudyDetailPage() {
                 </div>
               </m.div>
             )}
+            {detail.attribution && (
+              <p className="cs-attribution">{detail.attribution}</p>
+            )}
           </div>
         </section>
+        )}
 
         {/* ── CTA ── */}
         <div className="contact-section cs-cta" id="cs-contact">
