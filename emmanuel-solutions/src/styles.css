@@ -3165,3 +3165,174 @@ img, svg, video { max-width: 100%; }
 }
 .es-crash-body { font-size: .98rem; line-height: 1.75; color: var(--ink-mid); max-width: 52ch; }
 .es-crash-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.6rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   v14 — GROUND TO SKY
+   The page ascends: earth and sun at the top of the story,
+   sky and water through the middle, deep night at the AI
+   division. Blue is the bridge, so the shift into AI Solutions
+   is felt rather than announced.
+═══════════════════════════════════════════════════════════ */
+:root {
+  /* Earth — farms, materials, thirty years of industry */
+  --es-sand:      #F2EBDF;
+  --es-sand-deep: #E5D9C6;
+  --es-clay:      #B4674A;
+  --es-clay-soft: #C98A6E;
+  --es-soil:      #4A3A2E;
+
+  /* Sun — the energy behind everything deployed */
+  --es-gold:      #D69A3C;
+  --es-gold-soft: #E8BE7C;
+  --es-light:     #FFF6E8;
+
+  /* Sky and water — climate, air sealing, the cold chain */
+  --es-sky:       #7FA8C9;
+  --es-sky-pale:  #E8F0F6;
+  --es-water:     #2F5C7E;
+
+  /* Ink warms slightly to sit against sand rather than white */
+  --es-ink-warm:  #191C1A;
+}
+
+/* ── Temperature bands: the ascent, section by section ──── */
+.es-band { position: relative; }
+.es-band-earth   { background: linear-gradient(180deg, var(--es-sand) 0%, #F6F1E7 100%); }
+.es-band-warm    { background: linear-gradient(180deg, #F6F1E7 0%, #FAF7F1 100%); }
+.es-band-neutral { background: linear-gradient(180deg, #FAF7F1 0%, #F7F8F6 100%); }
+.es-band-sky     { background: linear-gradient(180deg, #F7F8F6 0%, var(--es-sky-pale) 100%); }
+.es-band-dusk    { background: linear-gradient(180deg, var(--es-sky-pale) 0%, #C9D8E4 55%, #46617A 100%); }
+
+/* Film grain — the single detail that stops gradients looking like CSS */
+.es-grain::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  opacity: .32; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* ── HERO · editorial split-screen ──────────────────────── */
+.es-hero-split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  min-height: 100svh;
+  background: var(--es-sand);
+  overflow: hidden;
+}
+.es-hero-copy {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: calc(72px + 3rem) 4rem 3rem clamp(1.5rem, 6vw, 6rem);
+  background: linear-gradient(160deg, var(--es-sand) 0%, #F7F2E9 55%, var(--es-sand-deep) 100%);
+}
+/* A low sun blooming behind the copy — the warmest point on the page */
+.es-hero-copy::before {
+  content: ""; position: absolute; inset: auto -20% -30% -10%;
+  height: 70%; pointer-events: none;
+  background: radial-gradient(ellipse 60% 100% at 30% 100%, rgba(214,154,60,.26), rgba(214,154,60,.06) 45%, transparent 72%);
+  animation: es-sun 34s ease-in-out infinite alternate;
+}
+@keyframes es-sun {
+  from { transform: translate3d(0,0,0) scale(1); opacity: .85; }
+  to   { transform: translate3d(4%,-3%,0) scale(1.12); opacity: 1; }
+}
+.es-hero-copy > * { position: relative; z-index: 2; }
+
+.es-hero-figure {
+  position: relative; overflow: hidden;
+  border-left: 1px solid rgba(74,58,46,.14);
+}
+.es-hero-figure img {
+  position: absolute; inset: 0;
+  width: 100%; height: 112%;
+  object-fit: cover; object-position: 52% 38%;
+  transform: scale(1.06);
+  animation: es-figure-in 1.9s cubic-bezier(.22,1,.36,1) .25s forwards;
+  will-change: transform;
+}
+@keyframes es-figure-in { to { transform: scale(1); } }
+/* Warm at the foot of the image, cool at the crown — ground to sky in one frame */
+.es-hero-figure::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(190deg, rgba(127,168,201,.20) 0%, transparent 38%),
+    linear-gradient(0deg, rgba(74,58,46,.42) 0%, rgba(74,58,46,.06) 34%, transparent 60%);
+}
+.es-hero-caption {
+  position: absolute; left: 1.6rem; right: 1.6rem; bottom: 1.5rem; z-index: 3;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: .72rem; line-height: 1.6; color: rgba(255,246,232,.9);
+  display: flex; align-items: center; gap: .55rem;
+}
+.es-hero-caption span.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--es-gold-soft); flex: 0 0 auto; }
+
+.es-eyebrow-warm { color: #6E6154; }
+.es-rule-warm { background: var(--es-clay-soft); }
+.es-display-warm { color: var(--es-ink-warm); }
+.es-display-accent { color: var(--es-clay); }
+.es-lead-warm { color: #4A463F; }
+.es-credentials-warm { color: #7A7267; }
+
+/* Buttons pick up the earth palette without losing the brand anchor */
+.btn-earth {
+  background: var(--es-soil); color: var(--es-light);
+  border: 0; border-radius: var(--es-r-md);
+  font-family: "Inter Tight", sans-serif; font-size: .95rem; font-weight: 500;
+  padding: .9rem 1.5rem; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: .5rem;
+  transition: transform var(--es-t-fast) var(--es-ease), box-shadow var(--es-t-fast), background-color var(--es-t-fast);
+}
+.btn-earth:hover {
+  background: #35291F; transform: translateY(-2px);
+  box-shadow: 0 16px 32px -16px rgba(74,58,46,.55); text-decoration: none;
+}
+.es-division-cta-warm {
+  background: rgba(255,246,232,.72);
+  border: 1px solid rgba(74,58,46,.16);
+}
+.es-division-cta-warm:hover { border-color: var(--es-gold); box-shadow: 0 16px 32px -18px rgba(74,58,46,.4); }
+.es-division-cta-warm .es-division-badge { color: #8A5A22; background: rgba(214,154,60,.16); }
+.es-division-cta-warm .es-division-arrow { color: var(--es-clay); }
+
+/* Practice rail on sand */
+.es-rail-warm { border-top: 1px solid rgba(74,58,46,.14); background: rgba(255,246,232,.4); }
+.es-rail-warm .es-rail-item { border-right-color: rgba(74,58,46,.1); }
+.es-rail-warm .es-rail-item:hover { background: rgba(255,246,232,.85); }
+.es-rail-warm .es-rail-name { color: var(--es-ink-warm); }
+.es-rail-warm .es-rail-note { color: #7A7267; }
+
+/* ── Warm surfaces for the sections that follow ─────────── */
+.es-band .founder-card,
+.es-band .service-card,
+.es-band .al-focus-card,
+.es-band .es-stat { background: rgba(255,255,255,.72); }
+.es-band-earth .section-label,
+.es-band-warm .section-label { color: #8A5A22; }
+.es-band-sky .section-label { color: var(--es-water); }
+.es-band .es-subhead::before { background: var(--es-clay); }
+.es-band-sky .es-subhead::before { background: var(--es-water); }
+.es-band .es-stat-value { color: var(--es-soil); }
+.es-band-sky .es-stat-value { color: var(--es-water); }
+
+/* Dusk band: the last warm surface before the AI division */
+.es-band-dusk .section-label { color: rgba(255,246,232,.72); }
+.es-band-dusk h2, .es-band-dusk h3 { color: var(--es-light); }
+.es-band-dusk p, .es-band-dusk .section-intro { color: rgba(255,246,232,.78); }
+.es-band-dusk .es-subhead { color: var(--es-light); }
+.es-band-dusk .es-subhead::before { background: var(--es-gold-soft); }
+
+@media (max-width: 1024px) {
+  .es-hero-split { grid-template-columns: 1fr; min-height: auto; }
+  .es-hero-copy { padding: calc(72px + 2.5rem) 2rem 2.5rem; }
+  .es-hero-figure { height: 56vh; min-height: 340px; border-left: 0; border-top: 1px solid rgba(74,58,46,.14); }
+}
+@media (max-width: 640px) {
+  .es-hero-copy { padding: calc(64px + 1.75rem) 1.35rem 2rem; }
+  .es-hero-figure { height: 46vh; min-height: 260px; }
+  .es-hero-caption { font-size: .66rem; left: 1.1rem; right: 1.1rem; }
+  .es-grain::after { opacity: .22; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .es-hero-copy::before { animation: none; }
+  .es-hero-figure img { animation: none; transform: none; }
+}

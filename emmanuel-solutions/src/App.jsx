@@ -10,7 +10,6 @@ import { ContactForm } from "./components/ContactForm";
 import { Footer }      from "./components/Footer";
 import { HeroSystem }  from "./components/HeroSystem";
 import { Reveal, MaskLine } from "./components/Reveal";
-import { useAct } from "./hooks/useAct";
 import { Seo }         from "./components/Seo";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -69,7 +68,6 @@ function HomePage() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 28, mass: 0.25 });
   const [focus, setFocus] = useState(null);
-  const act = useAct(1);
 
   return (
     <>
@@ -80,45 +78,39 @@ function HomePage() {
       />
       <m.div className="scroll-progress" style={{ scaleX }} />
 
-      {/* One system for the whole page. Acts advance as the visitor descends. */}
-      <HeroSystem act={act} focus={focus} page />
-
       <Navigation onFocusChange={setFocus} />
 
       <main id="main">
 
-        {/* ── ACT 1 · HERO ─────────────────────────────── */}
-        <section id="home" className="es-hero" aria-label="Introduction">
-
-          <div className="es-hero-inner">
-            <m.p className="es-eyebrow"
+        {/* ── HERO · editorial split-screen, warm earth ── */}
+        <section id="home" className="es-hero-split es-grain" aria-label="Introduction">
+          <div className="es-hero-copy">
+            <m.p className="es-eyebrow es-eyebrow-warm"
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+              transition={{ delay: 0.28, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
               <span>{heroCopy.eyebrow}</span>
-              <span className="es-rule" aria-hidden="true" />
+              <span className="es-rule es-rule-warm" aria-hidden="true" />
               <span>{heroCopy.location}</span>
             </m.p>
 
-            <h1 className="es-display">
-              <MaskLine delay={0.42}>{heroCopy.line1}</MaskLine>
-              <MaskLine delay={0.51} className="es-display-em">{heroCopy.line2}</MaskLine>
+            <h1 className="es-display es-display-warm">
+              <MaskLine delay={0.4}>{heroCopy.line1}</MaskLine>
+              <MaskLine delay={0.49} className="es-display-accent">{heroCopy.line2}</MaskLine>
             </h1>
 
-            <m.p className="es-lead"
+            <m.p className="es-lead es-lead-warm"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+              transition={{ delay: 0.68, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
               {heroCopy.lead}
             </m.p>
 
             <m.div className="es-hero-ctas"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.84, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
-              <a className="btn btn-primary" href={heroCopy.primaryCta.href}>
+              transition={{ delay: 0.82, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+              <a className="btn-earth" href={heroCopy.primaryCta.href}>
                 {heroCopy.primaryCta.label} <span className="es-arrow" aria-hidden="true">→</span>
               </a>
-              <a className="es-division-cta" href="#ai-solutions"
-                    onMouseEnter={() => setFocus("ai")} onMouseLeave={() => setFocus(null)}
-                    onFocus={() => setFocus("ai")} onBlur={() => setFocus(null)}>
+              <a className="es-division-cta es-division-cta-warm" href="#ai-solutions">
                 <span>
                   <span className="es-division-head">
                     {heroCopy.divisionCta.label}
@@ -130,7 +122,7 @@ function HomePage() {
               </a>
             </m.div>
 
-            <m.p className="es-credentials"
+            <m.p className="es-credentials es-credentials-warm"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ delay: 0.94, duration: 0.8 }}>
               <span className="es-significance">
@@ -140,25 +132,35 @@ function HomePage() {
             </m.p>
           </div>
 
-          <div className="es-rail">
-            {practiceAreas.map((p, i) => (
-              <m.a key={p.id} className="es-rail-item" href={`/services/${p.id}`}
-                onMouseEnter={() => setFocus(p.focus)} onMouseLeave={() => setFocus(null)}
-                onFocus={() => setFocus(p.focus)} onBlur={() => setFocus(null)}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
-                <span className="es-rail-name">
-                  <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
-                  {p.name}
-                </span>
-                <span className="es-rail-note">{p.note}</span>
-              </m.a>
-            ))}
-          </div>
+          <figure className="es-hero-figure">
+            <img
+              src="/assets/devrays-exterior.jpeg"
+              alt="The Mone Solar Dome at the first Devrays installation, Malegaon, Maharashtra"
+              width="899" height="1599" decoding="async"
+            />
+            <figcaption className="es-hero-caption">
+              <span className="dot" aria-hidden="true" />
+              Mone Solar Dome — first installation, Malegaon, Maharashtra
+            </figcaption>
+          </figure>
         </section>
 
+        <div className="es-rail es-rail-warm">
+          {practiceAreas.map((p, i) => (
+            <m.a key={p.id} className="es-rail-item" href={`/services/${p.id}`}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+              <span className="es-rail-name">
+                <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
+                {p.name}
+              </span>
+              <span className="es-rail-note">{p.note}</span>
+            </m.a>
+          ))}
+        </div>
+
         {/* ── ACT 2 · CREDIBILITY ──────────────────────── */}
-        <div className="section-alt" id="about">
+        <div className="section-alt es-band es-band-earth es-grain" id="about">
           <div className="section about-section">
             <div className="section-label">The founder</div>
             <div className="about-grid">
@@ -216,6 +218,7 @@ function HomePage() {
         </div>
 
         {/* ── ACT 3 · SERVICES ─────────────────────────── */}
+        <div className="es-band es-band-warm">
         <section id="services" className="section">
           <div className="section-label">What we do</div>
           <Reveal as="h2">Four practice areas. One standard of work.</Reveal>
@@ -229,6 +232,7 @@ function HomePage() {
             ))}
           </div>
         </section>
+        </div>
 
         {/* ── ACT 4 · AI SOLUTIONS ─────────────────────── */}
         <section className="es-division-band" id="ai-solutions" aria-labelledby="ai-heading">
@@ -275,7 +279,7 @@ function HomePage() {
         </section>
 
         {/* ── ACT 5 · PROOF ────────────────────────────── */}
-        <div className="section-alt">
+        <div className="section-alt es-band es-band-sky es-grain">
           <section id="case-studies" className="section">
             <div className="section-label">Partnerships &amp; proof</div>
             <Reveal as="h2">Technologies we have helped bring to market</Reveal>
@@ -298,6 +302,7 @@ function HomePage() {
           </section>
         </div>
 
+        <div className="es-band es-band-dusk es-grain">
         <section id="insights" className="section">
           <div className="section-label">Thought leadership</div>
           <Reveal as="h2">Latest insights</Reveal>
@@ -305,6 +310,7 @@ function HomePage() {
             {insights.map((insight, i) => <InsightCard key={insight.id} insight={insight} index={i + 1} />)}
           </div>
         </section>
+        </div>
 
         <div className="contact-section" id="contact">
           <div className="section">
