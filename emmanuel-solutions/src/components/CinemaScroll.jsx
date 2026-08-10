@@ -142,7 +142,7 @@ export function CinemaScroll({
   }, [mode]);
 
   return (
-    <figure className={`es-cinema ${className}`} ref={wrap}>
+    <figure className={`es-cinema ${className}`} ref={wrap} data-playing={(mode === "loop" || mode === "scrub") && ready ? "1" : "0"}>
       {(mode === "scrub" || mode === "loop") && (
         <video
           ref={video}
