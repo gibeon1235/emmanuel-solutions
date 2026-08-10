@@ -3528,3 +3528,14 @@ img, svg, video { max-width: 100%; }
     radial-gradient(ellipse 80% 50% at 50% 100%, rgba(214,154,60,.18), transparent 70%);
   mix-blend-mode: multiply;
 }
+
+/* Illustrative marker — small, permanent, never hidden */
+.es-cinema-note {
+  margin-left: .55rem; padding: .12rem .45rem;
+  font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,246,232,.9);
+  background: rgba(20,26,22,.5);
+  border: 1px solid rgba(255,246,232,.3);
+  border-radius: 4px; white-space: nowrap;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}

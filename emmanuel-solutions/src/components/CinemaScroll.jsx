@@ -23,9 +23,11 @@ function canScrub() {
 
 export function CinemaScroll({
   src,
+  srcWebm,
   poster,
   alt = "",
   caption,
+  note,
   objectPosition = "52% 38%",
   className = ""
 }) {
@@ -36,7 +38,16 @@ export function CinemaScroll({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (src && canScrub()) setMode("scrub");
+    if (!src || !canScrub()) return;
+    let cancelled = false;
+    const activate = () => {
+      if (cancelled) return;
+      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 400));
+      idle(() => { if (!cancelled) setMode("scrub"); });
+    };
+    if (document.readyState === "complete") activate();
+    else window.addEventListener("load", activate, { once: true });
+    return () => { cancelled = true; window.removeEventListener("load", activate); };
   }, [src]);
 
   /* Scrub: map the element's travel through the viewport onto duration */
@@ -110,7 +121,6 @@ export function CinemaScroll({
         <video
           ref={video}
           className="es-cinema-media"
-          src={src}
           poster={poster}
           muted
           playsInline
@@ -118,7 +128,10 @@ export function CinemaScroll({
           tabIndex={-1}
           aria-hidden="true"
           style={{ objectPosition, opacity: ready ? 1 : 0 }}
-        />
+        >
+          {srcWebm && <source src={srcWebm} type="video/webm" />}
+          <source src={src} type="video/mp4" />
+        </video>
       )}
       {/* The still stays mounted underneath: nothing ever renders empty */}
       <img
@@ -134,7 +147,8 @@ export function CinemaScroll({
       {caption && (
         <figcaption className="es-hero-caption">
           <span className="dot" aria-hidden="true" />
-          {caption}
+          <span>{caption}</span>
+          {note && <span className="es-cinema-note">{note}</span>}
         </figcaption>
       )}
     </figure>

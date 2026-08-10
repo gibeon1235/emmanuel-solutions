@@ -139,9 +139,13 @@ function HomePage() {
 
           <div className="es-hero-figure">
             <CinemaScroll
-              poster="/assets/devrays-exterior.jpeg"
-              alt="The Mone Solar Dome at the first Devrays installation, Malegaon, Maharashtra"
-              caption="Mone Solar Dome — first installation, Malegaon, Maharashtra"
+              src="/assets/video/greenhouse.mp4"
+              srcWebm="/assets/video/greenhouse.webm"
+              poster="/assets/video/greenhouse-poster.jpg"
+              alt="A climate-controlled growing environment at first light"
+              caption="Climate-controlled growing environment"
+              note="Illustrative"
+              objectPosition="50% 44%"
             />
           </div>
         </section>
