@@ -11,6 +11,7 @@ import { Footer }      from "./components/Footer";
 import { HeroSystem }  from "./components/HeroSystem";
 import { Reveal, MaskLine } from "./components/Reveal";
 import { Seo }         from "./components/Seo";
+import { CinemaScroll } from "./components/CinemaScroll";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 import {
@@ -83,7 +84,11 @@ function HomePage() {
       <main id="main">
 
         {/* ── HERO · editorial split-screen, warm earth ── */}
-        <section id="home" className="es-hero-split es-grain" aria-label="Introduction">
+        <section id="home" className="es-hero-split es-grain es-volumetric" aria-label="Introduction">
+          <span className="es-shaft" aria-hidden="true" />
+          <span className="es-shaft" aria-hidden="true" />
+          <span className="es-shaft" aria-hidden="true" />
+          <span className="es-flare" style={{ left: "18%", top: "76%" }} aria-hidden="true" />
           <div className="es-hero-copy">
             <m.p className="es-eyebrow es-eyebrow-warm"
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -132,17 +137,13 @@ function HomePage() {
             </m.p>
           </div>
 
-          <figure className="es-hero-figure">
-            <img
-              src="/assets/devrays-exterior.jpeg"
+          <div className="es-hero-figure">
+            <CinemaScroll
+              poster="/assets/devrays-exterior.jpeg"
               alt="The Mone Solar Dome at the first Devrays installation, Malegaon, Maharashtra"
-              width="899" height="1599" decoding="async"
+              caption="Mone Solar Dome — first installation, Malegaon, Maharashtra"
             />
-            <figcaption className="es-hero-caption">
-              <span className="dot" aria-hidden="true" />
-              Mone Solar Dome — first installation, Malegaon, Maharashtra
-            </figcaption>
-          </figure>
+          </div>
         </section>
 
         <div className="es-rail es-rail-warm">
@@ -160,7 +161,7 @@ function HomePage() {
         </div>
 
         {/* ── ACT 2 · CREDIBILITY ──────────────────────── */}
-        <div className="section-alt es-band es-band-earth es-grain" id="about">
+        <div className="section-alt es-band es-band-earth es-grain es-concrete" id="about">
           <div className="section about-section">
             <div className="section-label">The founder</div>
             <div className="about-grid">
@@ -235,10 +236,10 @@ function HomePage() {
         </div>
 
         {/* ── ACT 4 · AI SOLUTIONS ─────────────────────── */}
-        <section className="es-division-band" id="ai-solutions" aria-labelledby="ai-heading">
+        <section className="es-division-band es-obsidian" id="ai-solutions" aria-labelledby="ai-heading">
           <HeroSystem act={4} focus={focus} theme="dark" />
           <div className="es-division-inner">
-            <div className="es-division-label">A division of Emmanuel Solutions</div>
+            <div className="es-division-label"><span className="es-led" aria-hidden="true" /> A division of Emmanuel Solutions</div>
             <Reveal as="h2" id="ai-heading" className="es-division-title">
               Intelligence, woven through the business.
             </Reveal>

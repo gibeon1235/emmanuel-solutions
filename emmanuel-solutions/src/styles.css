@@ -3336,3 +3336,195 @@ img, svg, video { max-width: 100%; }
   .es-hero-copy::before { animation: none; }
   .es-hero-figure img { animation: none; transform: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   v15 — MATERIALS AND LIGHT
+   Surfaces become physical: frosted glass with edge lighting,
+   matte concrete, brushed titanium. Corporate green stops being
+   paint and becomes a light source. Text is never blurred.
+═══════════════════════════════════════════════════════════ */
+:root {
+  --es-glass-fill:   linear-gradient(148deg, rgba(255,255,255,.62), rgba(255,255,255,.24));
+  --es-glass-edge:   rgba(255,255,255,.78);
+  --es-glass-shadow: 0 24px 56px -28px rgba(28,34,30,.42), 0 2px 6px -2px rgba(28,34,30,.16);
+  --es-glow-green:   rgba(79,174,126,.42);
+  --es-glow-gold:    rgba(214,154,60,.38);
+}
+
+/* ── Frosted glass, four layers deep ────────────────────── */
+.es-glass {
+  position: relative;
+  background: var(--es-glass-fill);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: var(--es-r-lg);
+  box-shadow: var(--es-glass-shadow), inset 0 1px 0 var(--es-glass-edge), inset 0 -1px 0 rgba(28,34,30,.06);
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Edge light: a specular hairline that catches along the top-left */
+.es-glass::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 34%);
+  mix-blend-mode: screen;
+}
+/* Interior bloom: the surface appears to hold light */
+.es-glass::after {
+  content: ""; position: absolute; inset: -40% -20% auto -20%; height: 90%;
+  pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 60% 100% at 30% 0%, rgba(255,246,232,.5), transparent 68%);
+  filter: blur(14px);
+}
+.es-glass > * { position: relative; z-index: 1; }
+.es-glass-dark {
+  background: linear-gradient(148deg, rgba(18,26,22,.72), rgba(10,16,13,.5));
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 28px 64px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.es-glass-dark::before { background: linear-gradient(135deg, rgba(255,255,255,.16) 0%, transparent 36%); }
+.es-glass-dark::after  { background: radial-gradient(ellipse 60% 100% at 26% 0%, rgba(79,174,126,.2), transparent 66%); }
+
+/* ── Volumetric light: shafts that fall across the surface ── */
+.es-volumetric { position: relative; overflow: hidden; }
+.es-volumetric > .es-shaft {
+  position: absolute; top: -35%; width: 16vw; height: 175%;
+  pointer-events: none; z-index: 0;
+  background: linear-gradient(to bottom, rgba(255,246,232,.5), rgba(255,246,232,.06) 55%, transparent 82%);
+  filter: blur(28px);
+  transform: rotate(14deg);
+  animation: es-shaft-drift 26s ease-in-out infinite alternate;
+}
+.es-volumetric > .es-shaft:nth-of-type(2) { left: 22%; width: 9vw; opacity: .7; animation-duration: 34s; animation-delay: -8s; }
+.es-volumetric > .es-shaft:nth-of-type(3) { left: 58%; width: 22vw; opacity: .5; animation-duration: 41s; animation-delay: -18s; }
+@keyframes es-shaft-drift {
+  from { transform: rotate(14deg) translate3d(-3vw, 0, 0); opacity: .55; }
+  to   { transform: rotate(11deg) translate3d(4vw, 2%, 0); opacity: .95; }
+}
+/* Lens flare — one, small, never centred on text */
+.es-flare {
+  position: absolute; pointer-events: none; z-index: 1;
+  width: 340px; height: 340px; margin: -170px 0 0 -170px;
+  background:
+    radial-gradient(circle, rgba(255,246,232,.55) 0%, rgba(255,246,232,.14) 22%, transparent 46%),
+    radial-gradient(circle, rgba(214,154,60,.3) 0%, transparent 34%);
+  filter: blur(6px); opacity: .8;
+  animation: es-flare-breathe 18s ease-in-out infinite alternate;
+}
+@keyframes es-flare-breathe { from { opacity: .55; transform: scale(.94); } to { opacity: .92; transform: scale(1.06); } }
+
+/* ── Tactile surfaces ───────────────────────────────────── */
+.es-concrete {
+  background-color: #EDE7DC;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255,255,255,.6), transparent 42%),
+    radial-gradient(circle at 78% 68%, rgba(74,58,46,.07), transparent 48%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23c)' opacity='.4'/%3E%3C/svg%3E");
+  background-blend-mode: normal, normal, multiply;
+}
+.es-titanium {
+  background-image:
+    linear-gradient(104deg, #F4F1EA 0%, #E8E4DA 18%, #FBF8F2 34%, #E2DED3 52%, #F6F3EC 72%, #E6E1D6 100%),
+    repeating-linear-gradient(104deg, rgba(255,255,255,.5) 0 1px, transparent 1px 4px);
+}
+.es-obsidian {
+  background-image:
+    radial-gradient(ellipse 70% 60% at 74% 18%, rgba(79,174,126,.14), transparent 62%),
+    linear-gradient(168deg, #0B1210 0%, #070B0E 58%, #0A0F0D 100%);
+}
+
+/* ── Corporate green as a light source, not paint ───────── */
+.es-lit { position: relative; }
+.es-lit::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  pointer-events: none; opacity: 0;
+  box-shadow: 0 0 0 1px rgba(79,174,126,.5), 0 0 28px -4px var(--es-glow-green), inset 0 0 22px -12px var(--es-glow-green);
+  transition: opacity var(--es-t-fast) var(--es-ease);
+}
+.es-lit:hover::after, .es-lit:focus-visible::after { opacity: 1; }
+.es-etched {
+  position: relative;
+  text-shadow: 0 0 22px rgba(79,174,126,.28);
+}
+.es-led {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--es-signal);
+  box-shadow: 0 0 10px 1px var(--es-glow-green), 0 0 22px 3px rgba(79,174,126,.22);
+  animation: es-led 3.2s ease-in-out infinite;
+}
+@keyframes es-led { 0%,100% { opacity: 1; } 50% { opacity: .42; } }
+
+/* ── Applied: existing components become material ───────── */
+.es-topbar {
+  background: linear-gradient(180deg, rgba(252,250,246,.82), rgba(252,250,246,.62));
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  box-shadow: inset 0 -1px 0 rgba(74,58,46,.1), 0 1px 24px -12px rgba(28,34,30,.22);
+  border-bottom: 0;
+}
+.es-division-cta-warm,
+.service-card, .case-study-card, .insight-card,
+.founder-card, .al-role, .al-mv-card, .al-focus-card, .al-resource, .es-menu {
+  background: var(--es-glass-fill);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  border: 1px solid rgba(255,255,255,.5);
+  box-shadow: var(--es-glass-shadow), inset 0 1px 0 var(--es-glass-edge);
+}
+.service-card:hover, .case-study-card:hover, .insight-card:hover, .al-focus-card:hover, .al-resource:hover {
+  box-shadow: 0 30px 64px -30px rgba(28,34,30,.44), inset 0 1px 0 var(--es-glass-edge), 0 0 0 1px rgba(79,174,126,.3);
+}
+.btn-earth {
+  background: linear-gradient(168deg, #55432F 0%, var(--es-soil) 60%, #3A2C21 100%);
+  box-shadow: 0 18px 34px -18px rgba(74,58,46,.6), inset 0 1px 0 rgba(255,246,232,.22);
+}
+.btn-earth:hover { box-shadow: 0 22px 44px -18px rgba(74,58,46,.7), inset 0 1px 0 rgba(255,246,232,.3), 0 0 24px -6px var(--es-glow-gold); }
+.btn-primary {
+  background: linear-gradient(168deg, #24513A 0%, var(--green) 62%, #143222 100%);
+  box-shadow: 0 18px 34px -18px rgba(26,61,43,.62), inset 0 1px 0 rgba(255,255,255,.16);
+}
+.btn-primary:hover { box-shadow: 0 22px 44px -18px rgba(26,61,43,.72), inset 0 1px 0 rgba(255,255,255,.22), 0 0 26px -6px var(--es-glow-green); }
+
+/* The AI division: obsidian glass, green as illumination */
+.es-division-band { background-image: none; }
+.es-division-band .es-cap-group { padding: 1.35rem 1.25rem; border-radius: var(--es-r-lg);
+  background: linear-gradient(148deg, rgba(20,30,25,.6), rgba(8,13,11,.34));
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 22px 48px -28px rgba(0,0,0,.7);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.es-division-band .es-cap-group-title { text-shadow: 0 0 18px rgba(79,174,126,.4); }
+
+/* Cinematic depth: only decorative layers blur, never copy */
+.es-depth-far  { filter: blur(3px);   opacity: .8; }
+.es-depth-near { filter: blur(6px);   opacity: .55; }
+
+@media (max-width: 820px) {
+  .es-volumetric > .es-shaft { display: none; }
+  .es-flare { width: 200px; height: 200px; margin: -100px 0 0 -100px; }
+  .es-glass, .es-division-cta-warm, .service-card, .case-study-card, .insight-card,
+  .founder-card, .al-role, .al-mv-card, .al-focus-card, .al-resource {
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .es-volumetric > .es-shaft, .es-flare, .es-led { animation: none; }
+}
+
+/* ── Scroll-scrubbed cinema frame ────────────────────────── */
+.es-cinema { position: relative; overflow: hidden; margin: 0; height: 100%; background: #241C16; }
+.es-cinema-media {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; will-change: transform, opacity;
+  transition: opacity .8s var(--es-ease);
+}
+.es-cinema-still { transform: scale(1.08); }
+/* Colour grade + ground-to-sky wash, applied over whichever medium is live */
+.es-cinema-grade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(190deg, rgba(127,168,201,.22) 0%, transparent 38%),
+    linear-gradient(0deg, rgba(36,28,22,.5) 0%, rgba(36,28,22,.08) 34%, transparent 62%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(214,154,60,.18), transparent 70%);
+  mix-blend-mode: multiply;
+}
