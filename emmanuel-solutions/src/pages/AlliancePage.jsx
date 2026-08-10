@@ -1,5 +1,4 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { Navigation } from "../components/Navigation";
 import { Footer } from "../components/Footer";
 import { HeroSystem } from "../components/HeroSystem";
@@ -15,8 +14,6 @@ export function AlliancePage() {
   const { allianceId } = useParams();
   const navigate = useNavigate();
   const a = alliances[allianceId];
-
-  useEffect(() => { window.scrollTo(0, 0); }, [allianceId]);
 
   const goToContact = (e) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { LazyMotion, domAnimation, m, useScroll, useSpring } from "framer-motion";
 
@@ -12,6 +12,7 @@ import { HeroSystem }  from "./components/HeroSystem";
 import { Reveal, MaskLine } from "./components/Reveal";
 import { useAct } from "./hooks/useAct";
 import { Seo }         from "./components/Seo";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 import {
   services, caseStudies, insights, galleryImages, heroCopy, practiceAreas, credibilityStats, aiCapabilities
@@ -23,9 +24,22 @@ const InsightDetailPage   = lazy(() => import("./pages/InsightDetailPage").then(
 const CaseStudyDetailPage = lazy(() => import("./pages/CaseStudyDetailPage").then(m => ({ default: m.CaseStudyDetailPage })));
 const AlliancePage        = lazy(() => import("./pages/AlliancePage").then(m => ({ default: m.AlliancePage })));
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+/* Scroll behaviour that respects the back button.
+   On a new navigation we go to the top; on back/forward the browser's
+   own restored position is left alone. */
+function ScrollManager() {
+  const { pathname, hash } = useLocation();
+  const navigationType = useNavigationType();
+
+  useEffect(() => {
+    if (navigationType === "POP") return;
+    if (hash) {
+      const el = document.getElementById(hash.slice(1));
+      if (el) { el.scrollIntoView({ behavior: "smooth" }); return; }
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash, navigationType]);
+
   return null;
 }
 
@@ -322,7 +336,8 @@ export default function App() {
   return (
     <LazyMotion features={domAnimation} strict>
       <a href="#main" className="es-skip">Skip to content</a>
-      <ScrollToTop />
+      <ScrollManager />
+      <ErrorBoundary>
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -333,6 +348,7 @@ export default function App() {
           <Route path="*" element={<HomePage />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </LazyMotion>
   );
 }

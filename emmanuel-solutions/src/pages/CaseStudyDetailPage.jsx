@@ -1,5 +1,4 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
@@ -25,8 +24,6 @@ export function CaseStudyDetailPage() {
   const { caseStudyId } = useParams();
   const navigate        = useNavigate();
   const detail          = caseStudyDetails[caseStudyId];
-
-  useEffect(() => { window.scrollTo(0, 0); }, [caseStudyId]);
 
   const goToContact = (e) => {
     e.preventDefault();
@@ -204,11 +201,11 @@ export function CaseStudyDetailPage() {
                 Customer-Centric Business Models
               </m.h2>
               <div className="cs-biz-grid">
-                {detail.businessModels.map((m, i) => (
+                {detail.businessModels.map((model, i) => (
                   <m.div className="cs-biz-card" key={i} variants={fadeUp} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                    <span className="cs-biz-card__icon">{m.icon}</span>
-                    <h3>{m.title}</h3>
-                    <p>{m.desc}</p>
+                    <span className="cs-biz-card__icon">{model.icon}</span>
+                    <h3>{model.title}</h3>
+                    <p>{model.desc}</p>
                   </m.div>
                 ))}
               </div>

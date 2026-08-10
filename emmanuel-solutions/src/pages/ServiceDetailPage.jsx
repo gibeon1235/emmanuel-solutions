@@ -1,5 +1,4 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { m } from "framer-motion";
 import { Navigation } from "../components/Navigation";
 import { Footer }     from "../components/Footer";
@@ -26,8 +25,6 @@ export function ServiceDetailPage() {
   const { serviceId } = useParams();
   const navigate      = useNavigate();
   const detail        = serviceDetails[serviceId];
-
-  useEffect(() => { window.scrollTo(0, 0); }, [serviceId]);
 
   // Navigate home then scroll to contact
   const goToContact = (e) => {

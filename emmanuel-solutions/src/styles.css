@@ -3148,3 +3148,20 @@ img, svg, video { max-width: 100%; }
   .al-tl-item { grid-template-columns: 1fr; gap: .3rem; }
   .al-tl-date { padding-top: 0; }
 }
+
+/* ── Crash fallback: a failed route never blanks the site ── */
+.es-crash {
+  max-width: 620px; margin: 0 auto; padding: 22vh 2rem 12vh;
+  text-align: left;
+}
+.es-crash-label {
+  font-family: "Plus Jakarta Sans", sans-serif; font-size: .68rem;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--es-amber);
+  margin: 0 0 .9rem;
+}
+.es-crash-title {
+  font-family: "Inter Tight", sans-serif; font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 600; letter-spacing: -.028em; color: var(--es-ink); margin: 0 0 1rem;
+}
+.es-crash-body { font-size: .98rem; line-height: 1.75; color: var(--ink-mid); max-width: 52ch; }
+.es-crash-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.6rem; }
