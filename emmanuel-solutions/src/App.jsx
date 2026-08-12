@@ -13,6 +13,7 @@ import { Reveal, MaskLine } from "./components/Reveal";
 import { Seo }         from "./components/Seo";
 import { CinemaScroll } from "./components/CinemaScroll";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { RailMascotItem } from "./components/RailMascotItem";
 
 import {
   services, caseStudies, insights, galleryImages, heroCopy, practiceAreas, credibilityStats, aiCapabilities
@@ -153,15 +154,19 @@ function HomePage() {
 
         <div className="es-rail es-rail-warm">
           {practiceAreas.map((p, i) => (
-            <m.a key={p.id} className="es-rail-item" href={`/services/${p.id}`}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
-              <span className="es-rail-name">
-                <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
-                {p.name}
-              </span>
-              <span className="es-rail-note">{p.note}</span>
-            </m.a>
+            p.id === "sustainable-tech" ? (
+              <RailMascotItem key={p.id} p={p} delay={0.98 + i * 0.09} />
+            ) : (
+              <m.a key={p.id} className="es-rail-item" href={`/services/${p.id}`}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+                <span className="es-rail-name">
+                  <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
+                  {p.name}
+                </span>
+                <span className="es-rail-note">{p.note}</span>
+              </m.a>
+            )
           ))}
         </div>
 
