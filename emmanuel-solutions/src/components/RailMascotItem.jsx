@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect, Suspense, lazy } from "react";
 import { m } from "framer-motion";
+import { QuietBoundary } from "./QuietBoundary";
 
 const MascotScene = lazy(() => import("../three/MascotScene.jsx"));
 
@@ -14,10 +15,25 @@ const MascotScene = lazy(() => import("../three/MascotScene.jsx"));
    The Three.js chunk is only fetched on first pointer-enter, not on
    page load, so visitors who never hover this item pay nothing. */
 
+/* Cheap one-off WebGL probe. Some machines and locked-down browsers
+   report a pointer and no reduced-motion preference but cannot give
+   us a GL context at all — better to find out before downloading
+   900 KB of renderer. */
+function hasWebGL() {
+  try {
+    const c = document.createElement("canvas");
+    return !!(window.WebGLRenderingContext &&
+      (c.getContext("webgl2") || c.getContext("webgl")));
+  } catch (e) {
+    return false;
+  }
+}
+
 function eligible() {
   if (typeof window === "undefined") return false;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return false;
+  return hasWebGL();
 }
 
 export function RailMascotItem({ p, delay }) {
@@ -43,6 +59,15 @@ export function RailMascotItem({ p, delay }) {
     el.style.transform = "";
     el.style.opacity = "";
   }, []);
+
+  /* If the scene throws on this device, stop trying: drop the canvas,
+     restore the card, and never arm again for this session. */
+  const handleFail = useCallback(() => {
+    capable.current = false;
+    setArmed(false);
+    setActive(false);
+    reset();
+  }, [reset]);
 
   const handleEnter = () => {
     if (!capable.current) return;
@@ -72,9 +97,11 @@ export function RailMascotItem({ p, delay }) {
 
       {armed && (
         <span className="es-rail-mascot-stage" aria-hidden="true">
-          <Suspense fallback={null}>
-            <MascotScene active={active} onLift={applyLift} onCycleEnd={reset} colorAccent={p.tone} />
-          </Suspense>
+          <QuietBoundary onFail={handleFail}>
+            <Suspense fallback={null}>
+              <MascotScene active={active} onLift={applyLift} onCycleEnd={reset} colorAccent={p.tone} />
+            </Suspense>
+          </QuietBoundary>
         </span>
       )}
     </m.a>
