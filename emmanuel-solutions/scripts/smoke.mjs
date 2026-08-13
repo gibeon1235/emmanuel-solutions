@@ -10,8 +10,14 @@ import { ServiceDetailPage }   from "../src/components/../pages/ServiceDetailPag
 import { InsightDetailPage }   from "../src/pages/InsightDetailPage.jsx";
 import { CaseStudyDetailPage } from "../src/pages/CaseStudyDetailPage.jsx";
 import { AlliancePage }        from "../src/pages/AlliancePage.jsx";
+import App                     from "../src/App.jsx";
+
+/* The homepage is rendered through App so the real route table runs —
+   this is the page the service mascot lives on. */
+function HomeViaApp() { return React.createElement(App); }
 
 const CASES = [
+  ["/",                              "/*",                         HomeViaApp],
   ["/services/sustainable-tech",     "/services/:serviceId",       ServiceDetailPage],
   ["/services/circular-economy",     "/services/:serviceId",       ServiceDetailPage],
   ["/services/innovation-training",  "/services/:serviceId",       ServiceDetailPage],

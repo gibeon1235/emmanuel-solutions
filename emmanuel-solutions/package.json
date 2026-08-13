@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "smoke": "vite-node scripts/smoke.mjs",
-    "mascot": "vite-node scripts/mascot-timeline.mjs",
-    "mount": "vite-node scripts/mascot-mount.mjs"
+    "mount": "vite-node scripts/mascot-mount.mjs",
+    "farmer": "vite-node scripts/farmer-timeline.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.18.0",
