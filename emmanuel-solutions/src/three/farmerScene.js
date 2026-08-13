@@ -5,8 +5,8 @@ import { PARTS, partAt, poseAt, pulseAt, TOTAL } from "./farmerTimeline.js";
    Kept framework-free so it can be created, updated and disposed
    without React knowing anything about its internals. */
 
-const SX = 1.95;   // cold store x
-const RX = 3.35;   // solar rig x
+const SX = 1.35;   // cold store x
+const RX = 2.50;   // solar rig x
 
 function mkm(c, o) {
   o = o || {};
@@ -17,7 +17,8 @@ function mkm(c, o) {
     emissive: o.e || 0x000000,
     emissiveIntensity: o.ei || 0,
     transparent: !!o.t,
-    opacity: o.o === undefined ? 1 : o.o
+    opacity: o.o === undefined ? 1 : o.o,
+    envMapIntensity: o.env === undefined ? 0.42 : o.env
   });
 }
 function glowm(c, o) {
@@ -46,16 +47,16 @@ export function buildFarmerScene() {
   const key = new THREE.DirectionalLight(0xfff0d4, 1.6);
   key.position.set(3.0, 4.3, 2.6);
   key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
-  key.shadow.camera.left = -8; key.shadow.camera.right = 8;
-  key.shadow.camera.top = 6; key.shadow.camera.bottom = -5;
-  key.shadow.radius = 3;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -5; key.shadow.camera.right = 5;
+  key.shadow.camera.top = 4; key.shadow.camera.bottom = -3;
+  key.shadow.radius = 2;
   const fill = new THREE.DirectionalLight(0xd8e8ff, 0.7);
   fill.position.set(-2.6, 1.4, 2.2);
   const rim = new THREE.DirectionalLight(0xbfe4ff, 1.1);
   rim.position.set(-3.2, 2.0, -2.6);
   const warm = new THREE.PointLight(0xffc94d, 0, 10);
-  warm.position.set(3.4, 1.9, -0.5);
+  warm.position.set(2.5, 1.5, -0.5);
   group.add(hemi, key, fill, rim, warm);
 
   const shadowMat = new THREE.ShadowMaterial({ opacity: 0.24 });
@@ -112,28 +113,28 @@ export function buildFarmerScene() {
   stL.rotation.x = -0.42; bodyG.add(stL);
   const stR = M(new THREE.BoxGeometry(0.085, 0.44, 0.045), olive, 0.17, 0.76, 0.09);
   stR.rotation.x = -0.42; bodyG.add(stR);
-  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 22), olive, 0, 0.16, 0);
+  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 30), olive, 0, 0.16, 0);
   hips.scale.set(1.16, 1, 0.92); bodyG.add(hips);
-  bodyG.add(M(new THREE.CylinderGeometry(0.295, 0.295, 0.075, 22), leather, 0, 0.05, 0));
+  bodyG.add(M(new THREE.CylinderGeometry(0.295, 0.295, 0.075, 30), leather, 0, 0.05, 0));
   bodyG.add(M(new THREE.BoxGeometry(0.11, 0.08, 0.03), brass, 0, 0.05, 0.265));
 
   const headG = new THREE.Group();
   headG.position.set(0, 0.9, 0);
   root.add(headG);
-  const headM = M(new THREE.SphereGeometry(0.3, 32, 28), skin, 0, 0.28, 0);
+  const headM = M(new THREE.SphereGeometry(0.3, 40, 32), skin, 0, 0.28, 0);
   headM.scale.set(1, 1.02, 0.95); headG.add(headM);
-  headG.add(M(new THREE.CylinderGeometry(0.12, 0.15, 0.12, 16), skin, 0, 0.02, 0));
-  const beard = M(new THREE.SphereGeometry(0.283, 26, 22), beardM, 0, 0.185, 0.028);
+  headG.add(M(new THREE.CylinderGeometry(0.12, 0.15, 0.12, 24), skin, 0, 0.02, 0));
+  const beard = M(new THREE.SphereGeometry(0.283, 34, 28), beardM, 0, 0.185, 0.028);
   beard.scale.set(1, 0.84, 0.99); headG.add(beard);
-  headG.add(M(new THREE.SphereGeometry(0.128, 18, 14), beardM, 0, 0.1, 0.2));
-  const must = M(new THREE.CapsuleGeometry(0.038, 0.1, 5, 12), beardM, 0, 0.243, 0.243);
+  headG.add(M(new THREE.SphereGeometry(0.128, 24, 20), beardM, 0, 0.1, 0.2));
+  const must = M(new THREE.CapsuleGeometry(0.038, 0.1, 8, 18), beardM, 0, 0.243, 0.243);
   must.rotation.z = Math.PI / 2; headG.add(must);
-  const faceP = M(new THREE.SphereGeometry(0.278, 26, 22), skin, 0, 0.315, 0.03);
+  const faceP = M(new THREE.SphereGeometry(0.278, 34, 28), skin, 0, 0.315, 0.03);
   faceP.scale.set(0.93, 0.72, 0.95); headG.add(faceP);
   headG.add(M(new THREE.SphereGeometry(0.056, 16, 14), skin2, 0, 0.295, 0.265));
-  const scL = M(new THREE.SphereGeometry(0.064, 18, 16), eyeW, -0.1, 0.375, 0.208);
+  const scL = M(new THREE.SphereGeometry(0.064, 24, 20), eyeW, -0.1, 0.375, 0.208);
   scL.scale.set(0.92, 0.86, 0.45); headG.add(scL);
-  const scR = M(new THREE.SphereGeometry(0.064, 18, 16), eyeW, 0.1, 0.375, 0.208);
+  const scR = M(new THREE.SphereGeometry(0.064, 24, 20), eyeW, 0.1, 0.375, 0.208);
   scR.scale.set(0.92, 0.86, 0.45); headG.add(scR);
   const irL = M(new THREE.SphereGeometry(0.03, 14, 12), irisM, -0.1, 0.372, 0.232);
   irL.scale.set(1, 1, 0.55); headG.add(irL);
@@ -147,9 +148,9 @@ export function buildFarmerScene() {
   lidL.scale.set(0.94, 0.5, 0.5); headG.add(lidL);
   const lidR = M(new THREE.SphereGeometry(0.067, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), skin, 0.1, 0.378, 0.207);
   lidR.scale.set(0.94, 0.5, 0.5); headG.add(lidR);
-  const bwL = M(new THREE.CapsuleGeometry(0.018, 0.075, 4, 10), beardM, -0.1, 0.437, 0.203);
+  const bwL = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, -0.1, 0.437, 0.203);
   bwL.rotation.z = Math.PI / 2; headG.add(bwL);
-  const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 4, 10), beardM, 0.1, 0.437, 0.203);
+  const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.1, 0.437, 0.203);
   bwR.rotation.z = Math.PI / 2; headG.add(bwR);
   const mouth = M(new THREE.TorusGeometry(0.052, 0.0135, 8, 18, Math.PI), mouthM, 0, 0.2, 0.243);
   mouth.rotation.z = Math.PI; headG.add(mouth);
@@ -159,23 +160,23 @@ export function buildFarmerScene() {
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, 0.288, 0.3, 0));
 
   const hatG = new THREE.Group(); headG.add(hatG);
-  hatG.add(M(new THREE.SphereGeometry(0.225, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.5), straw, 0, 0.585, 0));
-  hatG.add(M(new THREE.CylinderGeometry(0.225, 0.248, 0.17, 22), straw, 0, 0.515, 0));
-  const brim = M(new THREE.CylinderGeometry(0.42, 0.42, 0.032, 26), straw, 0, 0.45, 0);
+  hatG.add(M(new THREE.SphereGeometry(0.225, 32, 20, 0, Math.PI * 2, 0, Math.PI * 0.5), straw, 0, 0.585, 0));
+  hatG.add(M(new THREE.CylinderGeometry(0.225, 0.248, 0.17, 30), straw, 0, 0.515, 0));
+  const brim = M(new THREE.CylinderGeometry(0.42, 0.42, 0.032, 36), straw, 0, 0.45, 0);
   brim.scale.set(1, 1, 0.96); hatG.add(brim);
-  hatG.add(M(new THREE.CylinderGeometry(0.252, 0.252, 0.05, 22), bandM, 0, 0.475, 0));
+  hatG.add(M(new THREE.CylinderGeometry(0.252, 0.252, 0.05, 30), bandM, 0, 0.475, 0));
 
   function mkArm(px) {
     const pv = new THREE.Group(); pv.position.set(px, 0.74, 0);
     const up = new THREE.Group(); pv.add(up);
-    up.add(M(new THREE.CapsuleGeometry(0.1, 0.14, 6, 16), cream, 0, -0.12, 0));
-    up.add(M(new THREE.CylinderGeometry(0.112, 0.1, 0.05, 14), cream, 0, -0.22, 0));
+    up.add(M(new THREE.CapsuleGeometry(0.1, 0.14, 10, 24), cream, 0, -0.12, 0));
+    up.add(M(new THREE.CylinderGeometry(0.112, 0.1, 0.05, 22), cream, 0, -0.22, 0));
     const fo = new THREE.Group(); fo.position.set(0, -0.28, 0); up.add(fo);
-    fo.add(M(new THREE.CapsuleGeometry(0.088, 0.18, 6, 14), skin, 0, -0.12, 0));
+    fo.add(M(new THREE.CapsuleGeometry(0.088, 0.18, 10, 24), skin, 0, -0.12, 0));
     const hd = new THREE.Group(); hd.position.set(0, -0.28, 0); fo.add(hd);
-    const palm = M(new THREE.SphereGeometry(0.1, 16, 14), skin, 0, 0, 0);
+    const palm = M(new THREE.SphereGeometry(0.1, 22, 18), skin, 0, 0, 0);
     palm.scale.set(1, 1.05, 0.8); hd.add(palm);
-    const th = M(new THREE.CapsuleGeometry(0.03, 0.05, 4, 10), skin, 0.068, 0.03, 0.05);
+    const th = M(new THREE.CapsuleGeometry(0.03, 0.05, 8, 16), skin, 0.068, 0.03, 0.05);
     th.rotation.z = -0.6; hd.add(th);
     bodyG.add(pv);
     return { up, fo, hand: hd, thumb: th };
@@ -183,7 +184,7 @@ export function buildFarmerScene() {
   const armR = mkArm(-0.4), armL = mkArm(0.4);
 
   const carrot = new THREE.Group();
-  const croot = M(new THREE.ConeGeometry(0.06, 0.28, 14), carrotM, 0, 0, 0);
+  const croot = M(new THREE.ConeGeometry(0.06, 0.28, 22), carrotM, 0, 0, 0);
   croot.rotation.x = Math.PI; carrot.add(croot);
   for (let k = 0; k < 3; k++) {
     const rg = M(new THREE.TorusGeometry(0.05 - k * 0.012, 0.006, 6, 14), carrotM2, 0, 0.02 - k * 0.07, 0);
@@ -203,10 +204,10 @@ export function buildFarmerScene() {
   function mkLeg(px) {
     const pv = new THREE.Group(); pv.position.set(px, 0.06, 0);
     const th = new THREE.Group(); pv.add(th);
-    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 6, 16), jean, 0, -0.13, 0));
+    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 10, 24), jean, 0, -0.13, 0));
     const sh = new THREE.Group(); sh.position.set(0, -0.26, 0); th.add(sh);
-    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 6, 14), jean, 0, -0.08, 0));
-    sh.add(M(new THREE.CylinderGeometry(0.125, 0.135, 0.16, 16), leather, 0, -0.2, 0));
+    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 10, 24), jean, 0, -0.08, 0));
+    sh.add(M(new THREE.CylinderGeometry(0.125, 0.135, 0.16, 24), leather, 0, -0.2, 0));
     sh.add(M(new THREE.SphereGeometry(0.135, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), leather, 0, -0.28, 0.03));
     sh.add(M(new THREE.BoxGeometry(0.22, 0.05, 0.3), leather2, 0, -0.31, 0.04));
     bodyG.add(pv);
@@ -246,7 +247,7 @@ export function buildFarmerScene() {
 
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(RX, -0.95, 0.1),
-    new THREE.Vector3(2.75, -1.02, 0.18),
+    new THREE.Vector3(1.95, -1.02, 0.18),
     new THREE.Vector3(SX + 0.25, -0.9, 0.24)
   ]);
   const cableGeo = new THREE.TubeGeometry(curve, 24, 0.026, 8);
@@ -365,7 +366,7 @@ export function buildFarmerScene() {
     cableM.opacity = p.cable;
     cable.visible = p.cable > 0.02;
 
-    sunG.position.set(3.6, p.sunY, -1.7);
+    sunG.position.set(2.55, p.sunY, -1.7);
     sunG.scale.setScalar(Math.max(0.01, p.sun) * (1 + Math.sin(t * 1.7) * 0.025));
     sunG.rotation.z = t * 0.16;
     g1.opacity = p.sun * (0.46 + Math.sin(t * 2.3) * 0.06);

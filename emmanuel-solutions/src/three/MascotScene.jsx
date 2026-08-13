@@ -1,6 +1,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { buildFarmerScene } from "./farmerScene.js";
 import { TOTAL } from "./farmerTimeline.js";
 
@@ -12,7 +13,7 @@ import { TOTAL } from "./farmerTimeline.js";
    so React owns the lifecycle while the scene owns its own internals —
    and disposal is explicit rather than left to the garbage collector. */
 
-const WORLD_WIDTH = 8.6;
+const WORLD_WIDTH = 6.4;
 
 function FitCamera() {
   const { camera, size } = useThree();
@@ -22,10 +23,28 @@ function FitCamera() {
     const visibleHeight = WORLD_WIDTH / aspect;
     const dist = (visibleHeight / 2) / Math.tan(vFov / 2);
     camera.fov = 30;
-    camera.position.set(0.4, 0.5, Math.min(12, Math.max(3.5, dist)));
-    camera.lookAt(0.4, 0.3, 0);
+    camera.position.set(0.2, 0.35, Math.min(12, Math.max(3.0, dist)));
+    camera.lookAt(0.2, 0.2, 0);
     camera.updateProjectionMatrix();
   }, [camera, size]);
+  return null;
+}
+
+/* A procedural room environment — no HDRI file to download. Gives the
+   materials something to reflect, which is most of the difference
+   between "solid object" and "flat shape". */
+function Environment() {
+  const { gl, scene } = useThree();
+  useEffect(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const env = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    scene.environment = env.texture;
+    return () => {
+      scene.environment = null;
+      env.texture.dispose();
+      pmrem.dispose();
+    };
+  }, [gl, scene]);
   return null;
 }
 
@@ -53,9 +72,9 @@ function Rig({ onProgress }) {
 export default function MascotScene({ onProgress }) {
   return (
     <Canvas
-      dpr={[1, 1.75]}
+      dpr={[1, 2]}
       shadows
-      gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
+      gl={{ alpha: true, antialias: true }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.toneMappingExposure = 1.08;
@@ -63,6 +82,7 @@ export default function MascotScene({ onProgress }) {
       style={{ background: "transparent", pointerEvents: "none" }}
     >
       <FitCamera />
+      <Environment />
       <Rig onProgress={onProgress} />
     </Canvas>
   );

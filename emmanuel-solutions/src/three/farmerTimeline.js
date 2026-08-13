@@ -9,8 +9,8 @@
    and the same beats can drive the other three services later. */
 
 export const TOTAL = 4.9;
-export const HOME  = -2.55;
-export const START = -4.9;
+export const HOME  = -1.95;
+export const START = -4.2;
 export const BASE_Y = -0.4;
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
@@ -80,7 +80,7 @@ export function poseAt(t) {
     nod: appr > 0 ? Math.sin(appr * Math.PI * 2) * 0.11 : 0,
     look: walking ? -0.35 : mix(0.85, 0.15, appr),
     sun, flow, chill, appr,
-    sunY: mix(1.05, 2.1, ease(sun)),
+    sunY: mix(0.55, 1.25, ease(sun)),
     panelTilt: -0.06 - sun * 0.58,
     cable: clamp01((t - 1.95) / 0.3)
   };
