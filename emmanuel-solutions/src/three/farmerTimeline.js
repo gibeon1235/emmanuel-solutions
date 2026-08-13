@@ -68,12 +68,16 @@ export function poseAt(t) {
     bob: walking ? Math.abs(Math.sin(wp)) * 0.07 : 0,
     wp,
     turn: walking ? 0 : mix(0, 0.3, clamp01((t - 0.7) / 0.3)),
+    /* Watching pose is arms relaxed at his sides with a natural elbow
+       break. The old pose folded both forearms up across his chest,
+       which read as holding something invisible. Only the thumbs-up
+       raises an arm, so the gesture actually lands. */
     armR: walking
       ? { up: 0.2 + Math.sin(wp) * 0.35, fo: -0.3 }
-      : { up: mix(0.85, 0.6, thumb), fo: mix(-1.45, -1.95, thumb) },
+      : { up: mix(0.16, 0.52, thumb), fo: mix(-0.26, -1.92, thumb) },
     armL: walking
-      ? { up: -0.22 + Math.sin(wp) * 0.2, fo: 0.5 }
-      : { up: mix(-0.26, -0.5, appr), fo: mix(0.55, 0.8, appr) },
+      ? { up: -0.22 + Math.sin(wp) * 0.2, fo: 0.4 }
+      : { up: mix(-0.16, -0.24, appr), fo: mix(0.34, 0.46, appr) },
     thumb,
     smile: 0.25 + clamp01((t - 1.0) / 1.2) * 0.25 + appr * 0.45,
     brow: clamp01((t - 1.0) / 1.0) * 0.3 + appr * 0.4,

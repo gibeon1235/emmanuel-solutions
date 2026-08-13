@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "smoke": "vite-node scripts/smoke.mjs",
     "mount": "vite-node scripts/mascot-mount.mjs",
-    "farmer": "vite-node scripts/farmer-timeline.mjs"
+    "farmer": "vite-node scripts/farmer-timeline.mjs",
+    "face": "vite-node scripts/farmer-face.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.18.0",

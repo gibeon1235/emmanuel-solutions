@@ -127,35 +127,44 @@ export function buildFarmerScene() {
   const beard = M(new THREE.SphereGeometry(0.283, 34, 28), beardM, 0, 0.185, 0.028);
   beard.scale.set(1, 0.84, 0.99); headG.add(beard);
   headG.add(M(new THREE.SphereGeometry(0.128, 24, 20), beardM, 0, 0.1, 0.2));
-  const must = M(new THREE.CapsuleGeometry(0.038, 0.1, 8, 18), beardM, 0, 0.243, 0.243);
+  const must = M(new THREE.CapsuleGeometry(0.038, 0.1, 8, 18), beardM, 0, 0.252, 0.320);
   must.rotation.z = Math.PI / 2; headG.add(must);
   const faceP = M(new THREE.SphereGeometry(0.278, 34, 28), skin, 0, 0.315, 0.03);
   faceP.scale.set(0.93, 0.72, 0.95); headG.add(faceP);
-  headG.add(M(new THREE.SphereGeometry(0.056, 16, 14), skin2, 0, 0.295, 0.265));
-  const scL = M(new THREE.SphereGeometry(0.064, 24, 20), eyeW, -0.1, 0.375, 0.208);
-  scL.scale.set(0.92, 0.86, 0.45); headG.add(scL);
-  const scR = M(new THREE.SphereGeometry(0.064, 24, 20), eyeW, 0.1, 0.375, 0.208);
-  scR.scale.set(0.92, 0.86, 0.45); headG.add(scR);
-  const irL = M(new THREE.SphereGeometry(0.03, 14, 12), irisM, -0.1, 0.372, 0.232);
-  irL.scale.set(1, 1, 0.55); headG.add(irL);
-  const irR = M(new THREE.SphereGeometry(0.03, 14, 12), irisM, 0.1, 0.372, 0.232);
-  irR.scale.set(1, 1, 0.55); headG.add(irR);
-  const puL = M(new THREE.SphereGeometry(0.014, 10, 10), darkM, -0.1, 0.372, 0.244); headG.add(puL);
-  const puR = M(new THREE.SphereGeometry(0.014, 10, 10), darkM, 0.1, 0.372, 0.244); headG.add(puR);
-  const hlL = M(new THREE.SphereGeometry(0.011, 8, 8), whiteM, -0.086, 0.392, 0.243); headG.add(hlL);
-  const hlR = M(new THREE.SphereGeometry(0.011, 8, 8), whiteM, 0.114, 0.392, 0.243); headG.add(hlR);
-  const lidL = M(new THREE.SphereGeometry(0.067, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), skin, -0.1, 0.378, 0.207);
-  lidL.scale.set(0.94, 0.5, 0.5); headG.add(lidL);
-  const lidR = M(new THREE.SphereGeometry(0.067, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), skin, 0.1, 0.378, 0.207);
-  lidR.scale.set(0.94, 0.5, 0.5); headG.add(lidR);
-  const bwL = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, -0.1, 0.437, 0.203);
+  headG.add(M(new THREE.SphereGeometry(0.056, 16, 14), skin2, 0, 0.295, 0.290));
+  /* Eyes are built as groups that sit clearly proud of the face.
+     The previous version laid the sclera almost flush with the head
+     sphere, so at a three-quarter angle the far eye was swallowed by
+     the head geometry and read as shut. Blinking now scales the whole
+     eye group rather than relying on a separate lid mesh, which sat
+     behind the eye and could never have occluded anything. */
+  function mkEye(side) {
+    const g = new THREE.Group();
+    g.position.set(side * 0.115, 0.375, 0.246);
+    const white = M(new THREE.SphereGeometry(0.075, 26, 22), eyeW, 0, 0, 0);
+    white.scale.set(0.94, 1, 0.62);
+    g.add(white);
+    const look = new THREE.Group();
+    look.position.set(0, 0, 0.028);
+    g.add(look);
+    const iris = M(new THREE.SphereGeometry(0.036, 18, 16), irisM, 0, 0, 0.022);
+    iris.scale.set(1, 1, 0.5);
+    look.add(iris);
+    look.add(M(new THREE.SphereGeometry(0.018, 12, 12), darkM, 0, 0, 0.038));
+    look.add(M(new THREE.SphereGeometry(0.013, 10, 10), whiteM, -0.018, 0.02, 0.042));
+    headG.add(g);
+    return { g, look };
+  }
+  const eyeL = mkEye(-1), eyeR = mkEye(1);
+
+  const bwL = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, -0.108, 0.437, 0.240);
   bwL.rotation.z = Math.PI / 2; headG.add(bwL);
-  const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.1, 0.437, 0.203);
+  const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.108, 0.437, 0.240);
   bwR.rotation.z = Math.PI / 2; headG.add(bwR);
-  const mouth = M(new THREE.TorusGeometry(0.052, 0.0135, 8, 18, Math.PI), mouthM, 0, 0.2, 0.243);
+  const mouth = M(new THREE.TorusGeometry(0.052, 0.0135, 8, 18, Math.PI), mouthM, 0, 0.205, 0.330);
   mouth.rotation.z = Math.PI; headG.add(mouth);
-  headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, -0.178, 0.283, 0.172));
-  headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, 0.178, 0.283, 0.172));
+  headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, -0.178, 0.283, 0.205));
+  headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, 0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, -0.288, 0.3, 0));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, 0.288, 0.3, 0));
 
@@ -174,10 +183,12 @@ export function buildFarmerScene() {
     const fo = new THREE.Group(); fo.position.set(0, -0.28, 0); up.add(fo);
     fo.add(M(new THREE.CapsuleGeometry(0.088, 0.18, 10, 24), skin, 0, -0.12, 0));
     const hd = new THREE.Group(); hd.position.set(0, -0.28, 0); fo.add(hd);
-    const palm = M(new THREE.SphereGeometry(0.1, 22, 18), skin, 0, 0, 0);
-    palm.scale.set(1, 1.05, 0.8); hd.add(palm);
-    const th = M(new THREE.CapsuleGeometry(0.03, 0.05, 8, 16), skin, 0.068, 0.03, 0.05);
-    th.rotation.z = -0.6; hd.add(th);
+    const palm = M(new THREE.SphereGeometry(0.115, 22, 18), skin, 0, -0.02, 0);
+    palm.scale.set(1, 1.08, 0.82); hd.add(palm);
+    const knuck = M(new THREE.BoxGeometry(0.13, 0.085, 0.115), skin, 0, 0.055, 0);
+    hd.add(knuck);
+    const th = M(new THREE.CapsuleGeometry(0.034, 0.055, 8, 16), skin, 0.078, 0.035, 0.055);
+    th.rotation.z = -0.62; hd.add(th);
     bodyG.add(pv);
     return { up, fo, hand: hd, thumb: th };
   }
@@ -319,25 +330,25 @@ export function buildFarmerScene() {
     headG.rotation.y = p.look * 0.3;
     mouth.scale.set(0.85 + p.smile * 0.55, 0.75 + p.smile * 0.7, 1);
     cheekM.opacity = p.smile * 0.35;
-    bwL.position.y = 0.437 + p.brow * 0.028;
-    bwR.position.y = 0.437 + p.brow * 0.028;
+    bwL.position.y = 0.437 + p.brow * 0.03;
+    bwR.position.y = 0.437 + p.brow * 0.03;
     lookCur += (p.look - lookCur) * 0.1;
-    const eo = lookCur * 0.014;
-    irL.position.x = -0.1 + eo; irR.position.x = 0.1 + eo;
-    puL.position.x = -0.1 + eo; puR.position.x = 0.1 + eo;
-    hlL.position.x = -0.086 + eo; hlR.position.x = 0.114 + eo;
+    const eo = lookCur * 0.016;
+    eyeL.look.position.x = eo;
+    eyeR.look.position.x = eo;
 
     blinkT += dt;
+    let lidOpen = 1;
     if (blinkT > nextBlink) {
-      const bp = (blinkT - nextBlink) / 0.12;
+      const bp = (blinkT - nextBlink) / 0.13;
       if (bp < 1) {
-        const s = Math.sin(bp * Math.PI);
-        lidL.scale.y = 0.5 + s * 1.1; lidR.scale.y = 0.5 + s * 1.1;
+        lidOpen = 1 - Math.sin(bp * Math.PI) * 0.92;
       } else {
-        lidL.scale.y = 0.5; lidR.scale.y = 0.5;
-        blinkT = 0; nextBlink = 1.7 + Math.random() * 2;
+        blinkT = 0; nextBlink = 1.8 + Math.random() * 2.4;
       }
     }
+    eyeL.g.scale.y = lidOpen;
+    eyeR.g.scale.y = lidOpen;
 
     for (let i = 0; i < PARTS.length; i++) {
       const spec = PARTS[i];
