@@ -25,7 +25,8 @@ global.ResizeObserver = class { observe(){} unobserve(){} disconnect(){} };
 dom.window.ResizeObserver = global.ResizeObserver;
 global.self = dom.window;
 
-// Force the eligibility gate open so the scene really mounts.
+// Answer the media queries the rail asks about. This does NOT open the
+// eligibility gate — see the note by the rail-item check below.
 dom.window.matchMedia = (q) => ({
   matches: /hover: hover|pointer: fine/.test(q),
   media: q, addEventListener(){}, removeEventListener(){}, addListener(){}, removeListener(){}
@@ -51,27 +52,28 @@ const areas = [
 
 const root = createRoot(document.getElementById("root"));
 let threw = null;
+let items = 0;
 try {
   root.render(React.createElement(LazyMotion, { features: domAnimation },
     React.createElement(ServiceRail, { areas })));
   await new Promise(r => setTimeout(r, 300));
 
-  const links = document.querySelectorAll(".es-rail-item");
-  if (links.length !== 4) throw new Error("expected 4 rail items, got " + links.length);
+  items = document.querySelectorAll(".es-rail-item").length;
 
-  // Hover the card that has a scene — triggers the lazy chunk + canvas.
-  links[0].dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true }));
-  await new Promise(r => setTimeout(r, 1200));
-  const stageAfterEnter = !!document.querySelector(".es-rail-stage");
+  /* Do NOT add a "the stage appears when you hover a card with a scene"
+     assertion here. It cannot pass under jsdom and will always read as a
+     failure: hasWebGL() calls canvas.getContext("webgl"), jsdom returns
+     null, so eligible() correctly returns false and no stage ever mounts.
+     Stubbing window.WebGLRenderingContext does not change that — the gate
+     asks for a context, not for the constructor.
 
-  // Move to a card with no scene yet — the stage must stand down.
-  links[1].dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true, relatedTarget: links[1] }));
-  links[1].dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true }));
-  await new Promise(r => setTimeout(r, 400));
-  const stageAfterSwitch = !!document.querySelector(".es-rail-stage");
-
-  console.log("stage appears on the card with a scene:", stageAfterEnter ? "YES (good)" : "NO (bad)");
-  console.log("stage stands down on a card without one:", stageAfterSwitch ? "NO (bad)" : "YES (good)");
+     That decision is not untested. `npm run capability` covers the whole
+     eligibility matrix — WebGL present, absent, throwing, reduced motion,
+     coarse pointer, SSR — against the same capability.js this rail uses.
+     What THIS script proves is the part capability.js cannot: that the
+     component tree mounts against React 18 + fiber 8 without crashing,
+     and that failing the gate degrades quietly instead of taking the
+     page to the crash panel. */
 } catch (e) {
   threw = e;
 }
@@ -80,12 +82,33 @@ console.warn = origWarn; console.error = origErr;
 
 const html = document.getElementById("root").innerHTML;
 const crashed = html.includes("es-crash");
-const stillThere = html.includes("Sustainable Technology") && html.includes("Circular Economy");
-
-console.log("mounted without throwing to top level:", threw === null ? "YES" : "NO -> " + threw.message);
-console.log("crash panel rendered:", crashed ? "YES (bad)" : "NO (good)");
-console.log("all four rail items still present:", stillThere ? "YES (good)" : "NO (bad)");
+// Every name, not just the first two — this check once passed with three of
+// the four items rendered, because it only ever looked for areas[0] and [1].
+const missing = areas.map(a => a.name).filter(n => !html.includes(n));
 const reactErr = warnings.filter(w => /ERR:/.test(w) && !/not wrapped in act|WebGL|Could not create/i.test(w));
-console.log("unexpected React errors:", reactErr.length ? reactErr.slice(0,3) : "none");
+
+let fails = 0;
+const check = (ok, label, detail) => {
+  if (!ok) fails++;
+  console.log((ok ? "PASS  " : "FAIL  ") + label + (detail ? "  " + detail : ""));
+};
+
+check(threw === null, "mounted without throwing to top level", threw ? "-> " + threw.message : "");
+check(items === 4, "rail rendered four items", "got " + items);
+check(!crashed, "crash panel not rendered");
+// Both halves matter: `missing` catches an area that was passed in but never
+// rendered, and the length catches the fixture itself drifting away from four.
+// Without the second half this check is relative to whatever `areas` holds, so
+// dropping an area would silently satisfy it — the same overpromising label
+// this check already had once.
+check(areas.length === 4 && missing.length === 0, "all four rail items still present",
+  missing.length ? "missing: " + missing.join(", ")
+    : areas.length !== 4 ? "fixture has " + areas.length + " areas, expected 4" : "");
+check(reactErr.length === 0, "no unexpected React errors",
+  reactErr.length ? JSON.stringify(reactErr.slice(0, 3)) : "");
+
 const degraded = warnings.filter(w => /degrading silently/.test(w));
-console.log("QuietBoundary caught + degraded:", degraded.length ? "YES" : "no (scene did not fail)");
+console.log("note: QuietBoundary caught + degraded:", degraded.length ? "YES" : "no (scene did not fail)");
+
+console.log(fails ? `\n${fails} mount check(s) failed` : "\nthe rail mounts cleanly on React 18 + fiber 8");
+process.exit(fails ? 1 : 0);
