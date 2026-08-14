@@ -16,8 +16,8 @@ const OCC = {
 };
 
 const FEATURES = [
-  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.075 * 0.62, behind: ["head", "face"] },
-  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.075 * 0.62, behind: ["head", "face"] },
+  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.062 * 0.62, behind: ["head", "face"] },
+  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.062 * 0.62, behind: ["head", "face"] },
   { name: "brow left",  x: -0.108, y: 0.437, z: 0.240, depth: 0.018,        behind: ["head", "face"] },
   { name: "brow right", x:  0.108, y: 0.437, z: 0.240, depth: 0.018,        behind: ["head", "face"] },
   { name: "mouth",      x:  0.000, y: 0.205, z: 0.330, depth: 0.0135,       behind: ["head", "face", "beard"] },
@@ -52,8 +52,8 @@ for (const f of FEATURES) {
    watch the build — that is the angle the old layout failed at. */
 const YAW = 0.85 * 0.3;
 const rot = (x, z) => -Math.sin(YAW) * x + Math.cos(YAW) * z;
-const farEye = rot(-0.115, 0.246 + 0.075 * 0.62);
-const nearEye = rot(0.115, 0.246 + 0.075 * 0.62);
+const farEye = rot(-0.115, 0.246 + 0.062 * 0.62);
+const nearEye = rot(0.115, 0.246 + 0.062 * 0.62);
 const bothVisible = farEye > 0.1 && nearEye > 0.1;
 console.log(`${bothVisible ? "PASS" : "FAIL"}  both eyes forward at ${(YAW * 57.3).toFixed(0)} degree yaw  far=${farEye.toFixed(3)} near=${nearEye.toFixed(3)}`);
 if (!bothVisible) fails++;

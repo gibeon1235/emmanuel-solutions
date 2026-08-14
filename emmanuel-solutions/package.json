@@ -10,7 +10,10 @@
     "smoke": "vite-node scripts/smoke.mjs",
     "mount": "vite-node scripts/mascot-mount.mjs",
     "farmer": "vite-node scripts/farmer-timeline.mjs",
-    "face": "vite-node scripts/farmer-face.mjs"
+    "face": "vite-node scripts/farmer-face.mjs",
+    "bundle": "node scripts/bundle-guard.mjs",
+    "verify": "npm run build && npm run bundle && npm run smoke && npm run farmer && npm run face && npm run capability",
+    "capability": "vite-node scripts/capability.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.18.0",

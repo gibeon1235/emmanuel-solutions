@@ -35,29 +35,43 @@ dom.window.WebGLRenderingContext = function () {};
 const React = (await import("react")).default;
 const { createRoot } = await import("react-dom/client");
 const { LazyMotion, domAnimation } = await import("framer-motion");
-const { RailMascotItem } = await import("../src/components/RailMascotItem.jsx");
+const { ServiceRail } = await import("../src/components/ServiceRail.jsx");
 
 const warnings = [];
 const origWarn = console.warn, origErr = console.error;
 console.warn = (...a) => { warnings.push(String(a[0])); };
 console.error = (...a) => { warnings.push("ERR:" + String(a[0])); };
 
-const p = { id: "sustainable-tech", tone: "#3E8E8A", name: "Sustainable Technology", note: "note" };
+const areas = [
+  { id: "sustainable-tech",     tone: "#3E8E8A", name: "Sustainable Technology", note: "a" },
+  { id: "circular-economy",     tone: "#4F6D3A", name: "Circular Economy",       note: "b" },
+  { id: "innovation-training",  tone: "#C08A2E", name: "Innovation Capability",  note: "c" },
+  { id: "industrial-marketing", tone: "#4A6785", name: "Industrial Marketing",   note: "d" }
+];
 
 const root = createRoot(document.getElementById("root"));
 let threw = null;
 try {
   root.render(React.createElement(LazyMotion, { features: domAnimation },
-    React.createElement(RailMascotItem, { p, delay: 0 })));
+    React.createElement(ServiceRail, { areas })));
   await new Promise(r => setTimeout(r, 300));
 
-  const link = document.querySelector(".es-rail-item-mascot");
-  if (!link) throw new Error("rail item did not render at all");
+  const links = document.querySelectorAll(".es-rail-item");
+  if (links.length !== 4) throw new Error("expected 4 rail items, got " + links.length);
 
-  // Fire the real hover path — this triggers the lazy chunk + Canvas mount.
-  const ev = new dom.window.MouseEvent("mouseover", { bubbles: true });
-  link.dispatchEvent(ev);
-  await new Promise(r => setTimeout(r, 1800));
+  // Hover the card that has a scene — triggers the lazy chunk + canvas.
+  links[0].dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true }));
+  await new Promise(r => setTimeout(r, 1200));
+  const stageAfterEnter = !!document.querySelector(".es-rail-stage");
+
+  // Move to a card with no scene yet — the stage must stand down.
+  links[1].dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true, relatedTarget: links[1] }));
+  links[1].dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true }));
+  await new Promise(r => setTimeout(r, 400));
+  const stageAfterSwitch = !!document.querySelector(".es-rail-stage");
+
+  console.log("stage appears on the card with a scene:", stageAfterEnter ? "YES (good)" : "NO (bad)");
+  console.log("stage stands down on a card without one:", stageAfterSwitch ? "NO (bad)" : "YES (good)");
 } catch (e) {
   threw = e;
 }
@@ -66,11 +80,11 @@ console.warn = origWarn; console.error = origErr;
 
 const html = document.getElementById("root").innerHTML;
 const crashed = html.includes("es-crash");
-const stillThere = html.includes("Sustainable Technology");
+const stillThere = html.includes("Sustainable Technology") && html.includes("Circular Economy");
 
 console.log("mounted without throwing to top level:", threw === null ? "YES" : "NO -> " + threw.message);
 console.log("crash panel rendered:", crashed ? "YES (bad)" : "NO (good)");
-console.log("rail item text still present:", stillThere ? "YES (good)" : "NO (bad)");
+console.log("all four rail items still present:", stillThere ? "YES (good)" : "NO (bad)");
 const reactErr = warnings.filter(w => /ERR:/.test(w) && !/not wrapped in act|WebGL|Could not create/i.test(w));
 console.log("unexpected React errors:", reactErr.length ? reactErr.slice(0,3) : "none");
 const degraded = warnings.filter(w => /degrading silently/.test(w));

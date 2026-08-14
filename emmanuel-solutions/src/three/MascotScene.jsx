@@ -2,18 +2,14 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { buildFarmerScene } from "./farmerScene.js";
-import { TOTAL } from "./farmerTimeline.js";
+import { SCENES } from "./sceneRegistry.js";
 
-/* Lazy-loaded chunk. Only fetched on first hover-intent over a service
-   rail item, and only for hover-capable, non-reduced-motion pointers
-   with a working WebGL context (gated by the caller).
+/* One canvas, shared by the whole rail. Moving the cursor between
+   cards swaps the scene inside it rather than tearing down the
+   renderer, so switching is instant and only ever one WebGL context
+   exists no matter how fast someone sweeps across the row. */
 
-   Everything is built in plain Three.js and mounted through <primitive>,
-   so React owns the lifecycle while the scene owns its own internals —
-   and disposal is explicit rather than left to the garbage collector. */
-
-const WORLD_WIDTH = 6.4;
+const WORLD_WIDTH = 6.0;
 
 function FitCamera() {
   const { camera, size } = useThree();
@@ -23,16 +19,15 @@ function FitCamera() {
     const visibleHeight = WORLD_WIDTH / aspect;
     const dist = (visibleHeight / 2) / Math.tan(vFov / 2);
     camera.fov = 30;
-    camera.position.set(0.2, 0.35, Math.min(12, Math.max(3.0, dist)));
-    camera.lookAt(0.2, 0.2, 0);
+    camera.position.set(0.2, 0.2, Math.min(14, Math.max(3.0, dist)));
+    camera.lookAt(0.2, 0.12, 0);
     camera.updateProjectionMatrix();
   }, [camera, size]);
   return null;
 }
 
-/* A procedural room environment — no HDRI file to download. Gives the
-   materials something to reflect, which is most of the difference
-   between "solid object" and "flat shape". */
+/* Procedural room environment — no HDRI file to download. Built once
+   and reused across scene switches. */
 function Environment() {
   const { gl, scene } = useThree();
   useEffect(() => {
@@ -48,28 +43,39 @@ function Environment() {
   return null;
 }
 
-function Rig({ onProgress }) {
-  const built = useMemo(() => buildFarmerScene(), []);
+function Rig({ sceneId, onProgress }) {
+  const entry = SCENES[sceneId];
+  const built = useMemo(() => (entry ? entry.build() : null), [entry]);
   const clock = useRef(0);
-  const lastChill = useRef(-1);
+  const lastPowered = useRef(false);
 
-  useEffect(() => () => built.dispose(), [built]);
+  /* Restart from the top whenever the cursor moves to a different card,
+     so you always see the story from the beginning rather than joining
+     it halfway through. */
+  useEffect(() => {
+    clock.current = 0;
+    lastPowered.current = false;
+  }, [sceneId]);
+
+  useEffect(() => () => { if (built) built.dispose(); }, [built]);
 
   useFrame((_, delta) => {
+    if (!built || !entry) return;
     const dt = Math.min(0.05, delta);
-    clock.current = (clock.current + dt) % TOTAL;
+    clock.current = (clock.current + dt) % entry.total;
     const p = built.update(clock.current, dt);
-    if (onProgress) {
-      const chilled = p.chill > 0.5;
-      if (chilled !== (lastChill.current > 0.5)) onProgress(p.chill);
-      lastChill.current = p.chill;
+    if (onProgress && p) {
+      const powered = p.chill > 0.5;
+      if (powered !== lastPowered.current) onProgress(powered);
+      lastPowered.current = powered;
     }
   });
 
+  if (!built) return null;
   return <primitive object={built.group} />;
 }
 
-export default function MascotScene({ onProgress }) {
+export default function MascotScene({ sceneId, onProgress }) {
   return (
     <Canvas
       dpr={[1, 2]}
@@ -77,13 +83,13 @@ export default function MascotScene({ onProgress }) {
       gl={{ alpha: true, antialias: true }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.08;
+        gl.toneMappingExposure = 0.94;
       }}
       style={{ background: "transparent", pointerEvents: "none" }}
     >
       <FitCamera />
       <Environment />
-      <Rig onProgress={onProgress} />
+      <Rig sceneId={sceneId} onProgress={onProgress} />
     </Canvas>
   );
 }

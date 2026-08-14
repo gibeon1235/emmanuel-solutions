@@ -18,7 +18,7 @@ function mkm(c, o) {
     emissiveIntensity: o.ei || 0,
     transparent: !!o.t,
     opacity: o.o === undefined ? 1 : o.o,
-    envMapIntensity: o.env === undefined ? 0.42 : o.env
+    envMapIntensity: o.env === undefined ? 0.16 : o.env
   });
 }
 function glowm(c, o) {
@@ -43,23 +43,23 @@ export function buildFarmerScene() {
   const glow = (c, o) => { const m = glowm(c, o); mats.push(m); return m; };
 
   /* ── lighting ─────────────────────────────────────── */
-  const hemi = new THREE.HemisphereLight(0xfff2e0, 0x5b6544, 1.05);
-  const key = new THREE.DirectionalLight(0xfff0d4, 1.6);
+  const hemi = new THREE.HemisphereLight(0xfff2e0, 0x5b6544, 0.72);
+  const key = new THREE.DirectionalLight(0xfff0d4, 1.15);
   key.position.set(3.0, 4.3, 2.6);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.left = -5; key.shadow.camera.right = 5;
   key.shadow.camera.top = 4; key.shadow.camera.bottom = -3;
   key.shadow.radius = 2;
-  const fill = new THREE.DirectionalLight(0xd8e8ff, 0.7);
+  const fill = new THREE.DirectionalLight(0xd8e8ff, 0.34);
   fill.position.set(-2.6, 1.4, 2.2);
-  const rim = new THREE.DirectionalLight(0xbfe4ff, 1.1);
+  const rim = new THREE.DirectionalLight(0xbfe4ff, 0.5);
   rim.position.set(-3.2, 2.0, -2.6);
   const warm = new THREE.PointLight(0xffc94d, 0, 10);
   warm.position.set(2.5, 1.5, -0.5);
   group.add(hemi, key, fill, rim, warm);
 
-  const shadowMat = new THREE.ShadowMaterial({ opacity: 0.24 });
+  const shadowMat = new THREE.ShadowMaterial({ opacity: 0.17 });
   mats.push(shadowMat);
   const groundGeo = new THREE.PlaneGeometry(30, 30);
   geos.push(groundGeo);
@@ -141,17 +141,17 @@ export function buildFarmerScene() {
   function mkEye(side) {
     const g = new THREE.Group();
     g.position.set(side * 0.115, 0.375, 0.246);
-    const white = M(new THREE.SphereGeometry(0.075, 26, 22), eyeW, 0, 0, 0);
+    const white = M(new THREE.SphereGeometry(0.062, 26, 22), eyeW, 0, 0, 0);
     white.scale.set(0.94, 1, 0.62);
     g.add(white);
     const look = new THREE.Group();
     look.position.set(0, 0, 0.028);
     g.add(look);
-    const iris = M(new THREE.SphereGeometry(0.036, 18, 16), irisM, 0, 0, 0.022);
+    const iris = M(new THREE.SphereGeometry(0.032, 18, 16), irisM, 0, 0, 0.018);
     iris.scale.set(1, 1, 0.5);
     look.add(iris);
-    look.add(M(new THREE.SphereGeometry(0.018, 12, 12), darkM, 0, 0, 0.038));
-    look.add(M(new THREE.SphereGeometry(0.013, 10, 10), whiteM, -0.018, 0.02, 0.042));
+    look.add(M(new THREE.SphereGeometry(0.016, 12, 12), darkM, 0, 0, 0.03));
+    look.add(M(new THREE.SphereGeometry(0.011, 10, 10), whiteM, -0.015, 0.018, 0.034));
     headG.add(g);
     return { g, look };
   }
@@ -291,19 +291,19 @@ export function buildFarmerScene() {
   const sunG = new THREE.Group(); group.add(sunG);
   const coreM = new THREE.MeshBasicMaterial({ color: 0xffd23f });
   mats.push(coreM);
-  sunG.add(M(new THREE.SphereGeometry(0.3, 24, 20), coreM));
-  const g1 = glow(0xffc733, 0.5), g2 = glow(0xffb020, 0.26), g3 = glow(0xff9c12, 0.13);
-  sunG.add(M(new THREE.SphereGeometry(0.44, 24, 20), g1));
-  sunG.add(M(new THREE.SphereGeometry(0.66, 24, 20), g2));
-  sunG.add(M(new THREE.SphereGeometry(0.98, 24, 20), g3));
+  sunG.add(M(new THREE.SphereGeometry(0.2, 24, 20), coreM));
+  const g1 = glow(0xffc733, 0.34), g2 = glow(0xffb020, 0.16), g3 = glow(0xff9c12, 0.07);
+  sunG.add(M(new THREE.SphereGeometry(0.29, 24, 20), g1));
+  sunG.add(M(new THREE.SphereGeometry(0.42, 24, 20), g2));
+  sunG.add(M(new THREE.SphereGeometry(0.58, 24, 20), g3));
   const rayM = glow(0xffd23f, 0.55);
   const rays = [];
-  const rayGeo = new THREE.ConeGeometry(0.055, 0.42, 6);
+  const rayGeo = new THREE.ConeGeometry(0.038, 0.26, 6);
   geos.push(rayGeo);
   for (let q = 0; q < 12; q++) {
     const ry = new THREE.Mesh(rayGeo, rayM);
     const a = (q / 12) * Math.PI * 2;
-    ry.position.set(Math.cos(a) * 0.62, Math.sin(a) * 0.62, 0);
+    ry.position.set(Math.cos(a) * 0.4, Math.sin(a) * 0.4, 0);
     ry.rotation.z = a - Math.PI / 2;
     sunG.add(ry); rays.push(ry);
   }
@@ -377,19 +377,19 @@ export function buildFarmerScene() {
     cableM.opacity = p.cable;
     cable.visible = p.cable > 0.02;
 
-    sunG.position.set(2.55, p.sunY, -1.7);
+    sunG.position.set(2.62, p.sunY, -1.7);
     sunG.scale.setScalar(Math.max(0.01, p.sun) * (1 + Math.sin(t * 1.7) * 0.025));
     sunG.rotation.z = t * 0.16;
-    g1.opacity = p.sun * (0.46 + Math.sin(t * 2.3) * 0.06);
-    g2.opacity = p.sun * 0.24;
-    g3.opacity = p.sun * 0.12;
-    rayM.opacity = p.sun * (0.42 + Math.sin(t * 3.1) * 0.1);
+    g1.opacity = p.sun * (0.3 + Math.sin(t * 2.3) * 0.04);
+    g2.opacity = p.sun * 0.15;
+    g3.opacity = p.sun * 0.07;
+    rayM.opacity = p.sun * (0.26 + Math.sin(t * 3.1) * 0.06);
     for (let i = 0; i < rays.length; i++) {
       rays[i].scale.y = 0.85 + Math.sin(t * 3 + i * 0.7) * 0.22;
     }
-    hemi.intensity = 1.05 + p.sun * 0.4;
-    key.intensity = 1.6 + p.sun * 0.85;
-    warm.intensity = p.sun * 2.6;
+    hemi.intensity = 0.72 + p.sun * 0.22;
+    key.intensity = 1.15 + p.sun * 0.45;
+    warm.intensity = p.sun * 1.3;
     glass.emissiveIntensity = p.sun * 0.4 + p.flow * Math.abs(Math.sin(t * 6)) * 0.45;
 
     for (let j = 0; j < dots.length; j++) {

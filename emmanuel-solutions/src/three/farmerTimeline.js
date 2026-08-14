@@ -84,7 +84,7 @@ export function poseAt(t) {
     nod: appr > 0 ? Math.sin(appr * Math.PI * 2) * 0.11 : 0,
     look: walking ? -0.35 : mix(0.85, 0.15, appr),
     sun, flow, chill, appr,
-    sunY: mix(0.55, 1.25, ease(sun)),
+    sunY: mix(0.3, 0.98, ease(sun)),
     panelTilt: -0.06 - sun * 0.58,
     cable: clamp01((t - 1.95) / 0.3)
   };

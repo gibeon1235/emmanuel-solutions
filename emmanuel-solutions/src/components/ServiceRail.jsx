@@ -1,0 +1,124 @@
+import { useRef, useState, useCallback, useEffect, Suspense, lazy } from "react";
+import { m } from "framer-motion";
+import { QuietBoundary } from "./QuietBoundary";
+import { hasScene } from "../three/sceneIds.js";
+import { eligible } from "../three/capability.js";
+
+const MascotScene = lazy(() => import("../three/MascotScene.jsx"));
+
+/* The four practice-area cards under the hero, with a single shared 3D
+   stage that follows the cursor.
+
+   The stage is a sibling of the cards rather than a child of any one of
+   them: it is positioned over whichever card is hovered and is free to
+   overflow sideways and above. Because it sits above the cards it must
+   not swallow pointer events, or moving onto it would read as leaving
+   the card underneath and the scene would flicker off. Hence
+   pointer-events: none on the stage.
+
+   Leaving the rail entirely stops playback and releases the canvas. The
+   short delay stops a fast diagonal sweep from tearing the renderer
+   down and immediately rebuilding it. */
+
+const LEAVE_DELAY = 160;
+
+export function ServiceRail({ areas }) {
+  const railRef = useRef(null);
+  const itemRefs = useRef([]);
+  const leaveTimer = useRef(null);
+  const capable = useRef(null);
+  const [active, setActive] = useState(null);
+  const [centre, setCentre] = useState(0);
+  const [powered, setPowered] = useState(false);
+
+  if (capable.current === null) capable.current = eligible();
+
+  const clearTimer = () => {
+    if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; }
+  };
+
+  const focusItem = useCallback((index, id) => {
+    if (!capable.current || !hasScene(id)) {
+      clearTimer();
+      setActive(null);
+      return;
+    }
+    clearTimer();
+    const rail = railRef.current;
+    const item = itemRefs.current[index];
+    if (rail && item) {
+      const r = rail.getBoundingClientRect();
+      const b = item.getBoundingClientRect();
+      setCentre(b.left - r.left + b.width / 2);
+    }
+    setPowered(false);
+    setActive(id);
+  }, []);
+
+  const leaveRail = useCallback(() => {
+    clearTimer();
+    leaveTimer.current = setTimeout(() => {
+      setActive(null);
+      setPowered(false);
+    }, LEAVE_DELAY);
+  }, []);
+
+  const handleFail = useCallback(() => {
+    capable.current = false;
+    clearTimer();
+    setActive(null);
+  }, []);
+
+  useEffect(() => () => clearTimer(), []);
+
+  /* Keep the stage aligned if the layout reflows while hovering. */
+  useEffect(() => {
+    if (!active) return;
+    const onResize = () => {
+      const index = areas.findIndex((a) => a.id === active);
+      const rail = railRef.current;
+      const item = itemRefs.current[index];
+      if (rail && item) {
+        const r = rail.getBoundingClientRect();
+        const b = item.getBoundingClientRect();
+        setCentre(b.left - r.left + b.width / 2);
+      }
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [active, areas]);
+
+  return (
+    <div className="es-rail es-rail-warm" ref={railRef} onMouseLeave={leaveRail}>
+      {areas.map((p, i) => (
+        <m.a
+          key={p.id}
+          ref={(el) => { itemRefs.current[i] = el; }}
+          className={"es-rail-item" + (active === p.id && powered ? " is-powered" : "")}
+          href={`/services/${p.id}`}
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}
+          onMouseEnter={() => focusItem(i, p.id)}
+          onFocus={() => focusItem(i, p.id)}
+          onBlur={leaveRail}
+        >
+          <span className="es-rail-name">
+            <span className="es-rail-tone" style={{ background: p.tone }} aria-hidden="true" />
+            {p.name}
+          </span>
+          <span className="es-rail-note">{p.note}</span>
+        </m.a>
+      ))}
+
+      {active && (
+        <span className="es-rail-stage" style={{ left: centre }} aria-hidden="true">
+          <QuietBoundary onFail={handleFail}>
+            <Suspense fallback={null}>
+              <MascotScene sceneId={active} onProgress={setPowered} />
+            </Suspense>
+          </QuietBoundary>
+        </span>
+      )}
+    </div>
+  );
+}
