@@ -8,6 +8,11 @@ import { PARTS, partAt, poseAt, pulseAt, TOTAL } from "./farmerTimeline.js";
 const SX = 1.35;   // cold store x
 const RX = 2.50;   // solar rig x
 
+/* Scaled down 12% from the original build — both scenes read a touch
+   large at 1:1 against the card. Applied to the whole top-level group,
+   the same pattern circularScene.js uses, so lights scale with it. */
+const SCENE_SCALE = 0.88;
+
 function mkm(c, o) {
   o = o || {};
   return new THREE.MeshStandardMaterial({
@@ -18,8 +23,20 @@ function mkm(c, o) {
     emissiveIntensity: o.ei || 0,
     transparent: !!o.t,
     opacity: o.o === undefined ? 1 : o.o,
-    envMapIntensity: o.env === undefined ? 0.16 : o.env
+    /* 0.08, not 0.16 — the higher default was reflecting enough of the
+       procedural room environment to read as a plasticky sheen across
+       every matte surface in the scene. */
+    envMapIntensity: o.env === undefined ? 0.08 : o.env
   });
+}
+/* Base colours were washing out under the lighting rig. Every material
+   built through mat() below goes through this — deepen the diffuse
+   colour only, never the emissive, so glowing parts (LED, pulse, sun)
+   stay vivid while surfaces read as pigment rather than pastel. */
+function deepen(hex) {
+  const r = (hex >> 16) & 255, g = (hex >> 8) & 255, b = hex & 255;
+  const f = 0.87;
+  return (Math.round(r * f) << 16) | (Math.round(g * f) << 8) | Math.round(b * f);
 }
 function glowm(c, o) {
   return new THREE.MeshBasicMaterial({
@@ -39,7 +56,7 @@ export function buildFarmerScene() {
     geos.push(g);
     return e;
   };
-  const mat = (c, o) => { const m = mkm(c, o); mats.push(m); return m; };
+  const mat = (c, o) => { const m = mkm(deepen(c), o); mats.push(m); return m; };
   const glow = (c, o) => { const m = glowm(c, o); mats.push(m); return m; };
 
   /* ── lighting ─────────────────────────────────────── */
@@ -69,33 +86,38 @@ export function buildFarmerScene() {
   ground.receiveShadow = true;
   group.add(ground);
 
-  /* ── materials ────────────────────────────────────── */
-  const skin = mat(0xe9b184, { r: 0.58 }), skin2 = mat(0xd9a074, { r: 0.6 });
-  const cream = mat(0xf2ece0, { r: 0.78 });
-  const olive = mat(0x6d7f4c, { r: 0.8 }), olive2 = mat(0x5d6d3f, { r: 0.8 });
-  const jean = mat(0x7e8ea3, { r: 0.85 });
-  const straw = mat(0xdcb96c, { r: 0.86 });
-  const bandM = mat(0x8a5a34, { r: 0.8 });
-  const beardM = mat(0x5b4030, { r: 0.9 });
-  const leather = mat(0x7c4a28, { r: 0.68 }), leather2 = mat(0x5e371d, { r: 0.7 });
-  const darkM = mat(0x2a2118, { r: 0.6 });
-  const cableM = mat(0x2a2118, { r: 0.6, t: true, o: 0 });
-  const eyeW = mat(0xf5efe6, { r: 0.35 });
-  const irisM = mat(0x4a3524, { r: 0.4 });
-  const whiteM = mat(0xffffff, { r: 0.3 });
-  const brass = mat(0xc9a227, { r: 0.35, m: 0.7 });
-  const metal = mat(0xb2b8bd, { r: 0.32, m: 0.72 });
-  const metal2 = mat(0x8f979d, { r: 0.4, m: 0.6 });
-  const glass = mat(0x14375a, { r: 0.14, m: 0.55, e: 0x2f7cc4, ei: 0 });
-  const cellM = mat(0x2d5f92, { r: 0.28, m: 0.45 });
-  const boxM = mat(0xe4ded1, { r: 0.78 });
-  const ledM = mat(0x14231d, { r: 0.5, e: 0x3ce39a, ei: 0 });
-  const pulseM = mat(0x9be8c4, { r: 0.4, e: 0x38d98d, ei: 2.4 });
-  const frostM = mat(0xcfeaf5, { r: 0.25, t: true, o: 0 });
-  const mouthM = mat(0x7a3a2e, { r: 0.6 });
-  const cheekM = mat(0xd97a62, { r: 0.7, t: true, o: 0 });
-  const carrotM = mat(0xe8792b, { r: 0.55 }), carrotM2 = mat(0xcc6320, { r: 0.6 });
-  const leafM = mat(0x4e8a3c, { r: 0.7 }), leafM2 = mat(0x66a34a, { r: 0.7 });
+  /* ── materials ────────────────────────────────────────
+     Roughness raised across the board for a matte finish; cloth and
+     painted surfaces (shirt, overalls, jeans, hat, cable sheath, cold
+     store body) sit at 0.85-0.95. Metalness stays only on parts that
+     are genuinely metal — the panel glass and solar cells were carrying
+     metalness meant for chrome, which is why they read plasticky. */
+  const skin = mat(0xe9b184, { r: 0.66 }), skin2 = mat(0xd9a074, { r: 0.68 });
+  const cream = mat(0xf2ece0, { r: 0.92 });
+  const olive = mat(0x6d7f4c, { r: 0.9 }), olive2 = mat(0x5d6d3f, { r: 0.9 });
+  const jean = mat(0x7e8ea3, { r: 0.93 });
+  const straw = mat(0xdcb96c, { r: 0.93 });
+  const bandM = mat(0x8a5a34, { r: 0.88 });
+  const beardM = mat(0x5b4030, { r: 0.92 });
+  const leather = mat(0x7c4a28, { r: 0.82 }), leather2 = mat(0x5e371d, { r: 0.84 });
+  const darkM = mat(0x2a2118, { r: 0.75 });
+  const cableM = mat(0x2a2118, { r: 0.88, t: true, o: 0 });
+  const eyeW = mat(0xf5efe6, { r: 0.42 });
+  const irisM = mat(0x4a3524, { r: 0.5 });
+  const whiteM = mat(0xffffff, { r: 0.35 });
+  const brass = mat(0xc9a227, { r: 0.42, m: 0.62 });
+  const metal = mat(0xb2b8bd, { r: 0.4, m: 0.62 });
+  const metal2 = mat(0x8f979d, { r: 0.46, m: 0.52 });
+  const glass = mat(0x14375a, { r: 0.2, m: 0.08, e: 0x2f7cc4, ei: 0 });
+  const cellM = mat(0x2d5f92, { r: 0.38, m: 0.12 });
+  const boxM = mat(0xe4ded1, { r: 0.9 });
+  const ledM = mat(0x14231d, { r: 0.6, e: 0x3ce39a, ei: 0 });
+  const pulseM = mat(0x9be8c4, { r: 0.45, e: 0x38d98d, ei: 2.4 });
+  const frostM = mat(0xcfeaf5, { r: 0.3, t: true, o: 0 });
+  const mouthM = mat(0x7a3a2e, { r: 0.68 });
+  const cheekM = mat(0xd97a62, { r: 0.78, t: true, o: 0 });
+  const carrotM = mat(0xe8792b, { r: 0.68 }), carrotM2 = mat(0xcc6320, { r: 0.72 });
+  const leafM = mat(0x4e8a3c, { r: 0.8 }), leafM2 = mat(0x66a34a, { r: 0.8 });
 
   /* ── farmer ───────────────────────────────────────── */
   const root = new THREE.Group();
@@ -138,20 +160,28 @@ export function buildFarmerScene() {
      the head geometry and read as shut. Blinking now scales the whole
      eye group rather than relying on a separate lid mesh, which sat
      behind the eye and could never have occluded anything. */
+  /* Eyes were reading too large on the card. Every radius and offset
+     inside the eye is scaled by EYE_SCALE together — shrinking only the
+     white sphere would leave the iris/pupil/highlight sitting proud of
+     it or buried, the same clearance problem npm run face exists to
+     catch. The eye's position on the head (g.position, below) is
+     unchanged: this makes the eyes smaller, not repositioned. */
+  const EYE_SCALE = 0.72;
   function mkEye(side) {
     const g = new THREE.Group();
     g.position.set(side * 0.115, 0.375, 0.246);
-    const white = M(new THREE.SphereGeometry(0.062, 26, 22), eyeW, 0, 0, 0);
+    const white = M(new THREE.SphereGeometry(0.062 * EYE_SCALE, 26, 22), eyeW, 0, 0, 0);
     white.scale.set(0.94, 1, 0.62);
     g.add(white);
     const look = new THREE.Group();
-    look.position.set(0, 0, 0.028);
+    look.position.set(0, 0, 0.028 * EYE_SCALE);
     g.add(look);
-    const iris = M(new THREE.SphereGeometry(0.032, 18, 16), irisM, 0, 0, 0.018);
+    const iris = M(new THREE.SphereGeometry(0.032 * EYE_SCALE, 18, 16), irisM, 0, 0, 0.018 * EYE_SCALE);
     iris.scale.set(1, 1, 0.5);
     look.add(iris);
-    look.add(M(new THREE.SphereGeometry(0.016, 12, 12), darkM, 0, 0, 0.03));
-    look.add(M(new THREE.SphereGeometry(0.011, 10, 10), whiteM, -0.015, 0.018, 0.034));
+    look.add(M(new THREE.SphereGeometry(0.016 * EYE_SCALE, 12, 12), darkM, 0, 0, 0.03 * EYE_SCALE));
+    look.add(M(new THREE.SphereGeometry(0.011 * EYE_SCALE, 10, 10), whiteM,
+      -0.015 * EYE_SCALE, 0.018 * EYE_SCALE, 0.034 * EYE_SCALE));
     headG.add(g);
     return { g, look };
   }
@@ -161,7 +191,7 @@ export function buildFarmerScene() {
   bwL.rotation.z = Math.PI / 2; headG.add(bwL);
   const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.108, 0.437, 0.240);
   bwR.rotation.z = Math.PI / 2; headG.add(bwR);
-  const mouth = M(new THREE.TorusGeometry(0.052, 0.0135, 8, 18, Math.PI), mouthM, 0, 0.205, 0.330);
+  const mouth = M(new THREE.TorusGeometry(0.038, 0.009, 8, 18, Math.PI), mouthM, 0, 0.205, 0.330);
   mouth.rotation.z = Math.PI; headG.add(mouth);
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, -0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, 0.178, 0.283, 0.205));
@@ -309,6 +339,8 @@ export function buildFarmerScene() {
   }
   sunG.scale.setScalar(0.01);
 
+  group.scale.setScalar(SCENE_SCALE);
+
   let blinkT = 0, nextBlink = 1.9, lookCur = 0;
   const tmp = new THREE.Vector3();
 
@@ -328,7 +360,9 @@ export function buildFarmerScene() {
 
     headG.rotation.x = p.nod;
     headG.rotation.y = p.look * 0.3;
-    mouth.scale.set(0.85 + p.smile * 0.55, 0.75 + p.smile * 0.7, 1);
+    /* Range between rest and full smile was 0.55/0.7 — enough to stretch
+       the mouth noticeably wide. Halved so it stays a subtle curve. */
+    mouth.scale.set(0.92 + p.smile * 0.24, 0.85 + p.smile * 0.32, 1);
     cheekM.opacity = p.smile * 0.35;
     bwL.position.y = 0.437 + p.brow * 0.03;
     bwR.position.y = 0.437 + p.brow * 0.03;

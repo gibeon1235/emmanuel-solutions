@@ -18,11 +18,13 @@ const DRUM_X = 0, DRUM_Y = -0.10;
 const DRUM_R = 0.62;
 const GAUGE_R = 0.22;
 const GAUGE_SEGMENTS = 12;
-/* Scaled up to sit at the farmer's visual weight — he fills the stage
-   height and this machine read as a thin band across the middle. The
-   offset re-centres the scene on the camera target after scaling, so
-   growing it does not push the feed belt off the left edge. */
-const WORLD_SCALE = 1.18;
+/* First scaled up (1.18) to sit at the farmer's visual weight — he
+   fills the stage height and this machine read as a thin band across
+   the middle. Then both scenes were scaled down 12% together because
+   the pair read a touch large overall: 1.18 * 0.88 ≈ 1.04. The offset
+   re-centres the scene on the camera target after scaling, so growing
+   it does not push the feed belt off the left edge. */
+const WORLD_SCALE = 1.04;
 
 function mkm(c, o) {
   o = o || {};
@@ -34,8 +36,18 @@ function mkm(c, o) {
     emissiveIntensity: o.ei || 0,
     transparent: !!o.t,
     opacity: o.o === undefined ? 1 : o.o,
-    envMapIntensity: o.env === undefined ? 0.16 : o.env
+    /* 0.08, not 0.16 — the higher default was reflecting enough of the
+       procedural room environment to read as a plasticky sheen. */
+    envMapIntensity: o.env === undefined ? 0.08 : o.env
   });
+}
+/* Base colours were washing out under the lighting rig. Diffuse colour
+   only, never emissive, so the reaction glow and gauge lights stay
+   vivid while surfaces read as pigment rather than pastel. */
+function deepen(hex) {
+  const r = (hex >> 16) & 255, g = (hex >> 8) & 255, b = hex & 255;
+  const f = 0.87;
+  return (Math.round(r * f) << 16) | (Math.round(g * f) << 8) | Math.round(b * f);
 }
 
 export function buildCircularScene() {
@@ -49,7 +61,7 @@ export function buildCircularScene() {
     geos.push(g);
     return e;
   };
-  const mat = (c, o) => { const m = mkm(c, o); mats.push(m); return m; };
+  const mat = (c, o) => { const m = mkm(deepen(c), o); mats.push(m); return m; };
 
   /* ── lighting ─────────────────────────────────────────
      The tuned rig from the farmer scene. Only the key casts shadows,
@@ -83,28 +95,32 @@ export function buildCircularScene() {
   group.add(ground);
 
   /* ── materials ────────────────────────────────────────
-     No pure white or black — both read as synthetic under ACES. */
-  const foamM = mat(0xa8a196, { r: 0.92 });
-  const foamM2 = mat(0x8d867b, { r: 0.9 });
-  const shell = mat(0xb2b8bd, { r: 0.34, m: 0.7 });
-  const shell2 = mat(0x8f979d, { r: 0.4, m: 0.6 });
-  const rubber = mat(0x4a4740, { r: 0.88 });
+     No pure white or black — both read as synthetic under ACES.
+     Roughness raised across the board for a matte finish; painted
+     surfaces (inner drum wall, gauge backing) sit at 0.85-0.95.
+     Metalness stays only on parts that are genuinely metal — the drum
+     shell and tray keep it, the pellets and tray gauge frame do not. */
+  const foamM = mat(0xa8a196, { r: 0.93 });
+  const foamM2 = mat(0x8d867b, { r: 0.91 });
+  const shell = mat(0xb2b8bd, { r: 0.42, m: 0.62 });
+  const shell2 = mat(0x8f979d, { r: 0.46, m: 0.52 });
+  const rubber = mat(0x4a4740, { r: 0.9 });
   /* Porthole tint. Keep metalness at zero: metalness suppresses what
      shows through, and at 0.5 with the RoomEnvironment this reads as a
      mirror rather than a window. Opacity is deliberately low — this is
      a pane to see the reaction through, not a surface in its own right.
      Note none of this is what hid the fragments; that was the barrel's
      end cap, see the drum below. */
-  const glassM = mat(0x1d4436, { r: 0.28, m: 0, e: 0x2fbd86, ei: 0, t: true, o: 0.12, env: 0.03 });
-  const innerM = mat(0x22302b, { r: 0.7 });
+  const glassM = mat(0x1d4436, { r: 0.32, m: 0, e: 0x2fbd86, ei: 0, t: true, o: 0.12, env: 0.03 });
+  const innerM = mat(0x22302b, { r: 0.88 });
   /* Fragments sit inside an enclosed drum, so they get almost no key
      light. Pale base colour plus a constant emissive floor keeps them
      from reading as dark specks in a dark box. */
-  const fragM = mat(0xe8cfa8, { r: 0.62, e: 0x8a6a3a, ei: 0.45 });
-  const pelletM = mat(0xd9a441, { r: 0.38, m: 0.1 });
-  const trayM = mat(0x9aa2a8, { r: 0.42, m: 0.55 });
-  const gaugeBackM = mat(0x2a2118, { r: 0.6 });
-  const loopM = mat(0x3fd39a, { r: 0.4, e: 0x2fbd86, ei: 0.6, t: true, o: 0 });
+  const fragM = mat(0xe8cfa8, { r: 0.72, e: 0x8a6a3a, ei: 0.45 });
+  const pelletM = mat(0xd9a441, { r: 0.5, m: 0.04 });
+  const trayM = mat(0x9aa2a8, { r: 0.5, m: 0.48 });
+  const gaugeBackM = mat(0x2a2118, { r: 0.85 });
+  const loopM = mat(0x3fd39a, { r: 0.45, e: 0x2fbd86, ei: 0.6, t: true, o: 0 });
 
   /* ── feed belt ────────────────────────────────────────
      Angled to match the block's travel line exactly, so the block rides
@@ -154,7 +170,7 @@ export function buildCircularScene() {
      and nothing could be seen. Same class as the buried facial features:
      the geometry in front has to be opened or moved, not the thing
      behind it brightened. DoubleSide so the far inner wall still draws. */
-  const shellIn = mat(0xb2b8bd, { r: 0.34, m: 0.7 });
+  const shellIn = mat(0xb2b8bd, { r: 0.42, m: 0.62 });
   shellIn.side = THREE.DoubleSide;
   const barrel = M(new THREE.CylinderGeometry(DRUM_R, DRUM_R, 0.95, 40, 1, true), shellIn);
   barrel.rotation.x = Math.PI / 2;
@@ -296,7 +312,7 @@ export function buildCircularScene() {
   const segGeo = new THREE.BoxGeometry(0.038, 0.075, 0.03);
   geos.push(segGeo);
   for (let i = 0; i < GAUGE_SEGMENTS; i++) {
-    const sm = mkm(0x2f3a34, { r: 0.5, e: 0x3fd39a, ei: 0 });
+    const sm = mkm(deepen(0x2f3a34), { r: 0.85, e: 0x3fd39a, ei: 0 });
     mats.push(sm);
     segMats.push(sm);
     const a = Math.PI - ((i + 0.5) / GAUGE_SEGMENTS) * Math.PI;

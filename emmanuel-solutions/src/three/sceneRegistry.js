@@ -12,20 +12,20 @@ export const SCENES = {
      flies in from an offset — the solar panel from +2.4 beyond the rig at
      2.5, and most of the rest from 3+ units overhead. Without saying so,
      a bounds check reads those entrances as parts escaping the card.
-     Measured extent is x[-4.61, 4.50] y[-1.25, 2.64]; the values below
-     are that plus a small margin, so a part that genuinely runs away
-     still trips the check. */
+     Measured extent at SCENE_SCALE 0.88 is x[-4.05, 3.96] y[-1.10, 2.33];
+     the values below are that plus a small margin, so a part that
+     genuinely runs away still trips the check. */
   "sustainable-tech": {
     build: buildFarmerScene, total: FARMER_TOTAL,
-    bounds: { x: [-4.8, 4.7], y: [-1.5, 2.85] }
+    bounds: { x: [-4.25, 4.15], y: [-1.3, 2.5] }
   },
   /* This one is meant to stay wholly inside the camera frame — nothing
      enters from off-stage — so its bounds are tight to the measured
-     extent x[-2.48, 2.81] y[-1.12, 1.35] rather than to the frame edge.
+     extent x[-2.13, 2.53] y[-0.97, 1.21] rather than to the frame edge.
      If the scene is rescaled again this is what catches it leaving. */
   "circular-economy": {
     build: buildCircularScene, total: CIRCULAR_TOTAL,
-    bounds: { x: [-2.75, 3.05], y: [-1.30, 1.55] }
+    bounds: { x: [-2.35, 2.75], y: [-1.15, 1.4] }
   }
 };
 

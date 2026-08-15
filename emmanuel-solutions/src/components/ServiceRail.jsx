@@ -22,6 +22,16 @@ const MascotScene = lazy(() => import("../three/MascotScene.jsx"));
 
 const LEAVE_DELAY = 160;
 
+/* Card hover glow needs the service's own tone at partial opacity, and
+   CSS can't apply alpha to a hex custom property on its own. Precompute
+   the rgb triplet once per render instead of reaching for color-mix(),
+   which is one dependency this restrained a treatment doesn't need. */
+function hexToRgbTriplet(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || "");
+  if (!m) return "0,0,0";
+  return [m[1], m[2], m[3]].map((h) => parseInt(h, 16)).join(",");
+}
+
 export function ServiceRail({ areas }) {
   const railRef = useRef(null);
   const itemRefs = useRef([]);
@@ -95,6 +105,7 @@ export function ServiceRail({ areas }) {
           key={p.id}
           ref={(el) => { itemRefs.current[i] = el; }}
           className={"es-rail-item" + (active === p.id && powered ? " is-powered" : "")}
+          style={{ "--rail-tone": p.tone, "--rail-tone-rgb": hexToRgbTriplet(p.tone) }}
           href={`/services/${p.id}`}
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.98 + i * 0.09, duration: 0.78, ease: [0.22, 1, 0.36, 1] }}
@@ -107,6 +118,7 @@ export function ServiceRail({ areas }) {
             {p.name}
           </span>
           <span className="es-rail-note">{p.note}</span>
+          <span className="es-rail-arrow" aria-hidden="true">→</span>
         </m.a>
       ))}
 

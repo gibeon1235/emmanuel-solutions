@@ -2674,15 +2674,29 @@ img { max-width: 100%; height: auto; }
   width: 100%; max-width: var(--max); margin: 2rem auto 0;
 }
 .es-rail-item {
-  padding: .95rem 1.25rem; text-decoration: none; display: block;
+  position: relative; z-index: 1;
+  padding: 1.3rem 2.15rem 1.3rem 1.5rem; text-decoration: none; display: block;
   border-right: 1px solid rgba(42,50,56,.05);
-  transition: background var(--es-t-fast), transform var(--es-t-fast) var(--es-ease);
+  transition: background var(--es-t-fast), transform var(--es-t-fast) var(--es-ease),
+              box-shadow var(--es-t-fast) var(--es-ease);
 }
 .es-rail-item:last-child { border-right: 0; }
-.es-rail-item:hover, .es-rail-item:focus-visible { background: rgba(255,255,255,.72); transform: translateY(-2px); text-decoration: none; }
-.es-rail-name { display: flex; align-items: center; gap: .45rem; font-size: .85rem; font-weight: 500; letter-spacing: -.01em; color: #18212A; }
+.es-rail-item:hover, .es-rail-item:focus-visible {
+  background: rgba(255,255,255,.72); transform: translateY(-3px); text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgba(var(--rail-tone-rgb), .35),
+              0 16px 30px -20px rgba(var(--rail-tone-rgb), .45);
+}
+.es-rail-item:hover .es-rail-arrow, .es-rail-item:focus-visible .es-rail-arrow {
+  opacity: .85; transform: translate(3px, -50%); color: var(--rail-tone);
+}
+.es-rail-name { display: flex; align-items: center; gap: .5rem; font-size: .94rem; font-weight: 500; letter-spacing: -.01em; color: #18212A; }
 .es-rail-tone { width: 6px; height: 6px; border-radius: 2px; flex: 0 0 auto; }
-.es-rail-note { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-size: .7rem; color: #7C847E; margin-top: .2rem; line-height: 1.5; }
+.es-rail-note { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-size: .75rem; color: #7C847E; margin-top: .3rem; line-height: 1.5; }
+.es-rail-arrow {
+  position: absolute; top: 50%; right: 1.15rem; transform: translate(0, -50%);
+  font-size: .95rem; color: #9AA2A0; opacity: .32;
+  transition: opacity var(--es-t-fast) var(--es-ease), transform var(--es-t-fast) var(--es-ease), color var(--es-t-fast) var(--es-ease);
+}
 
 /* ── AI SOLUTIONS BAND — the only dark section ──────────── */
 .es-division-band {
@@ -3557,7 +3571,10 @@ img, svg, video { max-width: 100%; }
    captured the pointer, moving into it would register as leaving the
    card and the scene would flicker off. */
 .es-rail { position: relative; overflow: visible; }
-.es-rail-item { position: relative; z-index: 1; transition: box-shadow .3s var(--es-ease), background var(--es-t-fast); }
+/* position/z-index/transition for .es-rail-item live with the base rule
+   above (line ~2676) — a second declaration here once silently dropped
+   the transform transition because a same-specificity rule later in the
+   file wins, so hover's lift never animated. */
 .es-rail-item.is-powered { box-shadow: inset 0 0 0 1px rgba(60, 227, 154, .22); }
 .es-rail-stage {
   position: absolute; bottom: -6px;

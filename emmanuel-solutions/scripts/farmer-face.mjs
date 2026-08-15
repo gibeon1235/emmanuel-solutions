@@ -15,12 +15,16 @@ const OCC = {
   beard: { r: 0.283, sx: 1,    sy: 0.84, sz: 0.99, cy: 0.185, cz: 0.028 }
 };
 
+/* Eye depth mirrors farmerScene.js's EYE_SCALE (0.72) applied to the
+   white sphere radius (0.062). Mouth depth mirrors the torus tube
+   radius, reduced from 0.0135 to 0.009 for a thinner stroke. */
+const EYE_SCALE = 0.72;
 const FEATURES = [
-  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.062 * 0.62, behind: ["head", "face"] },
-  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.062 * 0.62, behind: ["head", "face"] },
+  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"] },
+  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"] },
   { name: "brow left",  x: -0.108, y: 0.437, z: 0.240, depth: 0.018,        behind: ["head", "face"] },
   { name: "brow right", x:  0.108, y: 0.437, z: 0.240, depth: 0.018,        behind: ["head", "face"] },
-  { name: "mouth",      x:  0.000, y: 0.205, z: 0.330, depth: 0.0135,       behind: ["head", "face", "beard"] },
+  { name: "mouth",      x:  0.000, y: 0.205, z: 0.330, depth: 0.009,        behind: ["head", "face", "beard"] },
   { name: "mustache",   x:  0.000, y: 0.252, z: 0.320, depth: 0.038,        behind: ["head", "face", "beard"] },
   { name: "cheek left", x: -0.178, y: 0.283, z: 0.205, depth: 0.048,        behind: ["head", "face"] },
   { name: "cheek right",x:  0.178, y: 0.283, z: 0.205, depth: 0.048,        behind: ["head", "face"] },
@@ -52,8 +56,8 @@ for (const f of FEATURES) {
    watch the build — that is the angle the old layout failed at. */
 const YAW = 0.85 * 0.3;
 const rot = (x, z) => -Math.sin(YAW) * x + Math.cos(YAW) * z;
-const farEye = rot(-0.115, 0.246 + 0.062 * 0.62);
-const nearEye = rot(0.115, 0.246 + 0.062 * 0.62);
+const farEye = rot(-0.115, 0.246 + 0.062 * EYE_SCALE * 0.62);
+const nearEye = rot(0.115, 0.246 + 0.062 * EYE_SCALE * 0.62);
 const bothVisible = farEye > 0.1 && nearEye > 0.1;
 console.log(`${bothVisible ? "PASS" : "FAIL"}  both eyes forward at ${(YAW * 57.3).toFixed(0)} degree yaw  far=${farEye.toFixed(3)} near=${nearEye.toFixed(3)}`);
 if (!bothVisible) fails++;
