@@ -65,7 +65,10 @@ function Rig({ sceneId, onProgress }) {
     clock.current = (clock.current + dt) % entry.total;
     const p = built.update(clock.current, dt);
     if (onProgress && p) {
-      const powered = p.chill > 0.5;
+      /* Scenes say when their story has landed. The farmer's cold store
+         reports it as `chill`; anything newer sets `powered` directly,
+         so this does not need a branch per scene. */
+      const powered = p.powered !== undefined ? p.powered : p.chill > 0.5;
       if (powered !== lastPowered.current) onProgress(powered);
       lastPowered.current = powered;
     }

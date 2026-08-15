@@ -27,6 +27,15 @@ nothing on the live site. This wasted several deploy cycles. After any `git add`
 run `git status --short` and confirm **every changed path starts with
 `emmanuel-solutions/`**.
 
+## How to work in this repo
+
+- **Never start a browser, dev server or take screenshots.** The user checks
+  visuals themselves. Verify numerically instead.
+- **Filter command output to PASS/FAIL lines.** Never paste full logs.
+- **While iterating run only the specific test.** Run `npm run verify` once, at
+  the end.
+- **Keep summaries to a few lines.**
+
 ## Commands
 
 ```bash

@@ -10,9 +10,12 @@
     "smoke": "vite-node scripts/smoke.mjs",
     "mount": "vite-node scripts/mascot-mount.mjs",
     "farmer": "node scripts/farmer-timeline.mjs",
+    "circular": "node scripts/circular-timeline.mjs",
+    "porthole": "node scripts/circular-porthole.mjs",
+    "scenes": "node scripts/scene-contract.mjs",
     "face": "node scripts/farmer-face.mjs",
     "bundle": "node scripts/bundle-guard.mjs",
-    "verify": "npm run build && npm run bundle && npm run smoke && npm run farmer && npm run face && npm run capability && npm run mount",
+    "verify": "npm run build && npm run bundle && npm run smoke && npm run farmer && npm run circular && npm run face && npm run porthole && npm run capability && npm run scenes && npm run mount",
     "capability": "node scripts/capability.mjs"
   },
   "dependencies": {

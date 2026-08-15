@@ -259,6 +259,7 @@ Run `npm run verify` before every deploy.
 | Builds fine, explodes on mount | React Three Fiber 9 requires React 19; this project is React 18, so fiber 8.x |
 | A pivot stops rotating | Adding a child group to the scene re-parents it away from its pivot |
 | Feature invisible but animating | Buried inside a larger sphere — see the clearance formula |
+| Interior invisible through an opening | `CylinderGeometry` caps both ends by default; use `openEnded: true` plus `DoubleSide`. Guarded by `npm run porthole` |
 | Hover animation flickers off | Overlay stage capturing pointer events; it needs `pointer-events: none` |
 | Video or animation stutters | `mix-blend-mode` above it forcing full stacking-context repaints |
 | `CapsuleGeometry is not a constructor` | Three.js older than r142 |
