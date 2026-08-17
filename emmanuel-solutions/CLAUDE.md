@@ -158,9 +158,9 @@ gallery, correctly captioned. Rebuild the loop with
 
 ## Roadmap
 
-1. Circular economy scene — chemical recycling, no characters
-2. Innovation capability scene — character presenting at a board, classroom setting
-3. Industrial marketing scene — building timelapse, ending with a stamp effect
-4. Roll the warm palette onto service, case study and alliance pages (still cool-toned)
-5. Standalone `/aisolutions` page
-6. WebP image optimisation
+All four practice-area scenes are built (sustainable tech, circular economy,
+innovation capability, industrial marketing). Remaining:
+
+1. Roll the warm palette onto service, case study and alliance pages (still cool-toned)
+2. Standalone `/aisolutions` page
+3. WebP image optimisation

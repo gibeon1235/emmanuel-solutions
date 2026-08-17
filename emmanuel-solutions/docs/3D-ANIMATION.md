@@ -266,21 +266,34 @@ Run `npm run verify` before every deploy.
 
 ---
 
-## 11. The remaining scenes
+## 11. The four scenes
 
-Briefs as agreed:
+All built. Each is a timeline/scene pair with its own timing test.
+
+**Sustainable technology** — a farmer walks in and watches a solar cold store
+assemble itself. `farmerTimeline.js` / `farmerScene.js`, `npm run farmer`.
 
 **Circular economy** — chemical recycling, **no characters**. Waste feeds a
 drum, breaks into fragments, clean polyol pellets pour out, and the input
-reassembles from them. The mechanic is the message: a closed loop. A recovery
-gauge climbing to 90% matches the real Thaal figure.
+reassembles from them. The mechanic is the message: a closed loop. The recovery
+gauge stops at 90%, the real Thaal figure, and the test asserts it never reads
+higher. `circularTimeline.js` / `circularScene.js`, `npm run circular`, plus
+`npm run porthole` for the drum interior.
 
-**Innovation capability** — a character presenting at a board in a classroom or
-workshop setting, pointing as ideas appear. The Creatrix model's four drivers
-(ambiguity, independence, inner-directedness, uniqueness) can lock in one by one.
+**Innovation capability** — a presenter at a board, pointing as four panels lock
+in one at a time: the Creatrix drivers. No text on them — at card size a label
+is unreadable, so each is a colour and a glyph. Reuses the farmer's rig and face
+construction without the hat or beard. `innovationTimeline.js` /
+`innovationScene.js`, `npm run innovation`.
 
-**Industrial marketing** — a timelapse of industrial buildings rising, ending
-with an approval stamp slamming in from the side with a stamp impact effect.
+**Industrial marketing** — a build timelapse, **no characters**, ending in an
+approval stamp that swings in from the right and slams down. Growth is half
+smooth and half stepped by storey so it reads as timelapse rather than
+inflation. `industrialTimeline.js` / `industrialScene.js`, `npm run industrial`.
+
+Two guards cover all of them: `npm run scenes` builds every registered scene
+headlessly and checks the contract, bounds and disposal; `npm run face` checks
+facial-feature clearance on both characters.
 
 ## 12. Definition of done
 
