@@ -33,12 +33,15 @@ const PRESENTER_OCC = {
    (0.062). Mouth depth mirrors the torus tube radius. */
 const EYE_SCALE = 0.72;
 
+/* The farmer's eyes are single flattened dots — no sclera, iris or
+   highlight — and he has no mouth at all: the beard and mustache carry
+   the lower face. Depth is the dot radius after its z flattening. */
+const FARMER_EYE_DEPTH = 0.040 * 0.6;
 const FARMER = [
-  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"], flush: true },
-  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"], flush: true },
+  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: FARMER_EYE_DEPTH, behind: ["head", "face"], flush: true },
+  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: FARMER_EYE_DEPTH, behind: ["head", "face"], flush: true },
   { name: "brow left",  x: -0.108, y: 0.437, z: 0.240, depth: 0.018,  behind: ["head", "face"], flush: true },
   { name: "brow right", x:  0.108, y: 0.437, z: 0.240, depth: 0.018,  behind: ["head", "face"], flush: true },
-  { name: "mouth",      x:  0.000, y: 0.205, z: 0.330, depth: 0.009,  behind: ["head", "face", "beard"], flush: true },
   { name: "mustache",   x:  0.000, y: 0.252, z: 0.320, depth: 0.038,  behind: ["head", "face", "beard"] },
   { name: "cheek left", x: -0.178, y: 0.283, z: 0.205, depth: 0.048,  behind: ["head", "face"], flush: true },
   { name: "cheek right",x:  0.178, y: 0.283, z: 0.205, depth: 0.048,  behind: ["head", "face"], flush: true },
@@ -97,8 +100,11 @@ checkFace("presenter", PRESENTER_OCC, PRESENTER);
 /* The far eye must also stay clear once the head yaws — that is the
    angle the old layout failed at. Both characters yaw to watch
    something off to one side, so both are checked. */
-const eyeFront = 0.246 + 0.062 * EYE_SCALE * 0.62;
-for (const [label, yaw] of [["farmer", 0.85 * 0.3], ["presenter", 0.9 * 0.35]]) {
+console.log("");
+for (const [label, yaw, eyeFront] of [
+  ["farmer", 0.85 * 0.3, 0.246 + FARMER_EYE_DEPTH],
+  ["presenter", 0.9 * 0.35, 0.246 + 0.062 * EYE_SCALE * 0.62]
+]) {
   const rot = (x, z) => -Math.sin(yaw) * x + Math.cos(yaw) * z;
   const farEye = rot(-0.115, eyeFront);
   const nearEye = rot(0.115, eyeFront);
@@ -106,6 +112,27 @@ for (const [label, yaw] of [["farmer", 0.85 * 0.3], ["presenter", 0.9 * 0.35]]) 
   if (!bothVisible) fails++;
   console.log(`${bothVisible ? "PASS" : "FAIL"}  ${label}: both eyes forward at ${(yaw * 57.3).toFixed(0)} degree yaw  far=${farEye.toFixed(3)} near=${nearEye.toFixed(3)}`);
 }
+
+/* Hair must not come down over the face. The presenter's crown cap once
+   descended to y=0.270, well below the eyes at 0.375, wrapping a dark
+   band across the whole eye region — he read as masked. A sphere cap
+   descends equally front and back, so the only safe rim is one above the
+   brows; anything lower has to be a separate piece pushed back in z.
+   Mirrors innovationScene.js. */
+const CROWN = { r: 0.315, sy: 1.02, cy: 0.29, theta: Math.PI * 0.25 };
+const BROW_TOP = 0.437 + 0.03 + 0.016;          // raised brow plus its radius
+const hairRim = CROWN.cy + CROWN.r * CROWN.sy * Math.cos(CROWN.theta);
+const hairClears = hairRim > BROW_TOP;
+if (!hairClears) fails++;
+console.log(`${hairClears ? "PASS" : "FAIL"}  presenter: hairline clears the brow  rim=${hairRim.toFixed(3)} brow top=${BROW_TOP.toFixed(3)}`);
+
+/* And the mass behind the head must stay behind the face. */
+const BACK = { r: 0.3, sx: 1.02, sy: 1.0, sz: 0.82, cy: 0.3, cz: -0.075 };
+const backAtEye = surfZ(BACK, 0.115, 0.375);
+const eyeFrontP = 0.246 + 0.062 * EYE_SCALE * 0.62;
+const backClears = backAtEye === null || backAtEye < eyeFrontP - MIN_CLEARANCE;
+if (!backClears) fails++;
+console.log(`${backClears ? "PASS" : "FAIL"}  presenter: back hair stays behind the eyes  hair z=${backAtEye === null ? "n/a" : backAtEye.toFixed(3)} eye front=${eyeFrontP.toFixed(3)}`);
 
 console.log(fails ? `\n${fails} FAILED` : "\nevery facial feature is visible");
 process.exit(fails ? 1 : 0);

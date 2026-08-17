@@ -19,13 +19,20 @@
 
 export const TOTAL = 4.8;
 
-/* Where things live on the x axis. The camera frames roughly -2.8..3.2,
-   so the block starts just inside the left edge rather than off-stage. */
-export const FEED_X  = -2.30;
-export const FEED_Y  = 0.52;
-export const MOUTH_X = -0.78;
-export const MOUTH_Y = -0.06;
-export const TRAY_X  = 1.62;
+/* Where things live on the x axis.
+
+   These were originally spread much wider, with the feed belt running
+   from (-2.30, 0.52) down to the drum on a steep diagonal. Across three
+   card widths that read as a seesaw rather than a production line, so
+   the whole machine is now compact and close to level: the belt drops
+   0.12 over 1.06 instead of 0.58 over 1.52, and the tray has come in
+   from 1.62 to 1.34. The flow is still strictly left to right — feed,
+   drum, outlet, tray — which is the thing that has to survive. */
+export const FEED_X  = -1.72;
+export const FEED_Y  = 0.10;
+export const MOUTH_X = -0.66;
+export const MOUTH_Y = -0.02;
+export const TRAY_X  = 1.34;
 
 /* Thaal recover up to 90% of the material. The gauge stops there, not
    at a rounder-looking 100% — the number is the point. */

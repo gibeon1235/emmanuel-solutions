@@ -93,11 +93,16 @@ export function buildInnovationScene() {
      Matte throughout: cloth 0.88-0.93, metalness only on the board
      frame and the marker's clip. */
   const skin = mat(0xe9b184, { r: 0.66 }), skin2 = mat(0xd9a074, { r: 0.68 });
-  const shirt = mat(0x8fa6bb, { r: 0.9 });
-  const shirt2 = mat(0x7c93a8, { r: 0.9 });
-  const chino = mat(0xa89880, { r: 0.92 });
-  const shoe = mat(0x6b4a30, { r: 0.82 });
-  const hairM = mat(0x4a3527, { r: 0.92 });
+  /* Business suit: charcoal jacket and trousers, white shirt, clay tie,
+     dark shoes. Wool is matte — nothing in here above 0.9 metalness-free
+     roughness would read as cloth. */
+  const suit = mat(0x353d4a, { r: 0.93 });
+  const suit2 = mat(0x2a313c, { r: 0.93 });
+  const shirtM = mat(0xf4efe4, { r: 0.9 });
+  const tieM = mat(0x8a4234, { r: 0.86 });
+  const trouser = mat(0x39414d, { r: 0.93 });
+  const shoe = mat(0x2a2118, { r: 0.78 });
+  const hairM = mat(0x3f2d21, { r: 0.92 });
   const eyeW = mat(0xf5efe6, { r: 0.42 });
   const irisM = mat(0x4a3524, { r: 0.5 });
   const whiteM = mat(0xffffff, { r: 0.35 });
@@ -121,19 +126,31 @@ export function buildInnovationScene() {
   const bodyG = new THREE.Group();
   root.add(bodyG);
 
-  const torso = M(new THREE.CapsuleGeometry(0.28, 0.34, 8, 24), shirt, 0, 0.52, 0);
-  torso.scale.set(1.2, 1, 0.9); bodyG.add(torso);
-  /* Open collar and a placket — the smart-casual read, standing in for
-     the farmer's dungaree bib. */
-  const plack = M(new THREE.BoxGeometry(0.07, 0.42, 0.04), shirt2, 0, 0.52, 0.235);
-  bodyG.add(plack);
-  const colL = M(new THREE.BoxGeometry(0.13, 0.09, 0.04), shirt2, -0.1, 0.76, 0.2);
-  colL.rotation.z = 0.5; bodyG.add(colL);
-  const colR = M(new THREE.BoxGeometry(0.13, 0.09, 0.04), shirt2, 0.1, 0.76, 0.2);
-  colR.rotation.z = -0.5; bodyG.add(colR);
-  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 30), chino, 0, 0.16, 0);
+  /* Jacket over shirt. The jacket capsule encloses the torso entirely,
+     so the shirt has to be a separate panel in front of it rather than
+     a smaller shape underneath — otherwise none of it is ever seen. */
+  const jacket = M(new THREE.CapsuleGeometry(0.28, 0.34, 8, 24), suit, 0, 0.52, 0);
+  jacket.scale.set(1.24, 1, 0.94); bodyG.add(jacket);
+  bodyG.add(M(new THREE.BoxGeometry(0.17, 0.44, 0.03), shirtM, 0, 0.55, 0.262));
+  /* Lapels flank the shirt panel and are what actually says "jacket". */
+  const lapL = M(new THREE.BoxGeometry(0.125, 0.4, 0.035), suit2, -0.113, 0.56, 0.258);
+  lapL.rotation.z = 0.17; bodyG.add(lapL);
+  const lapR = M(new THREE.BoxGeometry(0.125, 0.4, 0.035), suit2, 0.113, 0.56, 0.258);
+  lapR.rotation.z = -0.17; bodyG.add(lapR);
+  /* Shirt collar, then the tie knot and blade over the placket. */
+  const colL = M(new THREE.BoxGeometry(0.1, 0.07, 0.035), shirtM, -0.072, 0.735, 0.252);
+  colL.rotation.z = 0.42; bodyG.add(colL);
+  const colR = M(new THREE.BoxGeometry(0.1, 0.07, 0.035), shirtM, 0.072, 0.735, 0.252);
+  colR.rotation.z = -0.42; bodyG.add(colR);
+  bodyG.add(M(new THREE.BoxGeometry(0.07, 0.06, 0.035), tieM, 0, 0.705, 0.285));
+  const tie = M(new THREE.BoxGeometry(0.075, 0.32, 0.03), tieM, 0, 0.52, 0.283);
+  tie.scale.set(1, 1, 1); bodyG.add(tie);
+  /* Jacket hem sits over the trouser waist. */
+  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 30), trouser, 0, 0.16, 0);
   hips.scale.set(1.16, 1, 0.92); bodyG.add(hips);
-  bodyG.add(M(new THREE.CylinderGeometry(0.295, 0.295, 0.06, 30), shoe, 0, 0.05, 0));
+  const hem = M(new THREE.CylinderGeometry(0.33, 0.315, 0.2, 30), suit, 0, 0.26, 0);
+  hem.scale.set(1.14, 1, 0.94); bodyG.add(hem);
+  bodyG.add(M(new THREE.CylinderGeometry(0.29, 0.29, 0.05, 30), shoe, 0, 0.06, 0));
 
   const headG = new THREE.Group();
   headG.position.set(0, 0.9, 0);
@@ -145,14 +162,25 @@ export function buildInnovationScene() {
   faceP.scale.set(0.93, 0.72, 0.95); headG.add(faceP);
   headG.add(M(new THREE.SphereGeometry(0.056, 16, 14), skin2, 0, 0.295, 0.290));
 
-  /* Hair instead of the straw hat: a cap over the crown plus a short
-     fringe, sitting proud of the head sphere so it cannot z-fight. */
-  const hairCap = M(new THREE.SphereGeometry(0.308, 32, 20, 0, Math.PI * 2, 0, Math.PI * 0.52),
+  /* Hair, in two pieces, and the reason it is two.
+
+     A single sphere cap descends by the same amount at the front as at
+     the back. The previous one ran down to y=0.270 — below the eyes at
+     0.375 — so it wrapped a dark band right across the eye region and
+     the character read as wearing a bandit mask. The eyes cleared it by
+     0.016 and poked through the middle of it, which is why nothing
+     looked broken from the numbers alone.
+
+     So: a crown cap whose rim stops at y=0.479, above even a raised brow
+     at 0.467, and a separate mass behind the head for the back and
+     sides. The hairline is high; the face is bare. */
+  const CROWN_THETA = Math.PI * 0.25;
+  const hairCap = M(new THREE.SphereGeometry(0.315, 32, 18, 0, Math.PI * 2, 0, CROWN_THETA),
     hairM, 0, 0.29, -0.01);
   hairCap.scale.set(1, 1.02, 0.98); headG.add(hairCap);
-  const fringe = M(new THREE.SphereGeometry(0.286, 26, 18, 0, Math.PI * 2, 0, Math.PI * 0.36),
-    hairM, 0, 0.315, 0.028);
-  fringe.scale.set(0.98, 0.78, 0.96); headG.add(fringe);
+  /* Pushed back in z so it never reaches around to the face. */
+  const hairBack = M(new THREE.SphereGeometry(0.3, 26, 20), hairM, 0, 0.3, -0.075);
+  hairBack.scale.set(1.02, 1.0, 0.82); headG.add(hairBack);
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, -0.288, 0.3, 0));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, 0.288, 0.3, 0));
 
@@ -192,10 +220,13 @@ export function buildInnovationScene() {
   function mkArm(px) {
     const pv = new THREE.Group(); pv.position.set(px, 0.74, 0);
     const up = new THREE.Group(); pv.add(up);
-    up.add(M(new THREE.CapsuleGeometry(0.1, 0.14, 10, 24), shirt, 0, -0.12, 0));
-    up.add(M(new THREE.CylinderGeometry(0.112, 0.1, 0.05, 22), shirt, 0, -0.22, 0));
+    up.add(M(new THREE.CapsuleGeometry(0.102, 0.14, 10, 24), suit, 0, -0.12, 0));
+    up.add(M(new THREE.CylinderGeometry(0.114, 0.102, 0.05, 22), suit, 0, -0.22, 0));
     const fo = new THREE.Group(); fo.position.set(0, -0.28, 0); up.add(fo);
-    fo.add(M(new THREE.CapsuleGeometry(0.088, 0.18, 10, 24), skin, 0, -0.12, 0));
+    /* Full sleeve with a shirt cuff showing at the wrist — a suit does
+       not stop at the elbow the way the farmer's shirt does. */
+    fo.add(M(new THREE.CapsuleGeometry(0.09, 0.15, 10, 24), suit, 0, -0.11, 0));
+    fo.add(M(new THREE.CylinderGeometry(0.084, 0.082, 0.05, 18), shirtM, 0, -0.235, 0));
     const hd = new THREE.Group(); hd.position.set(0, -0.28, 0); fo.add(hd);
     const palm = M(new THREE.SphereGeometry(0.115, 22, 18), skin, 0, -0.02, 0);
     palm.scale.set(1, 1.08, 0.82); hd.add(palm);
@@ -224,10 +255,10 @@ export function buildInnovationScene() {
   function mkLeg(px) {
     const pv = new THREE.Group(); pv.position.set(px, 0.06, 0);
     const th = new THREE.Group(); pv.add(th);
-    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 10, 24), chino, 0, -0.13, 0));
+    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 10, 24), trouser, 0, -0.13, 0));
     const sh = new THREE.Group(); sh.position.set(0, -0.26, 0); th.add(sh);
-    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 10, 24), chino, 0, -0.08, 0));
-    sh.add(M(new THREE.CylinderGeometry(0.12, 0.128, 0.14, 24), chino, 0, -0.2, 0));
+    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 10, 24), trouser, 0, -0.08, 0));
+    sh.add(M(new THREE.CylinderGeometry(0.12, 0.128, 0.14, 24), trouser, 0, -0.2, 0));
     sh.add(M(new THREE.SphereGeometry(0.128, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), shoe, 0, -0.27, 0.03));
     sh.add(M(new THREE.BoxGeometry(0.21, 0.05, 0.29), shoe, 0, -0.3, 0.04));
     bodyG.add(pv);

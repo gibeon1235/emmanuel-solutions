@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import {
   poseAt, fragmentAt, pelletAt, returnAt,
-  FRAGMENTS, PELLETS, FEED_X, FEED_Y, TRAY_X, TOTAL
+  FRAGMENTS, PELLETS, FEED_X, FEED_Y, MOUTH_X, MOUTH_Y, TRAY_X, TOTAL
 } from "./circularTimeline.js";
 
 /* Circular economy — chemical recycling, no characters.
@@ -18,13 +18,12 @@ const DRUM_X = 0, DRUM_Y = -0.10;
 const DRUM_R = 0.62;
 const GAUGE_R = 0.22;
 const GAUGE_SEGMENTS = 12;
-/* First scaled up (1.18) to sit at the farmer's visual weight — he
-   fills the stage height and this machine read as a thin band across
-   the middle. Then both scenes were scaled down 12% together because
-   the pair read a touch large overall: 1.18 * 0.88 ≈ 1.04. The offset
-   re-centres the scene on the camera target after scaling, so growing
-   it does not push the feed belt off the left edge. */
-const WORLD_SCALE = 1.04;
+/* The machine is now compact — the recomposition pulled its footprint in
+   from roughly 5.0 world units across to 3.7 — so it is scaled up a
+   little to keep the same presence on the card rather than simply
+   becoming smaller. The offset re-centres it on the camera target after
+   scaling, which is what keeps the feed belt on the card. */
+const WORLD_SCALE = 1.12;
 
 function mkm(c, o) {
   o = o || {};
@@ -67,7 +66,7 @@ export function buildCircularScene() {
      The tuned rig from the farmer scene. Only the key casts shadows,
      and the frustum is kept tight to what this scene actually occupies
      (roughly -2.7..2.4 across) rather than a generous box of empty air. */
-  const hemi = new THREE.HemisphereLight(0xfff2e0, 0x4c5a4e, 0.72);
+  const hemi = new THREE.HemisphereLight(0xfff2e0, 0x5f4c3a, 0.72);
   const key = new THREE.DirectionalLight(0xfff0d4, 1.15);
   key.position.set(3.0, 4.3, 2.6);
   key.castShadow = true;
@@ -100,47 +99,54 @@ export function buildCircularScene() {
      surfaces (inner drum wall, gauge backing) sit at 0.85-0.95.
      Metalness stays only on parts that are genuinely metal — the drum
      shell and tray keep it, the pellets and tray gauge frame do not. */
-  const foamM = mat(0xa8a196, { r: 0.93 });
-  const foamM2 = mat(0x8d867b, { r: 0.91 });
-  const shell = mat(0xb2b8bd, { r: 0.42, m: 0.62 });
-  const shell2 = mat(0x8f979d, { r: 0.46, m: 0.52 });
-  const rubber = mat(0x4a4740, { r: 0.9 });
+  /* Warm palette. The machine was cool greys and olive-greens, which read
+     as generic grey industrial equipment rather than as part of this
+     site — the tan/clay/amber run is the ground-to-sky palette's own.
+     Only the emissives stay green: that is the circular-economy tone
+     (#2C6048) doing signal work, not decoration. */
+  const foamM = mat(0xbcae98, { r: 0.93 });
+  const foamM2 = mat(0x9c8b72, { r: 0.91 });
+  const shell = mat(0xc7a583, { r: 0.42, m: 0.55 });
+  const shell2 = mat(0xa8845e, { r: 0.46, m: 0.48 });
+  const rubber = mat(0x5d4a3a, { r: 0.9 });
   /* Porthole tint. Keep metalness at zero: metalness suppresses what
      shows through, and at 0.5 with the RoomEnvironment this reads as a
      mirror rather than a window. Opacity is deliberately low — this is
      a pane to see the reaction through, not a surface in its own right.
      Note none of this is what hid the fragments; that was the barrel's
      end cap, see the drum below. */
-  const glassM = mat(0x1d4436, { r: 0.32, m: 0, e: 0x2fbd86, ei: 0, t: true, o: 0.12, env: 0.03 });
-  const innerM = mat(0x22302b, { r: 0.88 });
+  const glassM = mat(0x24352a, { r: 0.32, m: 0, e: 0x2fbd86, ei: 0, t: true, o: 0.12, env: 0.03 });
+  const innerM = mat(0x3a2b20, { r: 0.88 });
   /* Fragments sit inside an enclosed drum, so they get almost no key
      light. Pale base colour plus a constant emissive floor keeps them
      from reading as dark specks in a dark box. */
   const fragM = mat(0xe8cfa8, { r: 0.72, e: 0x8a6a3a, ei: 0.45 });
   const pelletM = mat(0xd9a441, { r: 0.5, m: 0.04 });
-  const trayM = mat(0x9aa2a8, { r: 0.5, m: 0.48 });
+  const trayM = mat(0xb08d64, { r: 0.5, m: 0.42 });
   const gaugeBackM = mat(0x2a2118, { r: 0.85 });
-  const loopM = mat(0x3fd39a, { r: 0.45, e: 0x2fbd86, ei: 0.6, t: true, o: 0 });
+  /* The return arc carries recovered pellets, so it reads in their amber
+     rather than in the reaction's green. */
+  const loopM = mat(0xd9a441, { r: 0.45, e: 0xc98f2e, ei: 0.6, t: true, o: 0 });
 
   /* ── feed belt ────────────────────────────────────────
      Angled to match the block's travel line exactly, so the block rides
      the surface instead of hovering above it or sinking through. */
-  const feedAng = Math.atan2(-0.58, 1.52);
+  const feedAng = Math.atan2(MOUTH_Y - FEED_Y, MOUTH_X - FEED_X);
   const belt = new THREE.Group();
-  belt.position.set(-1.54, 0.03, 0);
+  belt.position.set(-1.21, -0.16, 0);
   belt.rotation.z = feedAng;
   group.add(belt);
-  belt.add(M(new THREE.BoxGeometry(2.10, 0.055, 0.46), rubber));
-  belt.add(M(new THREE.BoxGeometry(2.10, 0.05, 0.045), shell2, 0, 0.02, 0.235));
-  belt.add(M(new THREE.BoxGeometry(2.10, 0.05, 0.045), shell2, 0, 0.02, -0.235));
+  belt.add(M(new THREE.BoxGeometry(1.45, 0.055, 0.46), rubber));
+  belt.add(M(new THREE.BoxGeometry(1.45, 0.05, 0.045), shell2, 0, 0.02, 0.235));
+  belt.add(M(new THREE.BoxGeometry(1.45, 0.05, 0.045), shell2, 0, 0.02, -0.235));
   for (let i = 0; i < 2; i++) {
     const roll = M(new THREE.CylinderGeometry(0.075, 0.075, 0.5, 18), shell2,
-      i ? 1.02 : -1.02, 0, 0);
+      i ? 0.7 : -0.7, 0, 0);
     roll.rotation.x = Math.PI / 2;
     belt.add(roll);
   }
   for (let i = 0; i < 2; i++) {
-    const leg = M(new THREE.BoxGeometry(0.07, 0.62, 0.07), shell2, i ? 0.8 : -0.8, -0.34, 0);
+    const leg = M(new THREE.BoxGeometry(0.07, 0.78, 0.07), shell2, i ? 0.5 : -0.5, -0.42, 0);
     leg.rotation.z = -feedAng;
     belt.add(leg);
   }
@@ -215,25 +221,27 @@ export function buildCircularScene() {
   drum.add(glass);
 
   /* Feed funnel into the drum, and the outlet spout. */
-  const funnel = M(new THREE.ConeGeometry(0.28, 0.44, 20, 1, true), shell2, -0.76, 0.04, 0);
+  const funnel = M(new THREE.ConeGeometry(0.26, 0.4, 20, 1, true), shell2, -0.70, -0.02, 0);
   funnel.rotation.z = -Math.PI / 2;
   group.add(funnel);
-  const spout = M(new THREE.CylinderGeometry(0.15, 0.19, 0.34, 20), shell2, 0.68, -0.30, 0.08);
+  const spout = M(new THREE.CylinderGeometry(0.15, 0.19, 0.32, 20), shell2, 0.66, -0.30, 0.08);
   spout.rotation.z = -0.9;
   group.add(spout);
 
-  /* ── outlet chute and tray ────────────────────────────*/
-  const chuteAng = Math.atan2(-0.40, 0.84);
+  /* ── outlet chute and tray ────────────────────────────
+     Shorter and shallower than before, so the outlet no longer mirrors
+     the feed into a seesaw across the card. */
+  const chuteAng = Math.atan2(-0.32, 0.62);
   const chute = new THREE.Group();
-  chute.position.set(1.08, -0.56, 0.08);
+  chute.position.set(0.98, -0.54, 0.08);
   chute.rotation.z = chuteAng;
   group.add(chute);
-  chute.add(M(new THREE.BoxGeometry(0.95, 0.04, 0.40), shell2));
-  chute.add(M(new THREE.BoxGeometry(0.95, 0.09, 0.035), shell2, 0, 0.05, 0.20));
-  chute.add(M(new THREE.BoxGeometry(0.95, 0.09, 0.035), shell2, 0, 0.05, -0.20));
+  chute.add(M(new THREE.BoxGeometry(0.78, 0.04, 0.40), shell2));
+  chute.add(M(new THREE.BoxGeometry(0.78, 0.09, 0.035), shell2, 0, 0.05, 0.20));
+  chute.add(M(new THREE.BoxGeometry(0.78, 0.09, 0.035), shell2, 0, 0.05, -0.20));
 
   const tray = new THREE.Group();
-  tray.position.set(TRAY_X, -0.86, 0);
+  tray.position.set(TRAY_X, -0.82, 0);
   group.add(tray);
   tray.add(M(new THREE.BoxGeometry(0.78, 0.05, 0.54), trayM));
   tray.add(M(new THREE.BoxGeometry(0.78, 0.18, 0.04), trayM, 0, 0.09, 0.25));
@@ -246,17 +254,19 @@ export function buildCircularScene() {
      home along the return arc. One pellet is never in two places, so
      reusing them keeps the count honest as well as cheap. */
   const pourCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0.60, -0.42, 0.10),
-    new THREE.Vector3(0.95, -0.58, 0.09),
-    new THREE.Vector3(1.30, -0.70, 0.06),
-    new THREE.Vector3(TRAY_X, -0.74, 0.02)
+    new THREE.Vector3(0.58, -0.42, 0.10),
+    new THREE.Vector3(0.82, -0.55, 0.09),
+    new THREE.Vector3(1.08, -0.66, 0.06),
+    new THREE.Vector3(TRAY_X, -0.70, 0.02)
   ]);
+  /* Tighter arc to match the compact machine — it still clears the drum
+     and the gauge on its way over. */
   const returnCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(TRAY_X, -0.60, 0.05),
-    new THREE.Vector3(1.35, 0.34, 0.05),
-    new THREE.Vector3(0.55, 0.92, 0.02),
-    new THREE.Vector3(-0.90, 1.02, 0),
-    new THREE.Vector3(-1.90, 0.82, 0),
+    new THREE.Vector3(TRAY_X, -0.56, 0.05),
+    new THREE.Vector3(1.16, 0.26, 0.05),
+    new THREE.Vector3(0.50, 0.80, 0.02),
+    new THREE.Vector3(-0.55, 0.90, 0),
+    new THREE.Vector3(-1.40, 0.60, 0),
     new THREE.Vector3(FEED_X, FEED_Y, 0)
   ]);
 
@@ -312,7 +322,7 @@ export function buildCircularScene() {
   const segGeo = new THREE.BoxGeometry(0.038, 0.075, 0.03);
   geos.push(segGeo);
   for (let i = 0; i < GAUGE_SEGMENTS; i++) {
-    const sm = mkm(deepen(0x2f3a34), { r: 0.85, e: 0x3fd39a, ei: 0 });
+    const sm = mkm(deepen(0x3d3229), { r: 0.85, e: 0x3fd39a, ei: 0 });
     mats.push(sm);
     segMats.push(sm);
     const a = Math.PI - ((i + 0.5) / GAUGE_SEGMENTS) * Math.PI;
@@ -324,7 +334,7 @@ export function buildCircularScene() {
   }
 
   group.scale.setScalar(WORLD_SCALE);
-  group.position.set(0.46, 0.13, 0);
+  group.position.set(0.31, 0.13, 0);
 
   /* Scratch vectors — never allocate inside update(). */
   const tmp = new THREE.Vector3();

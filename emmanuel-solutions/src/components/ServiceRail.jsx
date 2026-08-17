@@ -81,6 +81,53 @@ export function ServiceRail({ areas }) {
 
   useEffect(() => () => clearTimer(), []);
 
+  /* Prefetch the renderer chunk.
+
+     Without this the first hover pays for the whole Three.js download
+     before anything moves. On a normal connection that is several
+     seconds — long enough that the cursor has usually left the card by
+     the time the scene appears, so the animation may as well not exist.
+
+     Gated on the same eligible() the rail itself uses, so touch,
+     coarse-pointer and reduced-motion visitors still download nothing:
+     the point of the gate is that they never pay for the renderer, and
+     prefetching unconditionally would quietly undo it.
+
+     Idle, and after load, so it never competes with the hero video or
+     the fonts. The timeout stops a busy main thread starving it. */
+  useEffect(() => {
+    if (!capable.current) return;
+    let cancelled = false;
+    let handle = null;
+    let viaIdle = false;
+
+    const prefetch = () => {
+      if (cancelled) return;
+      const idle = window.requestIdleCallback;
+      if (idle) {
+        viaIdle = true;
+        handle = idle(() => {
+          if (!cancelled) import("../three/MascotScene.jsx");
+        }, { timeout: 2500 });
+      } else {
+        handle = setTimeout(() => {
+          if (!cancelled) import("../three/MascotScene.jsx");
+        }, 1200);
+      }
+    };
+
+    if (document.readyState === "complete") prefetch();
+    else window.addEventListener("load", prefetch, { once: true });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", prefetch);
+      if (handle === null) return;
+      if (viaIdle) { if (window.cancelIdleCallback) window.cancelIdleCallback(handle); }
+      else clearTimeout(handle);
+    };
+  }, []);
+
   /* Keep the stage aligned if the layout reflows while hovering. */
   useEffect(() => {
     if (!active) return;

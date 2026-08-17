@@ -20,6 +20,11 @@
     <meta name="twitter:description" content="Four practice areas. One dedicated AI division. Built on 30+ years at Bayer MaterialScience and Covestro." />
     <meta name="twitter:image" content="https://www.emmanuelsolutionss.com/og-image.png" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%231A3D2B'/><text y='.88em' font-size='64' x='16' fill='white' font-family='Georgia'>E</text></svg>" />
+    <!-- The hero still, fetched during HTML parse rather than after the
+         bundle has parsed and React has rendered. It is the largest
+         thing above the fold and the first thing a visitor sees, so it
+         should not queue behind the application code that renders it. -->
+    <link rel="preload" as="image" href="/assets/video/greenhouse-poster.jpg" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Inter+Tight:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />

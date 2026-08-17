@@ -51,18 +51,50 @@ export function CinemaScroll({
   const [mode, setMode] = useState("poster");   // poster | scrub
   const [ready, setReady] = useState(false);
 
+  /* Getting the footage on screen sooner.
+
+     This used to wait for window 'load' — which is every image, font and
+     script on the page — and then for a requestIdleCallback with no
+     timeout, which a busy main thread can defer indefinitely. Only then
+     did the <video> mount and *begin* its download. That chain is why
+     the hero sat on a still for seconds.
+
+     Now: DOM-ready rather than full load, and the idle callback carries
+     a short timeout so it is a scheduling hint rather than an open
+     question. The poster is preloaded from index.html so it is already
+     in cache by the time this component renders. */
   useEffect(() => {
     if (!src) return;
     if (loop ? !canLoop() : !canScrub()) return;
     let cancelled = false;
+    let handle = null;
+    let viaIdle = false;
+
     const activate = () => {
       if (cancelled) return;
-      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 400));
-      idle(() => { if (!cancelled) setMode(loop ? "loop" : "scrub"); });
+      const idle = window.requestIdleCallback;
+      if (idle) {
+        viaIdle = true;
+        handle = idle(() => { if (!cancelled) setMode(loop ? "loop" : "scrub"); },
+          { timeout: 600 });
+      } else {
+        handle = setTimeout(() => { if (!cancelled) setMode(loop ? "loop" : "scrub"); }, 120);
+      }
     };
-    if (document.readyState === "complete") activate();
-    else window.addEventListener("load", activate, { once: true });
-    return () => { cancelled = true; window.removeEventListener("load", activate); };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", activate, { once: true });
+    } else {
+      activate();
+    }
+
+    return () => {
+      cancelled = true;
+      document.removeEventListener("DOMContentLoaded", activate);
+      if (handle === null) return;
+      if (viaIdle) { if (window.cancelIdleCallback) window.cancelIdleCallback(handle); }
+      else clearTimeout(handle);
+    };
   }, [src, loop]);
 
   /* Scrub: map the element's travel through the viewport onto duration */
@@ -170,6 +202,8 @@ export function CinemaScroll({
         alt={alt}
         width="899" height="1599"
         decoding="async"
+        loading="eager"
+        fetchpriority="high"
         style={{ objectPosition, opacity: (mode === "scrub" || mode === "loop") && ready ? 0 : 1 }}
       />
       <span className="es-cinema-grade" aria-hidden="true" />

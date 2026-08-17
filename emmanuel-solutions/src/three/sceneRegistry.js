@@ -25,11 +25,11 @@ export const SCENES = {
   },
   /* This one is meant to stay wholly inside the camera frame — nothing
      enters from off-stage — so its bounds are tight to the measured
-     extent x[-2.13, 2.53] y[-0.97, 1.21] rather than to the frame edge.
+     extent x[-1.82, 2.23] y[-1.06, 1.16] rather than to the frame edge.
      If the scene is rescaled again this is what catches it leaving. */
   "circular-economy": {
     build: buildCircularScene, total: CIRCULAR_TOTAL,
-    bounds: { x: [-2.35, 2.75], y: [-1.15, 1.4] }
+    bounds: { x: [-2.05, 2.45], y: [-1.25, 1.4] }
   },
   /* Presenter and board both sit inside the frame; nothing enters from
      off-stage, so these are tight to the measured extent
@@ -38,13 +38,12 @@ export const SCENES = {
     build: buildInnovationScene, total: INNOVATION_TOTAL,
     bounds: { x: [-1.85, 2.15], y: [-1.1, 1.1] }
   },
-  /* This one legitimately reaches outside the frame on the right: the
-     stamp is visible from the moment it starts its swing at x=3.55, well
-     off-card, which is what makes it arrive rather than appear. Measured
-     extent x[-1.96, 4.22] y[-1.11, 2.39]. */
+  /* Everything stays on the card now that the stamp is gone — the crane
+     at x=2.45 is the rightmost thing on the site. Measured extent
+     x[-1.96, 3.07] y[-1.11, 1.58]. */
   "industrial-marketing": {
     build: buildIndustrialScene, total: INDUSTRIAL_TOTAL,
-    bounds: { x: [-2.2, 4.45], y: [-1.3, 2.6] }
+    bounds: { x: [-2.2, 3.3], y: [-1.3, 1.8] }
   }
 };
 

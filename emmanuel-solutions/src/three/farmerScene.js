@@ -102,9 +102,6 @@ export function buildFarmerScene() {
   const leather = mat(0x7c4a28, { r: 0.82 }), leather2 = mat(0x5e371d, { r: 0.84 });
   const darkM = mat(0x2a2118, { r: 0.75 });
   const cableM = mat(0x2a2118, { r: 0.88, t: true, o: 0 });
-  const eyeW = mat(0xf5efe6, { r: 0.42 });
-  const irisM = mat(0x4a3524, { r: 0.5 });
-  const whiteM = mat(0xffffff, { r: 0.35 });
   const brass = mat(0xc9a227, { r: 0.42, m: 0.62 });
   const metal = mat(0xb2b8bd, { r: 0.4, m: 0.62 });
   const metal2 = mat(0x8f979d, { r: 0.46, m: 0.52 });
@@ -114,7 +111,6 @@ export function buildFarmerScene() {
   const ledM = mat(0x14231d, { r: 0.6, e: 0x3ce39a, ei: 0 });
   const pulseM = mat(0x9be8c4, { r: 0.45, e: 0x38d98d, ei: 2.4 });
   const frostM = mat(0xcfeaf5, { r: 0.3, t: true, o: 0 });
-  const mouthM = mat(0x7a3a2e, { r: 0.68 });
   const cheekM = mat(0xd97a62, { r: 0.78, t: true, o: 0 });
   const carrotM = mat(0xe8792b, { r: 0.68 }), carrotM2 = mat(0xcc6320, { r: 0.72 });
   const leafM = mat(0x4e8a3c, { r: 0.8 }), leafM2 = mat(0x66a34a, { r: 0.8 });
@@ -160,28 +156,21 @@ export function buildFarmerScene() {
      the head geometry and read as shut. Blinking now scales the whole
      eye group rather than relying on a separate lid mesh, which sat
      behind the eye and could never have occluded anything. */
-  /* Eyes were reading too large on the card. Every radius and offset
-     inside the eye is scaled by EYE_SCALE together — shrinking only the
-     white sphere would leave the iris/pupil/highlight sitting proud of
-     it or buried, the same clearance problem npm run face exists to
-     catch. The eye's position on the head (g.position, below) is
-     unchanged: this makes the eyes smaller, not repositioned. */
-  const EYE_SCALE = 0.72;
+  /* Eyes are single dark dots — no sclera, no iris, no highlight. At the
+     size this renders, a four-part eye resolved into a grey smudge and
+     read as a stare; one solid dot reads as an eye. The group structure
+     is kept so blinking still scales `g` on y and the look drift still
+     translates `look`. EYE_R is flattened on z so the dot hugs the face
+     rather than bulging off it. */
+  const EYE_R = 0.040, EYE_FLAT = 0.6;
   function mkEye(side) {
     const g = new THREE.Group();
     g.position.set(side * 0.115, 0.375, 0.246);
-    const white = M(new THREE.SphereGeometry(0.062 * EYE_SCALE, 26, 22), eyeW, 0, 0, 0);
-    white.scale.set(0.94, 1, 0.62);
-    g.add(white);
     const look = new THREE.Group();
-    look.position.set(0, 0, 0.028 * EYE_SCALE);
     g.add(look);
-    const iris = M(new THREE.SphereGeometry(0.032 * EYE_SCALE, 18, 16), irisM, 0, 0, 0.018 * EYE_SCALE);
-    iris.scale.set(1, 1, 0.5);
-    look.add(iris);
-    look.add(M(new THREE.SphereGeometry(0.016 * EYE_SCALE, 12, 12), darkM, 0, 0, 0.03 * EYE_SCALE));
-    look.add(M(new THREE.SphereGeometry(0.011 * EYE_SCALE, 10, 10), whiteM,
-      -0.015 * EYE_SCALE, 0.018 * EYE_SCALE, 0.034 * EYE_SCALE));
+    const dot = M(new THREE.SphereGeometry(EYE_R, 18, 16), darkM, 0, 0, 0);
+    dot.scale.set(1, 1, EYE_FLAT);
+    look.add(dot);
     headG.add(g);
     return { g, look };
   }
@@ -191,8 +180,10 @@ export function buildFarmerScene() {
   bwL.rotation.z = Math.PI / 2; headG.add(bwL);
   const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.108, 0.437, 0.240);
   bwR.rotation.z = Math.PI / 2; headG.add(bwR);
-  const mouth = M(new THREE.TorusGeometry(0.038, 0.009, 8, 18, Math.PI), mouthM, 0, 0.205, 0.330);
-  mouth.rotation.z = Math.PI; headG.add(mouth);
+  /* No mouth. The beard and mustache carry the whole lower face; a
+     smile drawn under them was never legible at card size, and the
+     stretch of it was the thing that read as odd. `smile` still drives
+     the cheeks and brows, so the expression change survives. */
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, -0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, 0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, -0.288, 0.3, 0));
@@ -360,9 +351,8 @@ export function buildFarmerScene() {
 
     headG.rotation.x = p.nod;
     headG.rotation.y = p.look * 0.3;
-    /* Range between rest and full smile was 0.55/0.7 — enough to stretch
-       the mouth noticeably wide. Halved so it stays a subtle curve. */
-    mouth.scale.set(0.92 + p.smile * 0.24, 0.85 + p.smile * 0.32, 1);
+    /* No mouth mesh to drive — smile now shows only in the cheeks and
+       brows, which is all that was ever legible at this size. */
     cheekM.opacity = p.smile * 0.35;
     bwL.position.y = 0.437 + p.brow * 0.03;
     bwR.position.y = 0.437 + p.brow * 0.03;

@@ -1,14 +1,12 @@
 /* Industrial marketing — choreography as pure maths.
 
-   A timelapse: four foundations are poured, four structures rise from
-   them at staggered times while a crane slews across the site, windows
-   come on as each tops out, and then a large approval stamp swings in
-   from the right and slams down — squash on contact, a dust ring, and it
-   settles at a slight angle.
+   A timelapse: four foundations are poured and four structures rise from
+   them at staggered times while a crane slews across the site. Once the
+   last one tops out, the windows come on in sequence across the whole
+   skyline — left to right, bottom to top — and it holds there.
 
-   The stamp is the payoff, so it is the only thing here that moves
-   fast. Everything before it is patient; the contrast is what gives the
-   slam its weight.
+   The lighting sequence is the payoff. It reads as occupancy: the site
+   is not just built, it is in use.
 
    No Three.js here on purpose — the timing is unit tested without a GPU.
    Geometry lives in industrialScene.js. */
@@ -37,21 +35,24 @@ const RISE = [
   { t0: 1.25, dur: 1.10 },
   { t0: 1.70, dur: 1.10 }
 ];
-const WINDOW_DUR = 0.30;
 const CRANE_T0 = 0.30, CRANE_DUR = 0.55;
 const SLEW_T0 = 0.60, SLEW_DUR = 2.30;
 
-/* The last structure tops out here; the stamp answers it. */
+/* The last structure tops out here; the lighting sequence answers it. */
 export const TOP_OUT = RISE[BUILDINGS - 1].t0 + RISE[BUILDINGS - 1].dur;  // 2.80
 
-export const STAMP_T0 = 3.05, STAMP_DUR = 0.57;
-export const CONTACT = STAMP_T0 + STAMP_DUR;                              // 3.62
-const SQUASH_DUR = 0.30, SETTLE_DUR = 0.42, DUST_DUR = 0.52;
+/* Every window on the site, in the order it comes on: left to right by
+   building, bottom to top within each. Precomputed so both the timeline
+   and the geometry agree on which window is which. */
+export const WINDOWS = [];
+for (let b = 0; b < BUILDINGS; b++) {
+  for (let k = 0; k < SITES[b].storeys; k++) WINDOWS.push({ building: b, storey: k });
+}
 
-/* Where the stamp comes from and where it lands. */
-const STAMP_FROM_X = 3.55, STAMP_FROM_Y = 1.85, STAMP_FROM_ROT = -0.85;
-export const STAMP_X = 0.10, STAMP_Y = 0.30;
-export const STAMP_REST_ROT = -0.14;
+export const LIGHT_T0 = TOP_OUT + 0.15;      // 2.95
+const LIGHT_STAGGER = 0.062, LIGHT_DUR = 0.28;
+/* Last window finishes here; what remains of the cycle is the hold. */
+export const LIGHTS_DONE = LIGHT_T0 + (WINDOWS.length - 1) * LIGHT_STAGGER + LIGHT_DUR;
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 const smooth  = (p) => p * p * (3 - 2 * p);
@@ -79,14 +80,15 @@ export function buildingAt(i, t) {
   const stepped = Math.floor(p * SITES[i].storeys) / SITES[i].storeys;
   const h = 0.5 * smooth(p) + 0.5 * stepped;
   const done = t >= r.t0 + r.dur;
-  return {
-    visible: p > 0.001,
-    p,
-    h,
-    topped: done,
-    /* Windows come on only once the frame is finished. */
-    lit: clamp01((t - (r.t0 + r.dur)) / WINDOW_DUR)
-  };
+  return { visible: p > 0.001, p, h, topped: done };
+}
+
+/* One window's light, by its index in WINDOWS. Nothing comes on until
+   every structure is finished — a lit window in a half-built frame would
+   undercut the whole sequence. */
+export function windowAt(index, t) {
+  const p = clamp01((t - (LIGHT_T0 + index * LIGHT_STAGGER)) / LIGHT_DUR);
+  return { lit: p, on: p > 0.001 };
 }
 
 /* The crane: stands up early, slews across the site while the buildings
@@ -103,52 +105,19 @@ export function craneAt(t) {
   };
 }
 
-/* The stamp. Accelerating approach — p^2.2 rather than a symmetric ease
-   — so it is still gaining speed at the moment of contact instead of
-   gliding politely into place. */
-export function stampAt(t) {
-  const raw = clamp01((t - STAMP_T0) / STAMP_DUR);
-  const p = Math.pow(raw, 2.2);
-
-  /* Impact decay, 1 at the instant of contact falling to 0. */
-  const tau = clamp01((t - CONTACT) / SQUASH_DUR);
-  const bump = t >= CONTACT && tau < 1 ? (1 - tau) * (1 - tau) : 0;
-
-  /* A short recoil after the hit, so it does not simply stick. */
-  const sTau = clamp01((t - CONTACT) / SETTLE_DUR);
-  const recoil = t >= CONTACT && sTau < 1 ? Math.sin(sTau * Math.PI) * (1 - sTau) : 0;
-
-  return {
-    visible: raw > 0.001,
-    approach: raw,
-    landed: t >= CONTACT,
-    x: mix(STAMP_FROM_X, STAMP_X, p),
-    y: mix(STAMP_FROM_Y, STAMP_Y, p) + recoil * 0.08,
-    rot: mix(STAMP_FROM_ROT, STAMP_REST_ROT, p) + bump * 0.1,
-    /* Volume-preserving squash: flattens on the y it hit along, spreads
-       on the other two. */
-    squashY: 1 - 0.34 * bump,
-    squashXZ: 1 + 0.26 * bump,
-    bump
-  };
-}
-
-/* The dust ring thrown out by the slam. */
-export function dustAt(t) {
-  const p = clamp01((t - CONTACT) / DUST_DUR);
-  return { visible: p > 0.001 && p < 0.999, p };
-}
-
 /* Everything the scene needs for one frame. */
 export function poseAt(t) {
-  const stamp = stampAt(t);
+  let litSum = 0;
+  for (let i = 0; i < WINDOWS.length; i++) litSum += windowAt(i, t).lit;
+  const litFraction = litSum / WINDOWS.length;
+
   return {
     crane: craneAt(t),
-    stamp,
-    dust: dustAt(t),
+    /* How far through the lighting sequence the site is, 0 to 1. */
+    litFraction,
     /* Site floodlights warm up as the last structure tops out. */
     glow: clamp01((t - TOP_OUT) / 0.5),
-    /* The rail lights the card border the moment the stamp lands. */
-    powered: stamp.landed
+    /* The rail lights the card border as the payoff begins. */
+    powered: t >= LIGHT_T0
   };
 }
