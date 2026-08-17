@@ -29,31 +29,59 @@ const PRESENTER_OCC = {
   face: FARMER_OCC.face
 };
 
-/* Eye depth mirrors EYE_SCALE (0.72) applied to the white sphere radius
-   (0.062). Mouth depth mirrors the torus tube radius. */
-const EYE_SCALE = 0.72;
+/* Both characters now share one eye construction: a single dark dot,
+   flattened on z, with a small off-centre catchlight. Depth is the dot
+   radius after that flattening. */
+const EYE_R = 0.040, EYE_FLAT = 0.6;
+const EYE_DEPTH = EYE_R * EYE_FLAT;
+const EYE_X = 0.115, EYE_Y = 0.375, EYE_Z = 0.246;
+/* Catchlight, in eye-local coordinates. Not mirrored between eyes — a
+   real highlight follows the light, which comes from one side. */
+const HI_R = 0.012, HI_X = -0.013, HI_Y = 0.013, HI_Z = 0.024;
 
-/* The farmer's eyes are single flattened dots — no sclera, iris or
-   highlight — and he has no mouth at all: the beard and mustache carry
-   the lower face. Depth is the dot radius after its z flattening. */
-const FARMER_EYE_DEPTH = 0.040 * 0.6;
+/* Brows sit at 0.452 on both faces. At the old 0.437 the underside of a
+   brow was 0.002 above the top of an eye, which reads as a shelf
+   pressing down on it — see the brow/eye gap check further down. */
+const BROW_Y = 0.452;
+
+/* Mouth is a short arc lying on the surface behind it. Its lowest point
+   is one torus radius below the mesh centre, and that is the point the
+   clearance has to be measured at. */
+const MOUTH_R = 0.017, MOUTH_TUBE = 0.0055;
+const MOUTH_Y = 0.205 - MOUTH_R;
+
+const catchlight = (side) => ({
+  name: "catchlight " + (side < 0 ? "left" : "right"),
+  x: side * EYE_X + HI_X, y: EYE_Y + HI_Y, z: EYE_Z + HI_Z,
+  depth: HI_R, behind: ["head", "face"]
+});
+
 const FARMER = [
-  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: FARMER_EYE_DEPTH, behind: ["head", "face"], flush: true },
-  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: FARMER_EYE_DEPTH, behind: ["head", "face"], flush: true },
-  { name: "brow left",  x: -0.108, y: 0.437, z: 0.240, depth: 0.018,  behind: ["head", "face"], flush: true },
-  { name: "brow right", x:  0.108, y: 0.437, z: 0.240, depth: 0.018,  behind: ["head", "face"], flush: true },
+  { name: "eye left",   x: -EYE_X, y: EYE_Y, z: EYE_Z, depth: EYE_DEPTH, behind: ["head", "face"], flush: true },
+  { name: "eye right",  x:  EYE_X, y: EYE_Y, z: EYE_Z, depth: EYE_DEPTH, behind: ["head", "face"], flush: true },
+  catchlight(-1), catchlight(1),
+  /* z pulled back from 0.240 to 0.218 when the brows moved up: the skull
+     recedes as it rises, so a brow that stayed at the old depth floated
+     0.048 clear of it. */
+  { name: "brow left",  x: -0.108, y: BROW_Y, z: 0.218, depth: 0.020, behind: ["head", "face"], flush: true },
+  { name: "brow right", x:  0.108, y: BROW_Y, z: 0.218, depth: 0.020, behind: ["head", "face"], flush: true },
+  /* Lies on the beard, which bulges to z=0.308 at this height. */
+  { name: "mouth",      x:  0.000, y: MOUTH_Y, z: 0.318, depth: MOUTH_TUBE, behind: ["head", "face", "beard"], flush: true },
   { name: "mustache",   x:  0.000, y: 0.252, z: 0.320, depth: 0.038,  behind: ["head", "face", "beard"] },
   { name: "cheek left", x: -0.178, y: 0.283, z: 0.205, depth: 0.048,  behind: ["head", "face"], flush: true },
   { name: "cheek right",x:  0.178, y: 0.283, z: 0.205, depth: 0.048,  behind: ["head", "face"], flush: true },
-  { name: "nose",       x:  0.000, y: 0.295, z: 0.290, depth: 0.056,  behind: ["head", "face", "beard"] }
+  { name: "nose",       x:  0.000, y: 0.295, z: 0.290, depth: 0.056,  behind: ["head", "face"] }
 ];
 
 const PRESENTER = [
-  { name: "eye left",   x: -0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"], flush: true },
-  { name: "eye right",  x:  0.115, y: 0.375, z: 0.246, depth: 0.062 * EYE_SCALE * 0.62, behind: ["head", "face"], flush: true },
-  { name: "brow left",  x: -0.108, y: 0.437, z: 0.240, depth: 0.016,  behind: ["head", "face"], flush: true },
-  { name: "brow right", x:  0.108, y: 0.437, z: 0.240, depth: 0.016,  behind: ["head", "face"], flush: true },
-  { name: "mouth",      x:  0.000, y: 0.205, z: 0.288, depth: 0.009,  behind: ["head", "face"], flush: true },
+  { name: "eye left",   x: -EYE_X, y: EYE_Y, z: EYE_Z, depth: EYE_DEPTH, behind: ["head", "face"], flush: true },
+  { name: "eye right",  x:  EYE_X, y: EYE_Y, z: EYE_Z, depth: EYE_DEPTH, behind: ["head", "face"], flush: true },
+  catchlight(-1), catchlight(1),
+  { name: "brow left",  x: -0.108, y: BROW_Y, z: 0.220, depth: 0.017, behind: ["head", "face"], flush: true },
+  { name: "brow right", x:  0.108, y: BROW_Y, z: 0.220, depth: 0.017, behind: ["head", "face"], flush: true },
+  /* No beard here, so the mouth lies on the face patch instead and sits
+     0.034 further back than the farmer's. */
+  { name: "mouth",      x:  0.000, y: MOUTH_Y, z: 0.284, depth: MOUTH_TUBE, behind: ["head", "face"], flush: true },
   { name: "cheek left", x: -0.178, y: 0.283, z: 0.205, depth: 0.046,  behind: ["head", "face"], flush: true },
   { name: "cheek right",x:  0.178, y: 0.283, z: 0.205, depth: 0.046,  behind: ["head", "face"], flush: true },
   { name: "nose",       x:  0.000, y: 0.295, z: 0.290, depth: 0.056,  behind: ["head", "face"] }
@@ -97,17 +125,42 @@ function checkFace(label, occ, features) {
 checkFace("farmer", FARMER_OCC, FARMER);
 checkFace("presenter", PRESENTER_OCC, PRESENTER);
 
+/* The catchlight is what stops a dot eye reading as dead, so it has to
+   sit on the dot: buried in the pupil it does nothing, and too far proud
+   it detaches into a floating speck. Measured against the dot's own
+   surface, not against the face — the eye is already proud of the face,
+   so a face-relative check would pass either mistake. */
+console.log("");
+const dotSurfaceAtHighlight = EYE_R * EYE_FLAT *
+  Math.sqrt(1 - (HI_X / EYE_R) ** 2 - (HI_Y / EYE_R) ** 2);
+const hiFront = HI_Z + HI_R;
+const hiOver = hiFront - dotSurfaceAtHighlight;
+const hiOk = hiOver > 0.004 && hiOver < 0.02;
+if (!hiOk) fails++;
+console.log(`${hiOk ? "PASS" : "FAIL"}  catchlight sits on the eye, both characters  proud by ${hiOver.toFixed(4)} (want 0.004-0.020)`);
+
+/* A brow resting on the eye reads as a heavy shelf and is most of what
+   made the farmer look miserable. Needs real daylight between them. */
+const eyeTop = EYE_Y + EYE_R;
+for (const [label, browR] of [["farmer", 0.020], ["presenter", 0.017]]) {
+  const browBottom = BROW_Y - browR;
+  const gap = browBottom - eyeTop;
+  const gapOk = gap > 0.010;
+  if (!gapOk) fails++;
+  console.log(`${gapOk ? "PASS" : "FAIL"}  ${label}: brow clears the eye  gap=${gap.toFixed(3)} (eye top ${eyeTop.toFixed(3)}, brow underside ${browBottom.toFixed(3)})`);
+}
+
 /* The far eye must also stay clear once the head yaws — that is the
    angle the old layout failed at. Both characters yaw to watch
    something off to one side, so both are checked. */
 console.log("");
 for (const [label, yaw, eyeFront] of [
-  ["farmer", 0.85 * 0.3, 0.246 + FARMER_EYE_DEPTH],
-  ["presenter", 0.9 * 0.35, 0.246 + 0.062 * EYE_SCALE * 0.62]
+  ["farmer", 0.85 * 0.3, EYE_Z + EYE_DEPTH],
+  ["presenter", 0.9 * 0.35, EYE_Z + EYE_DEPTH]
 ]) {
   const rot = (x, z) => -Math.sin(yaw) * x + Math.cos(yaw) * z;
-  const farEye = rot(-0.115, eyeFront);
-  const nearEye = rot(0.115, eyeFront);
+  const farEye = rot(-EYE_X, eyeFront);
+  const nearEye = rot(EYE_X, eyeFront);
   const bothVisible = farEye > 0.1 && nearEye > 0.1;
   if (!bothVisible) fails++;
   console.log(`${bothVisible ? "PASS" : "FAIL"}  ${label}: both eyes forward at ${(yaw * 57.3).toFixed(0)} degree yaw  far=${farEye.toFixed(3)} near=${nearEye.toFixed(3)}`);
@@ -120,7 +173,9 @@ for (const [label, yaw, eyeFront] of [
    brows; anything lower has to be a separate piece pushed back in z.
    Mirrors innovationScene.js. */
 const CROWN = { r: 0.315, sy: 1.02, cy: 0.29, theta: Math.PI * 0.25 };
-const BROW_TOP = 0.437 + 0.03 + 0.016;          // raised brow plus its radius
+/* Raised brow plus its radius: BROW_Y, the 0.04 lift the presenter's
+   update applies at full p.brow, and the capsule radius. */
+const BROW_TOP = BROW_Y + 0.04 + 0.017;
 const hairRim = CROWN.cy + CROWN.r * CROWN.sy * Math.cos(CROWN.theta);
 const hairClears = hairRim > BROW_TOP;
 if (!hairClears) fails++;
@@ -128,8 +183,8 @@ console.log(`${hairClears ? "PASS" : "FAIL"}  presenter: hairline clears the bro
 
 /* And the mass behind the head must stay behind the face. */
 const BACK = { r: 0.3, sx: 1.02, sy: 1.0, sz: 0.82, cy: 0.3, cz: -0.075 };
-const backAtEye = surfZ(BACK, 0.115, 0.375);
-const eyeFrontP = 0.246 + 0.062 * EYE_SCALE * 0.62;
+const backAtEye = surfZ(BACK, EYE_X, EYE_Y);
+const eyeFrontP = EYE_Z + EYE_DEPTH;
 const backClears = backAtEye === null || backAtEye < eyeFrontP - MIN_CLEARANCE;
 if (!backClears) fails++;
 console.log(`${backClears ? "PASS" : "FAIL"}  presenter: back hair stays behind the eyes  hair z=${backAtEye === null ? "n/a" : backAtEye.toFixed(3)} eye front=${eyeFrontP.toFixed(3)}`);

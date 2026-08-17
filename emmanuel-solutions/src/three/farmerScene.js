@@ -92,7 +92,12 @@ export function buildFarmerScene() {
      store body) sit at 0.85-0.95. Metalness stays only on parts that
      are genuinely metal — the panel glass and solar cells were carrying
      metalness meant for chrome, which is why they read plasticky. */
-  const skin = mat(0xe9b184, { r: 0.66 }), skin2 = mat(0xd9a074, { r: 0.68 });
+  /* Deepened from 0xe9b184/0xd9a074 and roughened: the forearms were
+     reading pale and waxy, which is a low-roughness light skin catching
+     the environment map like plastic. */
+  const skin = mat(0xdc9a68, { r: 0.74 }), skin2 = mat(0xc98a58, { r: 0.76 });
+  /* Eye highlight — warm white, not pure, per the no-pure-white rule. */
+  const hiM = mat(0xfff6ea, { r: 0.3 });
   const cream = mat(0xf2ece0, { r: 0.92 });
   const olive = mat(0x6d7f4c, { r: 0.9 }), olive2 = mat(0x5d6d3f, { r: 0.9 });
   const jean = mat(0x7e8ea3, { r: 0.93 });
@@ -102,6 +107,7 @@ export function buildFarmerScene() {
   const leather = mat(0x7c4a28, { r: 0.82 }), leather2 = mat(0x5e371d, { r: 0.84 });
   const darkM = mat(0x2a2118, { r: 0.75 });
   const cableM = mat(0x2a2118, { r: 0.88, t: true, o: 0 });
+  const mouthM = mat(0x6b3226, { r: 0.72 });
   const brass = mat(0xc9a227, { r: 0.42, m: 0.62 });
   const metal = mat(0xb2b8bd, { r: 0.4, m: 0.62 });
   const metal2 = mat(0x8f979d, { r: 0.46, m: 0.52 });
@@ -163,6 +169,11 @@ export function buildFarmerScene() {
      translates `look`. EYE_R is flattened on z so the dot hugs the face
      rather than bulging off it. */
   const EYE_R = 0.040, EYE_FLAT = 0.6;
+  /* The single thing that stops a dot eye reading as dead: one small
+     off-centre catchlight. It has to clear the dot's own surface, which
+     at this offset is at local z=0.021, or it sinks into the pupil and
+     does nothing. */
+  const HI_R = 0.012, HI_X = -0.013, HI_Y = 0.013, HI_Z = 0.024;
   function mkEye(side) {
     const g = new THREE.Group();
     g.position.set(side * 0.115, 0.375, 0.246);
@@ -171,19 +182,35 @@ export function buildFarmerScene() {
     const dot = M(new THREE.SphereGeometry(EYE_R, 18, 16), darkM, 0, 0, 0);
     dot.scale.set(1, 1, EYE_FLAT);
     look.add(dot);
+    look.add(M(new THREE.SphereGeometry(HI_R, 10, 10), hiM, HI_X, HI_Y, HI_Z));
     headG.add(g);
     return { g, look };
   }
   const eyeL = mkEye(-1), eyeR = mkEye(1);
 
-  const bwL = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, -0.108, 0.437, 0.240);
-  bwL.rotation.z = Math.PI / 2; headG.add(bwL);
-  const bwR = M(new THREE.CapsuleGeometry(0.018, 0.075, 8, 16), beardM, 0.108, 0.437, 0.240);
-  bwR.rotation.z = Math.PI / 2; headG.add(bwR);
-  /* No mouth. The beard and mustache carry the whole lower face; a
-     smile drawn under them was never legible at card size, and the
-     stretch of it was the thing that read as odd. `smile` still drives
-     the cheeks and brows, so the expression change survives. */
+  /* Brows sit at 0.452, not the old 0.437. At 0.437 the underside of a
+     brow was 0.002 above the top of the eye — close enough to read as a
+     heavy shelf pressing down on it, which is most of why he looked
+     miserable. Angled up at the inner edge: the +x end of the left brow
+     and the -x end of the right one, so both lift toward the nose. */
+  const BROW_Y = 0.452, BROW_TILT = 0.16;
+  const bwL = M(new THREE.CapsuleGeometry(0.020, 0.085, 8, 16), beardM, -0.108, BROW_Y, 0.218);
+  bwL.rotation.z = Math.PI / 2 + BROW_TILT; headG.add(bwL);
+  const bwR = M(new THREE.CapsuleGeometry(0.020, 0.085, 8, 16), beardM, 0.108, BROW_Y, 0.218);
+  bwR.rotation.z = Math.PI / 2 - BROW_TILT; headG.add(bwR);
+
+  /* A short smile line lying ON the beard rather than hovering in front
+     of it. The beard surface at this point is z=0.3081, so the stroke
+     front at 0.3235 clears it by 0.015 — enough not to z-fight, little
+     enough to read as part of the beard. Arc is 0.55pi rather than a
+     full half-torus, and 0.034 wide against the original 0.104: a
+     suggestion of a smile inside the beard, not a separate mouth. */
+  const MOUTH_ARC = Math.PI * 0.55;
+  const mouth = M(new THREE.TorusGeometry(0.017, 0.0055, 6, 16, MOUTH_ARC),
+    mouthM, 0, 0.205, 0.318);
+  mouth.rotation.z = -Math.PI / 2 - MOUTH_ARC / 2;
+  headG.add(mouth);
+
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, -0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.048, 12, 12), cheekM, 0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, -0.288, 0.3, 0));
@@ -200,7 +227,12 @@ export function buildFarmerScene() {
     const pv = new THREE.Group(); pv.position.set(px, 0.74, 0);
     const up = new THREE.Group(); pv.add(up);
     up.add(M(new THREE.CapsuleGeometry(0.1, 0.14, 10, 24), cream, 0, -0.12, 0));
-    up.add(M(new THREE.CylinderGeometry(0.112, 0.1, 0.05, 22), cream, 0, -0.22, 0));
+    /* The sleeve already overlaps the forearm by 0.068 — its tip is at
+       -0.290 against a forearm top of -0.222, so there was never a gap.
+       The cuff was simply too close to the sleeve's own radius to read
+       as a cuff, so it is wider and deeper now: a visible band, not a
+       seam. */
+    up.add(M(new THREE.CylinderGeometry(0.118, 0.106, 0.06, 22), cream, 0, -0.225, 0));
     const fo = new THREE.Group(); fo.position.set(0, -0.28, 0); up.add(fo);
     fo.add(M(new THREE.CapsuleGeometry(0.088, 0.18, 10, 24), skin, 0, -0.12, 0));
     const hd = new THREE.Group(); hd.position.set(0, -0.28, 0); fo.add(hd);
@@ -351,11 +383,19 @@ export function buildFarmerScene() {
 
     headG.rotation.x = p.nod;
     headG.rotation.y = p.look * 0.3;
-    /* No mouth mesh to drive — smile now shows only in the cheeks and
-       brows, which is all that was ever legible at this size. */
-    cheekM.opacity = p.smile * 0.35;
-    bwL.position.y = 0.437 + p.brow * 0.03;
-    bwR.position.y = 0.437 + p.brow * 0.03;
+    /* A small head tilt on the approving beat. Tilting the head is what
+       turns a nod into approval rather than acknowledgement. */
+    headG.rotation.z = p.appr * 0.08;
+    /* The smile stroke widens a little and lifts at the corners rather
+       than stretching — the arc keeps its shape, so it stays a smile
+       inside the beard at every value. */
+    mouth.scale.set(0.9 + p.smile * 0.28, 0.85 + p.smile * 0.4, 1);
+    cheekM.opacity = p.smile * 0.45;
+    bwL.position.y = BROW_Y + p.brow * 0.045;
+    bwR.position.y = BROW_Y + p.brow * 0.045;
+    /* Inner ends lift further on approval — the shape of a warm brow. */
+    bwL.rotation.z = Math.PI / 2 + BROW_TILT + p.appr * 0.07;
+    bwR.rotation.z = Math.PI / 2 - BROW_TILT - p.appr * 0.07;
     lookCur += (p.look - lookCur) * 0.1;
     const eo = lookCur * 0.016;
     eyeL.look.position.x = eo;

@@ -5,10 +5,11 @@ import { poseAt, panelAt, PANELS, STAND_X, BASE_Y, BOARD_X, TOTAL }
 /* Innovation capability — a presenter at a board in a workshop.
 
    The rig and face are the farmer's construction with a different
-   wardrobe: same head sphere, face patch, eye groups and clearance
-   offsets, no straw hat and no beard. Because the beard is gone the
-   mouth had to move back to z=0.288 — at the farmer's 0.330 it cleared
-   a beard that no longer exists and floated in front of the face.
+   wardrobe: same head sphere, face patch, dot eyes with a catchlight,
+   and the same brow and mouth treatment — but in a business suit, with
+   no straw hat and no beard. Because there is no beard the mouth sits at
+   z=0.284 rather than the farmer's 0.318: the surface it has to lie on
+   is the face patch, not a beard bulging in front of it.
    scripts/farmer-face.mjs checks both characters for that.
 
    Timing lives in innovationTimeline.js. Nothing here decides when
@@ -92,7 +93,9 @@ export function buildInnovationScene() {
   /* ── materials ────────────────────────────────────────
      Matte throughout: cloth 0.88-0.93, metalness only on the board
      frame and the marker's clip. */
-  const skin = mat(0xe9b184, { r: 0.66 }), skin2 = mat(0xd9a074, { r: 0.68 });
+  /* Same deepened, roughened skin as the farmer — the pale low-roughness
+     version caught the environment map and read waxy. */
+  const skin = mat(0xdc9a68, { r: 0.74 }), skin2 = mat(0xc98a58, { r: 0.76 });
   /* Business suit: charcoal jacket and trousers, white shirt, clay tie,
      dark shoes. Wool is matte — nothing in here above 0.9 metalness-free
      roughness would read as cloth. */
@@ -100,12 +103,9 @@ export function buildInnovationScene() {
   const suit2 = mat(0x2a313c, { r: 0.93 });
   const shirtM = mat(0xf4efe4, { r: 0.9 });
   const tieM = mat(0x8a4234, { r: 0.86 });
-  const trouser = mat(0x39414d, { r: 0.93 });
   const shoe = mat(0x2a2118, { r: 0.78 });
   const hairM = mat(0x3f2d21, { r: 0.92 });
-  const eyeW = mat(0xf5efe6, { r: 0.42 });
-  const irisM = mat(0x4a3524, { r: 0.5 });
-  const whiteM = mat(0xffffff, { r: 0.35 });
+  const hiM = mat(0xfff6ea, { r: 0.3 });
   const darkM = mat(0x2a2118, { r: 0.75 });
   const browM = mat(0x4a3527, { r: 0.9 });
   const mouthM = mat(0x7a3a2e, { r: 0.68 });
@@ -126,27 +126,76 @@ export function buildInnovationScene() {
   const bodyG = new THREE.Group();
   root.add(bodyG);
 
-  /* Jacket over shirt. The jacket capsule encloses the torso entirely,
-     so the shirt has to be a separate panel in front of it rather than
-     a smaller shape underneath — otherwise none of it is ever seen. */
+  /* ── the suit ─────────────────────────────────────────
+     Rebuilt. The previous version was a bare capsule with a shirt slab
+     and a flat tie plane laid across it, which read as a tube with
+     decals rather than as tailoring.
+
+     The torso capsule's front surface sits at z=0.263 through the
+     straight part of its barrel, so every garment piece has to be in
+     front of that number or it is simply inside the body and invisible.
+     That single fact drives all the z values below. */
   const jacket = M(new THREE.CapsuleGeometry(0.28, 0.34, 8, 24), suit, 0, 0.52, 0);
   jacket.scale.set(1.24, 1, 0.94); bodyG.add(jacket);
-  bodyG.add(M(new THREE.BoxGeometry(0.17, 0.44, 0.03), shirtM, 0, 0.55, 0.262));
-  /* Lapels flank the shirt panel and are what actually says "jacket". */
-  const lapL = M(new THREE.BoxGeometry(0.125, 0.4, 0.035), suit2, -0.113, 0.56, 0.258);
-  lapL.rotation.z = 0.17; bodyG.add(lapL);
-  const lapR = M(new THREE.BoxGeometry(0.125, 0.4, 0.035), suit2, 0.113, 0.56, 0.258);
-  lapR.rotation.z = -0.17; bodyG.add(lapR);
-  /* Shirt collar, then the tie knot and blade over the placket. */
-  const colL = M(new THREE.BoxGeometry(0.1, 0.07, 0.035), shirtM, -0.072, 0.735, 0.252);
-  colL.rotation.z = 0.42; bodyG.add(colL);
-  const colR = M(new THREE.BoxGeometry(0.1, 0.07, 0.035), shirtM, 0.072, 0.735, 0.252);
-  colR.rotation.z = -0.42; bodyG.add(colR);
-  bodyG.add(M(new THREE.BoxGeometry(0.07, 0.06, 0.035), tieM, 0, 0.705, 0.285));
-  const tie = M(new THREE.BoxGeometry(0.075, 0.32, 0.03), tieM, 0, 0.52, 0.283);
-  tie.scale.set(1, 1, 1); bodyG.add(tie);
-  /* Jacket hem sits over the trouser waist. */
-  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 30), trouser, 0, 0.16, 0);
+
+  /* Shoulder line: a yoke wider than the capsule (half-width 0.36
+     against the body's 0.338, so it actually protrudes) plus deltoid
+     caps at the arm pivots. Without this the shoulders are a smooth
+     dome and the silhouette has no tailoring in it at all. */
+  const yoke = M(new THREE.BoxGeometry(0.72, 0.1, 0.30), suit, 0, 0.75, 0);
+  bodyG.add(yoke);
+  for (const s of [-1, 1]) {
+    const delt = M(new THREE.SphereGeometry(0.13, 20, 16), suit, s * 0.355, 0.735, 0);
+    delt.scale.set(1.05, 0.78, 1.0);
+    bodyG.add(delt);
+  }
+
+  /* Shirt, visible only inside the V. Three stacked panels narrowing as
+     they descend, so what shows between the lapels is a wedge rather
+     than a rectangle of shirt across the whole chest. */
+  bodyG.add(M(new THREE.BoxGeometry(0.145, 0.09, 0.03), shirtM, 0, 0.715, 0.266));
+  bodyG.add(M(new THREE.BoxGeometry(0.105, 0.09, 0.03), shirtM, 0, 0.635, 0.267));
+  bodyG.add(M(new THREE.BoxGeometry(0.065, 0.09, 0.03), shirtM, 0, 0.558, 0.266));
+
+  /* Lapels: from the shoulders down to mid-chest, meeting at the button
+     stance. Running (±0.16, 0.75) to (±0.03, 0.52) gives a 0.515 rad
+     lean, which is the V. They sit slightly proud of the shirt so they
+     overlap its edges and crop it into that wedge. */
+  const LAPEL_LEAN = 0.515;
+  for (const s of [-1, 1]) {
+    const lap = M(new THREE.BoxGeometry(0.115, 0.30, 0.04), suit2, s * 0.095, 0.635, 0.271);
+    lap.rotation.z = s * LAPEL_LEAN;
+    bodyG.add(lap);
+    /* A narrower under-collar continuing the lapel up to the neck. */
+    const roll = M(new THREE.BoxGeometry(0.075, 0.12, 0.038), suit2, s * 0.15, 0.766, 0.252);
+    roll.rotation.z = s * 0.62;
+    bodyG.add(roll);
+  }
+
+  /* Shirt collar points either side of the notch. */
+  for (const s of [-1, 1]) {
+    const col = M(new THREE.BoxGeometry(0.085, 0.065, 0.032), shirtM, s * 0.062, 0.756, 0.264);
+    col.rotation.z = s * 0.44;
+    bodyG.add(col);
+  }
+
+  /* Tie: knot at the collar notch, then four tapering segments that bow
+     forward over the chest and pull back in at the bottom. Narrower than
+     the shirt wedge at every height, and it stops at 0.375 — above the
+     waist, not running into it. */
+  bodyG.add(M(new THREE.BoxGeometry(0.052, 0.05, 0.042), tieM, 0, 0.716, 0.279));
+  const TIE = [
+    { y: 0.660, w: 0.048, h: 0.10, z: 0.281 },
+    { y: 0.565, w: 0.042, h: 0.10, z: 0.286 },
+    { y: 0.470, w: 0.034, h: 0.10, z: 0.284 },
+    { y: 0.390, w: 0.024, h: 0.08, z: 0.276 }
+  ];
+  for (const seg of TIE) {
+    bodyG.add(M(new THREE.BoxGeometry(seg.w, seg.h, 0.026), tieM, 0, seg.y, seg.z));
+  }
+
+  /* Jacket hem over the trouser waist. */
+  const hips = M(new THREE.CylinderGeometry(0.29, 0.26, 0.28, 30), suit, 0, 0.16, 0);
   hips.scale.set(1.16, 1, 0.92); bodyG.add(hips);
   const hem = M(new THREE.CylinderGeometry(0.33, 0.315, 0.2, 30), suit, 0, 0.26, 0);
   hem.scale.set(1.14, 1, 0.94); bodyG.add(hem);
@@ -184,36 +233,40 @@ export function buildInnovationScene() {
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, -0.288, 0.3, 0));
   headG.add(M(new THREE.SphereGeometry(0.052, 12, 12), skin2, 0.288, 0.3, 0));
 
-  /* Eye groups, same construction and same EYE_SCALE as the farmer —
-     shrinking the white alone would leave the iris proud or buried. */
-  const EYE_SCALE = 0.72;
+  /* Same eye treatment as the farmer: one dark dot per eye with a small
+     off-centre catchlight. The four-part white/iris/pupil/highlight eye
+     resolved into a grey smudge at card size, and a grey smudge either
+     side of the nose is a large part of what read as a mask. */
+  const EYE_R = 0.040, EYE_FLAT = 0.6;
+  const HI_R = 0.012, HI_X = -0.013, HI_Y = 0.013, HI_Z = 0.024;
   function mkEye(side) {
     const g = new THREE.Group();
     g.position.set(side * 0.115, 0.375, 0.246);
-    const white = M(new THREE.SphereGeometry(0.062 * EYE_SCALE, 26, 22), eyeW, 0, 0, 0);
-    white.scale.set(0.94, 1, 0.62);
-    g.add(white);
     const look = new THREE.Group();
-    look.position.set(0, 0, 0.028 * EYE_SCALE);
     g.add(look);
-    const iris = M(new THREE.SphereGeometry(0.032 * EYE_SCALE, 18, 16), irisM, 0, 0, 0.018 * EYE_SCALE);
-    iris.scale.set(1, 1, 0.5);
-    look.add(iris);
-    look.add(M(new THREE.SphereGeometry(0.016 * EYE_SCALE, 12, 12), darkM, 0, 0, 0.03 * EYE_SCALE));
-    look.add(M(new THREE.SphereGeometry(0.011 * EYE_SCALE, 10, 10), whiteM,
-      -0.015 * EYE_SCALE, 0.018 * EYE_SCALE, 0.034 * EYE_SCALE));
+    const dot = M(new THREE.SphereGeometry(EYE_R, 18, 16), darkM, 0, 0, 0);
+    dot.scale.set(1, 1, EYE_FLAT);
+    look.add(dot);
+    look.add(M(new THREE.SphereGeometry(HI_R, 10, 10), hiM, HI_X, HI_Y, HI_Z));
     headG.add(g);
     return { g, look };
   }
   const eyeL = mkEye(-1), eyeR = mkEye(1);
 
-  const bwL = M(new THREE.CapsuleGeometry(0.016, 0.07, 8, 16), browM, -0.108, 0.437, 0.240);
-  bwL.rotation.z = Math.PI / 2; headG.add(bwL);
-  const bwR = M(new THREE.CapsuleGeometry(0.016, 0.07, 8, 16), browM, 0.108, 0.437, 0.240);
-  bwR.rotation.z = Math.PI / 2; headG.add(bwR);
-  /* z=0.288, not the farmer's 0.330 — see the note at the top. */
-  const mouth = M(new THREE.TorusGeometry(0.036, 0.009, 8, 18, Math.PI), mouthM, 0, 0.205, 0.288);
-  mouth.rotation.z = Math.PI; headG.add(mouth);
+  /* 0.452, matching the farmer — at 0.437 the brow underside sat 0.002
+     above the eye and read as a band across the face. */
+  const BROW_Y = 0.452, BROW_TILT = 0.14;
+  const bwL = M(new THREE.CapsuleGeometry(0.017, 0.078, 8, 16), browM, -0.108, BROW_Y, 0.220);
+  bwL.rotation.z = Math.PI / 2 + BROW_TILT; headG.add(bwL);
+  const bwR = M(new THREE.CapsuleGeometry(0.017, 0.078, 8, 16), browM, 0.108, BROW_Y, 0.220);
+  bwR.rotation.z = Math.PI / 2 - BROW_TILT; headG.add(bwR);
+  /* Same short stroke as the farmer, but at 0.284: there is no beard
+     here, so the surface it lies on is the face patch, not the beard. */
+  const MOUTH_ARC = Math.PI * 0.55;
+  const mouth = M(new THREE.TorusGeometry(0.017, 0.0055, 6, 16, MOUTH_ARC),
+    mouthM, 0, 0.205, 0.284);
+  mouth.rotation.z = -Math.PI / 2 - MOUTH_ARC / 2;
+  headG.add(mouth);
   headG.add(M(new THREE.SphereGeometry(0.046, 12, 12), cheekM, -0.178, 0.283, 0.205));
   headG.add(M(new THREE.SphereGeometry(0.046, 12, 12), cheekM, 0.178, 0.283, 0.205));
 
@@ -255,10 +308,10 @@ export function buildInnovationScene() {
   function mkLeg(px) {
     const pv = new THREE.Group(); pv.position.set(px, 0.06, 0);
     const th = new THREE.Group(); pv.add(th);
-    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 10, 24), trouser, 0, -0.13, 0));
+    th.add(M(new THREE.CapsuleGeometry(0.125, 0.14, 10, 24), suit, 0, -0.13, 0));
     const sh = new THREE.Group(); sh.position.set(0, -0.26, 0); th.add(sh);
-    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 10, 24), trouser, 0, -0.08, 0));
-    sh.add(M(new THREE.CylinderGeometry(0.12, 0.128, 0.14, 24), trouser, 0, -0.2, 0));
+    sh.add(M(new THREE.CapsuleGeometry(0.11, 0.1, 10, 24), suit, 0, -0.08, 0));
+    sh.add(M(new THREE.CylinderGeometry(0.12, 0.128, 0.14, 24), suit, 0, -0.2, 0));
     sh.add(M(new THREE.SphereGeometry(0.128, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), shoe, 0, -0.27, 0.03));
     sh.add(M(new THREE.BoxGeometry(0.21, 0.05, 0.29), shoe, 0, -0.3, 0.04));
     bodyG.add(pv);
@@ -355,10 +408,17 @@ export function buildInnovationScene() {
 
     headG.rotation.x = p.nod;
     headG.rotation.y = p.look * 0.35;
-    mouth.scale.set(0.92 + p.smile * 0.24, 0.85 + p.smile * 0.32, 1);
-    cheekM.opacity = p.smile * 0.32;
-    bwL.position.y = 0.437 + p.brow * 0.03;
-    bwR.position.y = 0.437 + p.brow * 0.03;
+    /* Lifts at the corners rather than stretching wide, so the stroke
+       keeps its shape at every value. */
+    mouth.scale.set(0.9 + p.smile * 0.28, 0.85 + p.smile * 0.4, 1);
+    cheekM.opacity = p.smile * 0.45;
+    /* BROW_Y, not the literal 0.437 the geometry used to sit at — writing
+       the old number here would drop the brows back onto the eyes on the
+       very first frame. */
+    bwL.position.y = BROW_Y + p.brow * 0.04;
+    bwR.position.y = BROW_Y + p.brow * 0.04;
+    bwL.rotation.z = Math.PI / 2 + BROW_TILT + p.nod * 0.3;
+    bwR.rotation.z = Math.PI / 2 - BROW_TILT - p.nod * 0.3;
     lookCur += (p.look - lookCur) * 0.1;
     const eo = lookCur * 0.016;
     eyeL.look.position.x = eo;
